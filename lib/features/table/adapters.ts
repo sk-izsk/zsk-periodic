@@ -1,5 +1,6 @@
 import type { Element } from '@/lib/elements';
 import type { ElementLocaleRecord } from '@/lib/i18n/types';
+import { STABLE_MASS_NUMBERS } from '@/lib/isotopes';
 import type { ElementProfile } from './types';
 
 const VALENCE_BY_GROUP: Record<number, string> = {
@@ -35,11 +36,14 @@ function formatNullable(value: number | null, unit: string) {
   return `${value}${unit}`;
 }
 
-function inferBlock(config: string) {
-  const tail = config.replace(/\s+/g, '').slice(-2);
-  if (tail.includes('f')) return 'f';
-  if (tail.includes('d')) return 'd';
-  if (tail.includes('p')) return 'p';
+function inferBlock(config: string): string {
+  // Scan all orbitals present in the config (after noble gas core) for highest angular momentum
+  const norm = config.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (c) =>
+    ({ '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' }[c] ?? c)
+  );
+  if (/\df\d/.test(norm)) return 'f';
+  if (/\dd\d/.test(norm)) return 'd';
+  if (/\dp\d/.test(norm)) return 'p';
   return 's';
 }
 
@@ -78,13 +82,17 @@ export function toElementProfile(
       },
       protons: el.n,
       electronsNeutral: el.n,
-      isotopes: [
-        {
-          name: `${el.sym}-${Math.round(el.mass)}`,
-          neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`,
-          percent: 'Stable/Observed',
-        },
-      ],
+      isotopes: (() => {
+        const masses = STABLE_MASS_NUMBERS[el.n] ?? [];
+        if (masses.length === 0) {
+          return [{ name: `${el.sym}-${Math.round(el.mass)}`, neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`, percent: 'Radioactive' }];
+        }
+        return masses.map((m) => ({
+          name: `${el.sym}-${m}`,
+          neutron: `${m - el.n}n`,
+          percent: 'Stable',
+        }));
+      })(),
     },
     level3: {
       electronic: {

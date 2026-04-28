@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
 import Nav from '@/components/Nav';
-import type { ReactionType, Difficulty } from '@/lib/worksheet';
+import type { Difficulty, ReactionType } from '@/lib/worksheet';
+import { useState } from 'react';
 
 const REACTION_TYPES: { key: ReactionType; label: string; example: string }[] = [
   { key: 'synthesis',     label: 'Synthesis',          example: 'A + B → AB' },
@@ -32,7 +32,7 @@ export default function WorksheetPage() {
   return (
     <div>
       <Nav />
-      <main className="max-w-2xl mx-auto p-6">
+      <main className="max-w-2xl p-6 mx-auto">
         <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 4 }}>Worksheet Generator</h1>
         <p style={{ fontSize: 14, color: 'var(--color-muted)', marginBottom: 24 }}>
           Generate print-ready balanced equation worksheets with answer key.
@@ -44,7 +44,7 @@ export default function WorksheetPage() {
           <div className="flex gap-2">
             {[5, 10, 20, 30, 50].map(n => (
               <button key={n} onClick={() => setCount(n)}
-                className="px-4 py-2 rounded-lg text-sm transition-colors"
+                className="px-4 py-2 text-sm transition-colors rounded-lg"
                 style={{
                   background: count === n ? '#3b82f6' : 'var(--color-bg2)',
                   color: count === n ? '#fff' : 'var(--color-text)',
@@ -61,7 +61,7 @@ export default function WorksheetPage() {
           <label style={{ fontSize: 14, fontWeight: 500, display: 'block', marginBottom: 8 }}>Reaction types</label>
           <div className="flex flex-col gap-2">
             {REACTION_TYPES.map(t => (
-              <label key={t.key} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg"
+              <label key={t.key} className="flex items-center gap-3 p-3 rounded-lg cursor-pointer"
                 style={{ border: '0.5px solid var(--color-border)', background: types.includes(t.key) ? 'rgba(59,130,246,.08)' : 'var(--color-bg2)' }}>
                 <input type="checkbox" checked={types.includes(t.key)} onChange={() => toggle(t.key)} />
                 <div>
@@ -79,7 +79,7 @@ export default function WorksheetPage() {
           <div className="flex gap-2">
             {(['easy','medium','hard'] as Difficulty[]).map(d => (
               <button key={d} onClick={() => setDifficulty(d)}
-                className="px-4 py-2 rounded-lg text-sm capitalize transition-colors"
+                className="px-4 py-2 text-sm capitalize transition-colors rounded-lg"
                 style={{
                   background: difficulty === d ? '#3b82f6' : 'var(--color-bg2)',
                   color: difficulty === d ? '#fff' : 'var(--color-text)',
@@ -100,7 +100,7 @@ export default function WorksheetPage() {
         </section>
 
         <button onClick={generate} disabled={generating || types.length === 0}
-          className="w-full py-3 rounded-xl text-white font-medium text-sm transition-colors"
+          className="w-full py-3 text-sm font-medium text-white transition-colors rounded-xl"
           style={{ background: types.length === 0 ? '#94a3b8' : '#3b82f6' }}>
           {generating ? 'Generating…' : `Generate ${count}-question worksheet (PDF)`}
         </button>

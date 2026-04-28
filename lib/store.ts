@@ -53,7 +53,7 @@ export const useAppStore = create<AppStore>()(
       setFilterCategory: (cat) => set((s) => ({ filterCategory: s.filterCategory === cat ? null : cat })),
       setSearchQuery: (q) => set({ searchQuery: q }),
 
-      darkMode: false,
+      darkMode: true,
       toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
 
       language: DEFAULT_LANGUAGE,

@@ -4,7 +4,7 @@ const elementLocaleCache: Partial<Record<AppLanguage, Record<string, ElementLoca
 const ionLocaleCache: Partial<Record<AppLanguage, Record<string, IonLocaleRecord>>> = {};
 
 const elementLoaders: Record<AppLanguage, () => Promise<Record<string, ElementLocaleRecord>>> = {
-  en: async () => ({}),
+  en: async () => (await import('./locales/elements/en')).default,
   zh: async () => (await import('./locales/elements/zh')).default,
   'zh-Hant': async () => (await import('./locales/elements/zh-Hant')).default,
   fr: async () => (await import('./locales/elements/fr')).default,

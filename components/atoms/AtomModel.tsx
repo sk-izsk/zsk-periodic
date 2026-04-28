@@ -230,6 +230,41 @@ function Shell({ shellIndex, shellCount, electrons, speedMul, paused, topView, d
   );
 }
 
+// ─── Parse electron config string to Bohr shell occupancies ─────────────────
+const SUP: Record<string, string> = {
+  '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9',
+};
+// K, L, M, N, O, P electrons for noble gas core abbreviations
+const NG_SHELLS: Record<string, number[]> = {
+  '[He]': [2],
+  '[Ne]': [2, 8],
+  '[Ar]': [2, 8, 8],
+  '[Kr]': [2, 8, 18, 8],
+  '[Xe]': [2, 8, 18, 18, 8],
+  '[Rn]': [2, 8, 18, 32, 18, 8],
+};
+
+function configToShells(config: string): number[] {
+  let base: number[] = [];
+  let rest = config;
+  for (const [sym, shells] of Object.entries(NG_SHELLS)) {
+    if (config.startsWith(sym)) { base = [...shells]; rest = config.slice(sym.length).trim(); break; }
+  }
+  const counts = [...base];
+  // Match Unicode superscripts DIRECTLY to avoid greedy normalisation ambiguity:
+  // "3d¹⁰4s²" → n=3 e=10, n=4 e=2  (normalising first gives "3d104s2" → e=104 bug)
+  const re = /(\d)[spdf]([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g;
+  let m;
+  while ((m = re.exec(rest)) !== null) {
+    const n = parseInt(m[1], 10);
+    const e = parseInt(m[2].split('').map(c => SUP[c] ?? c).join(''), 10);
+    while (counts.length < n) counts.push(0);
+    counts[n - 1] += e;
+  }
+  while (counts.length > 0 && counts[counts.length - 1] === 0) counts.pop();
+  return counts.length > 0 ? counts : [1];
+}
+
 // ─── Full atom scene ──────────────────────────────────────────────────────────
 function AtomScene({ element, paused, speed, topView, darkMode, onShellHover }: {
   element: Element; paused: boolean; speed: number; topView: boolean; darkMode: boolean; onShellHover: (idx: number | null) => void;
@@ -242,13 +277,7 @@ function AtomScene({ element, paused, speed, topView, darkMode, onShellHover }: 
     if (atomRef.current) atomRef.current.scale.set(0.1, 0.1, 0.1);
   }, [element.n]);
 
-  const shells = useMemo(() => {
-    const caps = [2, 8, 8, 18, 18, 32, 32];
-    const result: number[] = [];
-    let rem = element.n;
-    for (const cap of caps) { if (rem <= 0) break; result.push(Math.min(rem, cap)); rem -= cap; }
-    return result;
-  }, [element.n]);
+  const shells = useMemo(() => configToShells(element.config), [element.config]);
 
   const neutrons = useMemo(() => Math.max(0, Math.round(element.mass) - element.n), [element]);
 
@@ -296,13 +325,7 @@ export default function AtomModel({ element, bg = '#0f0f1a', height = 320, fill 
   const isDarkMode = !isLight;
   const textColor = isLight ? '#222' : '#eee';
 
-  const shells = useMemo(() => {
-    const caps = [2, 8, 8, 18, 18, 32, 32];
-    const result: number[] = [];
-    let rem = element.n;
-    for (const cap of caps) { if (rem <= 0) break; result.push(Math.min(rem, cap)); rem -= cap; }
-    return result;
-  }, [element.n]);
+  const shells = useMemo(() => configToShells(element.config), [element.config]);
 
   const cameraPosition = topView ? ([0, 10, 34] as [number, number, number]) : ([0, 2, 34] as [number, number, number]);
 

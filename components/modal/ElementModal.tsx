@@ -20,7 +20,14 @@ const CARD_BG: Record<string, string> = {
   l4: '#c45858',
 };
 
-// ─── Ion notation helpers ─────────────────────────────────────────────────────
+// ─── Superscript helper ───────────────────────────────────────────────────────
+const SUP_DIGITS: Record<string, string> = {
+  '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+  '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+};
+function toSuperscript(n: number): string {
+  return String(n).split('').map((c) => SUP_DIGITS[c] ?? c).join('');
+}
 const SUPS: Record<string, string> = {
   '1': '¹', '2': '²', '3': '³', '4': '⁴',
   '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸',
@@ -179,7 +186,6 @@ function L2Card({
     massUnit === 'highSchool'
       ? profile.level2.mass.highSchool
       : (profile.level2.mass.universityConventional ?? profile.level2.mass.highSchool);
-  const iso = profile.level2.isotopes[0];
 
   return (
     <div
@@ -187,42 +193,53 @@ function L2Card({
       style={{ background: CARD_BG.l2, borderRadius: 16, overflow: 'hidden' }}
     >
       <CardRow label="Avg Atomic Mass" value={mass} />
-      <CardRow label="Protons" value={String(profile.level2.protons)} />
-      <CardRow label="Electrons (neutral)" value={String(profile.level2.electronsNeutral)} />
-      {iso && (
-        <>
-          <CardRow label="Key Isotope" value={iso.name} />
-          <CardRow label="Neutrons" value={iso.neutron} />
-          <CardRow label="Abundance" value={iso.percent} last />
-        </>
-      )}
-      {/* Electron configuration at bottom */}
-      <div style={{ flex: 1, padding: '12px 14px' }}>
-        <div
-          style={{
-            fontSize: 10,
-            letterSpacing: '0.07em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.55)',
-            marginBottom: 6,
-            fontWeight: 500,
-          }}
-        >
-          Electron Configuration
+      <CardRow label="Configuration" value={profile.electronConfiguration} />
+      <CardRow label="Valence e⁻" value={profile.level1.valenceElectrons} />
+      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        {[
+          { label: `${profile.level2.protons}`, sub: 'P⁺ Protons' },
+          { label: `${Math.round(parseFloat(profile.level2.mass.highSchool)) - profile.level2.protons}`, sub: 'N° Neutrons' },
+          { label: `${profile.level2.electronsNeutral}`, sub: 'E⁻ Electrons' },
+        ].map(({ label, sub }) => (
+          <div key={sub} style={{ flex: 1, textAlign: 'center', padding: '10px 4px', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{label}</div>
+            <div style={{ fontSize: 9, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Isotope list */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', padding: '4px 14px 8px', fontWeight: 500 }}>
+          Isotopes
         </div>
-        <div
-          style={{
-            fontFamily: 'monospace',
-            fontSize: 12,
-            color: '#fff',
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: 8,
-            padding: '8px 12px',
-            wordBreak: 'break-all',
-          }}
-        >
-          {profile.electronConfiguration}
-        </div>
+        {profile.level2.isotopes.map((iso, i) => {
+          const massNum = parseInt(iso.name.split('-')[1] ?? '0', 10);
+          const symWithSup = `${toSuperscript(massNum)}${profile.symbol}`;
+          const isLast = i === profile.level2.isotopes.length - 1;
+          return (
+            <div
+              key={iso.name}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '9px 14px',
+                borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                gap: 10,
+              }}
+            >
+              <span style={{ fontWeight: 700, fontSize: 15, color: '#ffd77a', minWidth: 52 }}>{symWithSup}</span>
+              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', flex: 1 }}>{iso.neutron}</span>
+              <span style={{
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: '0.06em',
+                color: iso.percent === 'Radioactive' ? '#ff9a9a' : '#7affb8',
+                textTransform: 'uppercase',
+              }}>{iso.percent}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
