@@ -20,8 +20,6 @@
 
 * { box-sizing: border-box; }
 
-* { box-sizing: border-box; }
-
 html, body, #__next {
   height: 100%;
   width: 100%;
@@ -34,6 +32,21 @@ body {
   color: var(--color-text);
   font-family: 'Inter', system-ui, sans-serif;
   transition: background 0.2s, color 0.2s;
+}
+
+article h2 {
+  font-size: 1rem;
+  margin: 0.8rem 0 0.35rem;
+}
+
+article ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+article li {
+  margin-bottom: 0.3rem;
+  color: var(--color-text);
 }
 
 /* Element cell hover */
