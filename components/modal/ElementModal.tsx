@@ -391,19 +391,7 @@ export default function ElementModal() {
   const [locale, setLocale] = useState<ElementLocaleRecord | undefined>();
   const [topView, setTopView] = useState(false);
   const touchStartX = useRef<number | null>(null);
-
-  // URL -> modal state (supports `?element=12` or `?element=Mg`)
-  useEffect(() => {
-    const q = elementParam;
-    if (!q) return;
-
-    const byAtomic = /^\d+$/.test(q) ? elements.find((e) => e.n === Number(q)) : undefined;
-    const bySymbol = elements.find((e) => e.sym.toLowerCase() === q.toLowerCase());
-    const match = byAtomic ?? bySymbol;
-
-    if (!match) return;
-    if (selectedElement?.n !== match.n) setSelectedElement(match);
-  }, [elementParam, selectedElement?.n, setSelectedElement]);
+  const isInternalUrlSync = useRef(false);
 
   // modal state -> URL
   useEffect(() => {
@@ -411,14 +399,39 @@ export default function ElementModal() {
     const current = params.get('element');
     const next = selectedElement ? String(selectedElement.n) : null;
 
+    // If URL already has an element and store is empty, let URL -> state hydrate first.
+    if (!next && current) return;
+
     if (next === current || (!next && !current)) return;
 
     if (next) params.set('element', next);
     else params.delete('element');
 
     const qs = params.toString();
+    isInternalUrlSync.current = true;
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [selectedElement?.n, pathname, router, searchParamsKey]);
+
+  // URL -> modal state (supports `?element=12` or `?element=Mg`)
+  useEffect(() => {
+    if (isInternalUrlSync.current) {
+      isInternalUrlSync.current = false;
+      return;
+    }
+
+    const q = elementParam;
+    if (!q) {
+      if (selectedElement) setSelectedElement(null);
+      return;
+    }
+
+    const byAtomic = /^\d+$/.test(q) ? elements.find((e) => e.n === Number(q)) : undefined;
+    const bySymbol = elements.find((e) => e.sym.toLowerCase() === q.toLowerCase());
+    const match = byAtomic ?? bySymbol;
+
+    if (!match) return;
+    if (selectedElement?.n !== match.n) setSelectedElement(match);
+  }, [elementParam, selectedElement, setSelectedElement]);
 
   // Reset card index and load locale when element changes
   useEffect(() => {
@@ -441,7 +454,16 @@ export default function ElementModal() {
     [selectedElement, locale],
   );
 
-  const close = useCallback(() => setSelectedElement(null), [setSelectedElement]);
+  const close = useCallback(() => {
+    const params = new URLSearchParams(searchParamsKey);
+    if (params.has('element')) {
+      params.delete('element');
+      const qs = params.toString();
+      isInternalUrlSync.current = true;
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    }
+    setSelectedElement(null);
+  }, [pathname, router, searchParamsKey, setSelectedElement]);
 
   // ESC to close
   useEffect(() => {
