@@ -67,3 +67,4 @@ zperiod/
 - Add i18n with `next-intl` (language files go in `messages/`)
 - Add `app/element/[n]/page.tsx` for deep-linked element URLs
 # zsk-periodic
+# zsk-periodic
