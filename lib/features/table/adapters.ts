@@ -1,6 +1,6 @@
 import type { Element } from '@/lib/elements';
 import type { ElementLocaleRecord } from '@/lib/i18n/types';
-import { STABLE_MASS_NUMBERS } from '@/lib/isotopes';
+import { KEY_RADIOACTIVE_MASS_NUMBERS, STABLE_MASS_NUMBERS } from '@/lib/isotopes';
 import type { ElementProfile } from './types';
 
 const VALENCE_BY_GROUP: Record<number, string> = {
@@ -53,27 +53,48 @@ function inferIons(el: Element): string {
   return common.map((state) => `${el.sym}${state}`).join(', ');
 }
 
+function displayGroup(el: Element): number | null {
+  if (el.group != null) return el.group;
+  if (el.cat === 'lanthanide' || el.cat === 'actinide') return 3;
+  return null;
+}
+
+function pickCommonIons(el: Element, locale?: ElementLocaleRecord): string {
+  const localeIons = locale?.ions?.trim();
+  const hasLocaleIons = Boolean(localeIons);
+  const localeSuppressesIons = localeIons === 'No common ions';
+  const preferInferredForFBlock = (el.cat === 'lanthanide' || el.cat === 'actinide') && localeSuppressesIons;
+
+  if (!hasLocaleIons || preferInferredForFBlock) {
+    return inferIons(el);
+  }
+
+  return localeIons as string;
+}
+
 export function toElementProfile(
   el: Element,
   locale?: ElementLocaleRecord
 ): ElementProfile {
+  const group = displayGroup(el);
+
   return {
     id: el.n,
     symbol: el.sym,
     name: locale?.name ?? el.name,
     category: el.cat,
     period: el.period,
-    group: el.group,
+    group,
     phaseAtSTP: el.phase,
     electronConfiguration: el.config,
     raw: el,
     level1: {
       type: el.cat,
-      groupPeriod: `${el.group ?? '-'} / ${el.period}`,
+      groupPeriod: `${group ?? '-'} / ${el.period}`,
       phaseAtSTP: el.phase,
-      valenceElectrons: el.group ? VALENCE_BY_GROUP[el.group] ?? 'Variable' : 'Variable',
+      valenceElectrons: group ? VALENCE_BY_GROUP[group] ?? 'Variable' : 'Variable',
       electronBlock: inferBlock(el.config),
-      commonIons: locale?.ions ?? inferIons(el),
+      commonIons: pickCommonIons(el, locale),
     },
     level2: {
       mass: {
@@ -83,14 +104,18 @@ export function toElementProfile(
       protons: el.n,
       electronsNeutral: el.n,
       isotopes: (() => {
-        const masses = STABLE_MASS_NUMBERS[el.n] ?? [];
+        const stableMasses = STABLE_MASS_NUMBERS[el.n] ?? [];
+        const hasStableMasses = stableMasses.length > 0;
+        const masses = hasStableMasses
+          ? stableMasses
+          : (KEY_RADIOACTIVE_MASS_NUMBERS[el.n] ?? []);
         if (masses.length === 0) {
           return [{ name: `${el.sym}-${Math.round(el.mass)}`, neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`, percent: 'Radioactive' }];
         }
         return masses.map((m) => ({
           name: `${el.sym}-${m}`,
           neutron: `${m - el.n}n`,
-          percent: 'Stable',
+          percent: hasStableMasses ? 'Stable' : 'Radioactive/Trace',
         }));
       })(),
     },

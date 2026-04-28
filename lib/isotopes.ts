@@ -89,3 +89,47 @@ export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
   83: [209],
   // 84–118: all radioactive — no stable isotopes
 };
+
+/**
+ * Key radioactive isotope mass numbers used when stable isotopes do not exist.
+ * Includes naturally occurring, long-lived, or most representative isotopes.
+ */
+export const KEY_RADIOACTIVE_MASS_NUMBERS: Record<number, number[]> = {
+  43: [97, 99],
+  61: [145, 147],
+  84: [209, 210],
+  85: [210, 211],
+  86: [220, 222],
+  87: [223],
+  88: [226],
+  89: [227],
+  90: [230, 232],
+  91: [231],
+  92: [235, 238],
+  93: [237],
+  94: [239, 244],
+  95: [241, 243],
+  96: [247],
+  97: [247],
+  98: [251],
+  99: [252],
+  100: [257],
+  101: [258],
+  102: [259],
+  103: [262],
+  104: [267],
+  105: [268],
+  106: [269],
+  107: [270],
+  108: [277],
+  109: [278],
+  110: [281],
+  111: [282],
+  112: [285],
+  113: [286],
+  114: [289],
+  115: [290],
+  116: [293],
+  117: [294],
+  118: [294],
+};

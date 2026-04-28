@@ -101,6 +101,13 @@ function CardRow({
 
 function L1Card({ profile }: { profile: ElementProfile }) {
   const ions = parseCommonIons(profile.level1.commonIons, profile.name);
+  const typeLabel =
+    profile.category === 'actinide'
+      ? 'Actinides'
+      : profile.category === 'lanthanide'
+        ? 'Lanthanides'
+        : (CATEGORY_LABELS[profile.category] ?? profile.level1.type);
+
   return (
     <div
       className="h-full flex flex-col"
@@ -110,65 +117,78 @@ function L1Card({ profile }: { profile: ElementProfile }) {
         overflow: 'hidden',
       }}
     >
-      <CardRow label="Type" value={profile.level1.type} />
+      <CardRow label="Type" value={typeLabel} />
       <CardRow label="Group / Period" value={profile.level1.groupPeriod} />
       <CardRow label="Phase @ STP" value={profile.level1.phaseAtSTP} />
-      <CardRow label="Valence e⁻" value={profile.level1.valenceElectrons} />
       <CardRow label="Electron Block" value={profile.level1.electronBlock} last />
 
       {/* Common ions section */}
-      <div style={{ flex: 1, padding: '0 12px 12px' }}>
+      <div style={{ flex: 1, padding: '12px 14px 14px' }}>
         <div
           style={{
-            fontSize: 10,
-            letterSpacing: '0.07em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.55)',
-            textAlign: 'center',
-            marginBottom: 8,
-            fontWeight: 500,
+            height: '100%',
+            background: 'rgba(28, 41, 63, 0.42)',
+            border: '1px solid rgba(255,255,255,0.14)',
+            borderRadius: 14,
+            padding: '10px 10px 12px',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          Common Ions
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {ions.length === 0 ? (
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.12)',
-                borderRadius: 10,
-                padding: '8px 12px',
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.6)',
-                textAlign: 'center',
-              }}
-            >
-              No common ions
-            </div>
-          ) : (
-            ions.slice(0, 3).map((ion, i) => (
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.55)',
+              textAlign: 'center',
+              marginBottom: 8,
+              fontWeight: 600,
+            }}
+          >
+            Common Ions
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto' }}>
+            {ions.length === 0 ? (
               <div
-                key={i}
                 style={{
-                  background: 'rgba(255,255,255,0.14)',
-                  borderRadius: 10,
-                  padding: '8px 14px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  background: 'rgba(255,255,255,0.12)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 11,
+                  padding: '10px 12px',
+                  fontSize: 14,
+                  color: 'rgba(255,255,255,0.7)',
+                  textAlign: 'center',
                 }}
               >
-                <span style={{ fontWeight: 700, fontSize: 14, color: '#fff' }}>
-                  {ion.notation}
-                </span>
-                {ion.label && (
-                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
-                    {ion.label}
-                  </span>
-                )}
+                No common ions
               </div>
-            ))
-          )}
+            ) : (
+              ions.slice(0, 4).map((ion, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: 'rgba(255,255,255,0.14)',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    borderRadius: 11,
+                    padding: '10px 14px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ fontWeight: 700, fontSize: 18, color: '#f5df9a' }}>
+                    {ion.notation}
+                  </span>
+                  {ion.label && (
+                    <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.78)' }}>
+                      {ion.label}
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -228,13 +248,13 @@ function L2Card({
                 gap: 10,
               }}
             >
-              <span style={{ fontWeight: 700, fontSize: 15, color: '#ffd77a', minWidth: 52 }}>{symWithSup}</span>
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', flex: 1 }}>{iso.neutron}</span>
+              <span style={{ fontWeight: 700, fontSize: 18, color: '#ffd77a', minWidth: 64 }}>{symWithSup}</span>
+              <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>{iso.neutron}</span>
               <span style={{
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: '0.06em',
-                color: iso.percent === 'Radioactive' ? '#ff9a9a' : '#7affb8',
+                color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
                 textTransform: 'uppercase',
               }}>{iso.percent}</span>
             </div>
