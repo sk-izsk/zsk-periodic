@@ -1,4 +1,5 @@
 'use client';
+import AtomModel from '@/components/atoms/AtomModel';
 import { CATEGORY_COLORS, CATEGORY_LABELS, elements } from '@/lib/elements';
 import { toElementProfile } from '@/lib/features/table/adapters';
 import type { ElementProfile } from '@/lib/features/table/types';
@@ -6,11 +7,8 @@ import { loadElementLocale } from '@/lib/i18n/locale-loaders';
 import type { ElementLocaleRecord } from '@/lib/i18n/types';
 import { useAppStore } from '@/lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-const AtomModel = dynamic(() => import('@/components/atoms/AtomModel'), { ssr: false });
+import { useSearchParams } from 'react-router-dom';
 
 // ─── Card colors matching original (L1 steel-blue, L2 blue, L3 amber, L4 red) ───
 const CARD_BG: Record<string, string> = {
@@ -517,10 +515,7 @@ function ControlBtn({
 const LEVELS = ['l1', 'l2', 'l3', 'l4'] as const;
 
 export default function ElementModal() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const searchParamsKey = searchParams.toString();
+  const [searchParams, setSearchParams] = useSearchParams();
   const elementParam = searchParams.get('element');
 
   const selectedElement = useAppStore((s) => s.selectedElement);
@@ -536,47 +531,37 @@ export default function ElementModal() {
   const [locale, setLocale] = useState<ElementLocaleRecord | undefined>();
   const [topView, setTopView] = useState(false);
   const touchStartX = useRef<number | null>(null);
-  const isInternalUrlSync = useRef(false);
+  // Ref so URL→state effect can read selectedElement without it being a dep
+  const selectedElementRef = useRef(selectedElement);
+  useEffect(() => { selectedElementRef.current = selectedElement; });
 
-  // modal state -> URL
+  // state -> URL: only fires when the element number changes
   useEffect(() => {
-    const params = new URLSearchParams(searchParamsKey);
-    const current = params.get('element');
+    const currentParam = searchParams.get('element');
     const next = selectedElement ? String(selectedElement.n) : null;
-
-    // If URL already has an element and store is empty, let URL -> state hydrate first.
-    if (!next && current) return;
-
-    if (next === current || (!next && !current)) return;
-
+    if (next === currentParam) return;
+    if (!next && !currentParam) return;
+    const params = new URLSearchParams(searchParams);
     if (next) params.set('element', next);
     else params.delete('element');
+    setSearchParams(params, { replace: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedElement?.n]); // intentionally omit searchParams to avoid loop
 
-    const qs = params.toString();
-    isInternalUrlSync.current = true;
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-  }, [selectedElement?.n, pathname, router, searchParamsKey]);
-
-  // URL -> modal state (supports `?element=12` or `?element=Mg`)
+  // URL -> state: only fires when the URL param string changes
   useEffect(() => {
-    if (isInternalUrlSync.current) {
-      isInternalUrlSync.current = false;
+    if (!elementParam) {
+      if (selectedElementRef.current) setSelectedElement(null);
       return;
     }
-
-    const q = elementParam;
-    if (!q) {
-      if (selectedElement) setSelectedElement(null);
-      return;
-    }
-
-    const byAtomic = /^\d+$/.test(q) ? elements.find((e) => e.n === Number(q)) : undefined;
-    const bySymbol = elements.find((e) => e.sym.toLowerCase() === q.toLowerCase());
+    const byAtomic = /^\d+$/.test(elementParam) ? elements.find((e) => e.n === Number(elementParam)) : undefined;
+    const bySymbol = elements.find((e) => e.sym.toLowerCase() === elementParam.toLowerCase());
     const match = byAtomic ?? bySymbol;
-
     if (!match) return;
-    if (selectedElement?.n !== match.n) setSelectedElement(match);
-  }, [elementParam, selectedElement, setSelectedElement]);
+    if (selectedElementRef.current?.n !== match.n) setSelectedElement(match);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elementParam]); // intentionally omit selectedElement to avoid loop
+
 
   // Reset card index and load locale when element changes
   useEffect(() => {
@@ -612,15 +597,9 @@ export default function ElementModal() {
   }, [currentIdx, setSelectedElement]);
 
   const close = useCallback(() => {
-    const params = new URLSearchParams(searchParamsKey);
-    if (params.has('element')) {
-      params.delete('element');
-      const qs = params.toString();
-      isInternalUrlSync.current = true;
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-    }
     setSelectedElement(null);
-  }, [pathname, router, searchParamsKey, setSelectedElement]);
+    // setSelectedElement triggers state→URL effect which removes ?element from URL
+  }, [setSelectedElement]);
 
   // ESC to close
   useEffect(() => {
