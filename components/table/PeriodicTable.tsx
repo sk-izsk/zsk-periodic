@@ -1,4 +1,3 @@
-'use client';
 import { CATEGORY_COLORS, CATEGORY_LABELS, Element, ElementCategory, elements } from '@/lib/elements';
 import { matchesElementQuery } from '@/lib/features/table/search';
 import { loadElementLocale } from '@/lib/i18n/locale-loaders';

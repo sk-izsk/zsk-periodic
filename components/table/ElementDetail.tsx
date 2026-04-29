@@ -1,4 +1,3 @@
-'use client';
 import { CATEGORY_COLORS, CATEGORY_LABELS, Element } from '@/lib/elements';
 import { toElementProfile } from '@/lib/features/table/adapters';
 import type { DetailLevel } from '@/lib/features/table/types';

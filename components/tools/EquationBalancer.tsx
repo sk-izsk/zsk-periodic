@@ -1,6 +1,5 @@
-'use client';
-import { useState } from 'react';
 import { balanceEquation } from '@/lib/balancer';
+import { useState } from 'react';
 
 export default function EquationBalancer() {
   const [input, setInput] = useState('');

@@ -1,4 +1,3 @@
-'use client';
 import AtomModel from '@/components/atoms/AtomModel';
 import { CATEGORY_COLORS, CATEGORY_LABELS, elements } from '@/lib/elements';
 import { toElementProfile } from '@/lib/features/table/adapters';
@@ -632,12 +631,20 @@ export default function ElementModal() {
   useEffect(() => {
     if (!selectedElement) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') setActiveCard((c) => Math.min(c + 1, LEVELS.length - 1));
-      if (e.key === 'ArrowLeft') setActiveCard((c) => Math.max(c - 1, 0));
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        navigateNext();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        navigatePrev();
+        return;
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selectedElement]);
+  }, [selectedElement, navigateNext, navigatePrev]);
 
   const atomBg = darkMode ? '#000000' : '#e8ecf4';
 

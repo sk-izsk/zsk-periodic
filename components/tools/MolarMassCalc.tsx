@@ -1,6 +1,5 @@
-'use client';
-import { useState } from 'react';
 import { calcMolarMass } from '@/lib/molarMass';
+import { useState } from 'react';
 
 export default function MolarMassCalc() {
   const [input, setInput] = useState('');

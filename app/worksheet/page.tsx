@@ -1,4 +1,3 @@
-'use client';
 import type { Difficulty, ReactionType } from '@/lib/worksheet';
 import { useState } from 'react';
 

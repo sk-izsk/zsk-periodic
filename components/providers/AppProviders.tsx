@@ -1,4 +1,3 @@
-'use client';
 
 import { RTL_LANGUAGES } from '@/lib/i18n/config';
 import { useAppStore } from '@/lib/store';

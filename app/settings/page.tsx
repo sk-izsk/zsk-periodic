@@ -1,4 +1,3 @@
-'use client';
 
 import { changelogData } from '@/lib/changelog';
 import { t } from '@/lib/i18n/ui';

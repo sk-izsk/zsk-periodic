@@ -1,4 +1,3 @@
-'use client';
 import type { AppLanguage } from '@/lib/i18n/types';
 import { t } from '@/lib/i18n/ui';
 import { useAppStore } from '@/lib/store';

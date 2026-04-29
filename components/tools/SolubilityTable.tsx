@@ -1,4 +1,3 @@
-'use client';
 
 const CATIONS = ['Li⁺', 'Na⁺', 'K⁺', 'NH₄⁺', 'Ag⁺', 'Ca²⁺', 'Mg²⁺', 'Ba²⁺', 'Fe²⁺', 'Fe³⁺', 'Cu²⁺', 'Zn²⁺', 'Pb²⁺'];
 const ANIONS  = ['Cl⁻', 'Br⁻', 'I⁻', 'SO₄²⁻', 'CO₃²⁻', 'OH⁻', 'NO₃⁻', 'PO₄³⁻'];

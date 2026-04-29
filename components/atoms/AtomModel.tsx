@@ -1,4 +1,3 @@
-'use client';
 import type { Element } from '@/lib/elements';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
