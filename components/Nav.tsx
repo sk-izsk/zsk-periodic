@@ -79,8 +79,8 @@ export default function Nav() {
             placeholder="Search elements... (Cmd+K)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-sm outline-none"
-            style={{ border: '0.5px solid var(--color-border)', background: 'var(--color-bg2)', color: 'var(--color-text)', width: 240 }}
+            className="px-3 py-1.5 rounded-lg text-sm outline-none transition-[border-color,box-shadow] duration-150 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+            style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg2)', color: 'var(--color-text)', width: 240 }}
           />
         </div>
       )}

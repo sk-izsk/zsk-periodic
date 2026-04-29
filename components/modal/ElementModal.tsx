@@ -77,7 +77,7 @@ function CardRow({
 }) {
   return (
     <div
-      className="flex justify-between items-center"
+      className="flex items-center justify-between"
       style={{
         padding: '9px 16px',
         borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.1)',
@@ -110,7 +110,7 @@ function L1Card({ profile }: { profile: ElementProfile }) {
 
   return (
     <div
-      className="h-full flex flex-col"
+      className="flex flex-col h-full"
       style={{
         background: CARD_BG.l1,
         borderRadius: 16,
@@ -209,7 +209,7 @@ function L2Card({
 
   return (
     <div
-      className="h-full flex flex-col"
+      className="flex flex-col h-full"
       style={{ background: CARD_BG.l2, borderRadius: 16, overflow: 'hidden' }}
     >
       <CardRow label="Avg Atomic Mass" value={mass} />
@@ -286,7 +286,7 @@ function L3Card({ profile }: { profile: ElementProfile }) {
 
   return (
     <div
-      className="h-full flex flex-col"
+      className="flex flex-col h-full"
       style={{ background: CARD_BG.l3, borderRadius: 16, overflow: 'hidden' }}
     >
       <CardRow label="Configuration" value={e.configuration} last />
@@ -408,7 +408,7 @@ function L4Card({ profile }: { profile: ElementProfile }) {
 
   return (
     <div
-      className="h-full flex flex-col"
+      className="flex flex-col h-full"
       style={{ background: CARD_BG.l4, borderRadius: 16, overflow: 'hidden' }}
     >
       <CardRow label="Discovery Year" value={h.discoveryYear} />
