@@ -477,6 +477,7 @@ interface Props {
   paused?: boolean
   speed?: number
   topView?: boolean
+  resetToken?: number
 }
 
 export default function AtomModel({
@@ -487,8 +488,10 @@ export default function AtomModel({
   paused = false,
   speed = 1,
   topView = false,
+  resetToken = 0,
 }: Props) {
   const [hoveredShell, setHoveredShell] = useState<number | null>(null)
+  const controlsRef = useRef<any>(null)
   const isLight = bg.startsWith('#e') || bg.startsWith('#d') || bg.startsWith('#f')
   const isDarkMode = !isLight
   const textColor = isLight ? '#222' : '#eee'
@@ -498,6 +501,10 @@ export default function AtomModel({
   const cameraPosition = topView
     ? ([0, 10, 34] as [number, number, number])
     : ([0, 2, 34] as [number, number, number])
+
+  useEffect(() => {
+    controlsRef.current?.reset?.()
+  }, [resetToken])
 
   return (
     <div
@@ -560,7 +567,7 @@ export default function AtomModel({
       )}
 
       <Canvas
-        key={topView ? 'atom-top-view' : 'atom-default-view'}
+        key={`${topView ? 'atom-top-view' : 'atom-default-view'}-${resetToken}`}
         camera={{ position: cameraPosition, fov: 46 }}
         gl={{ antialias: true, alpha: true }}
         style={{ width: '100%', height: '100%' }}
@@ -577,6 +584,7 @@ export default function AtomModel({
           onShellHover={setHoveredShell}
         />
         <OrbitControls
+          ref={controlsRef}
           enablePan={false}
           enableZoom
           enableRotate

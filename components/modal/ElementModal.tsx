@@ -280,29 +280,36 @@ function L2Card({ profile, massUnit }: { profile: ElementProfile; massUnit: stri
               key={iso.name}
               style={{
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column',
                 padding: '9px 14px',
                 borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.07)',
-                gap: 10,
+                gap: 4,
               }}
             >
-              <span style={{ fontWeight: 700, fontSize: 18, color: '#ffd77a', minWidth: 64 }}>
-                {symWithSup}
-              </span>
-              <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>
-                {iso.neutron}
-              </span>
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: '0.06em',
-                  color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {iso.percent}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 18, color: '#ffd77a', minWidth: 64 }}>
+                  {symWithSup}
+                </span>
+                <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>
+                  {iso.neutron}
+                </span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: '0.06em',
+                    color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {iso.percent}
+                </span>
+              </div>
+              {iso.note && (
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', paddingLeft: 74 }}>
+                  {iso.note}
+                </span>
+              )}
             </div>
           )
         })}
@@ -577,6 +584,7 @@ export default function ElementModal() {
   const [activeCard, setActiveCard] = useState(0)
   const [locale, setLocale] = useState<ElementLocaleRecord | undefined>()
   const [topView, setTopView] = useState(false)
+  const [resetViewToken, setResetViewToken] = useState(0)
   const touchStartX = useRef<number | null>(null)
   const isClosingRef = useRef(false)
   // Ref so URL→state effect can read selectedElement without it being a dep
@@ -1114,13 +1122,14 @@ export default function ElementModal() {
                 <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0 }}>
                     <AtomModel
-                      key={selectedElement.n}
+                      key={`${selectedElement.n}-${resetViewToken}`}
                       element={selectedElement}
                       bg={atomBg}
                       fill
                       paused={animationsPaused}
                       speed={animationSpeed}
                       topView={topView}
+                      resetToken={resetViewToken}
                     />
                   </div>
                 </div>
@@ -1178,11 +1187,27 @@ export default function ElementModal() {
                     </ControlBtn>
                   </div>
 
-                  {/* Help */}
-                  <ControlBtn title="Help">
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-muted)' }}>
-                      ?
-                    </span>
+                  {/* Reset camera */}
+                  <ControlBtn
+                    title="Reset view"
+                    onClick={() => {
+                      setTopView(false)
+                      setResetViewToken((v) => v + 1)
+                    }}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 12a9 9 0 1 0 3-6.7" />
+                      <polyline points="3 3 3 9 9 9" />
+                    </svg>
                   </ControlBtn>
                 </div>
               </div>

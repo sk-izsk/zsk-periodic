@@ -29,7 +29,7 @@ export type ElementProfile = {
     mass: ElementMass
     protons: number
     electronsNeutral: number
-    isotopes: Array<{ name: string; neutron: string; percent: string }>
+    isotopes: Array<{ name: string; neutron: string; percent: string; note?: string }>
   }
   level3: {
     electronic: {

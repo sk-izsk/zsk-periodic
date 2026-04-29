@@ -64,7 +64,7 @@ const en: Record<string, ElementLocaleRecord> = {
     hazards: ['Low toxicity as element', 'some compounds toxic'],
   },
   '6': {
-    ions: 'No common ions',
+    ions: 'C⁴⁻ (Carbon(-IV)), C²⁺ (Carbon(II)), C⁴⁺ (Carbon(IV))',
     history: {
       discoveryYear: 'Prehistoric',
       discoveredBy: 'Ancient Civilizations',

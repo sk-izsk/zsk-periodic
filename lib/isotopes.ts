@@ -133,3 +133,22 @@ export const KEY_RADIOACTIVE_MASS_NUMBERS: Record<number, number[]> = {
   117: [294],
   118: [294],
 }
+
+/**
+ * Notable radioactive isotopes for elements that also have stable isotopes.
+ * These are appended to the stable list so they appear in the modal.
+ */
+export const NOTABLE_RADIOACTIVE_MASS_NUMBERS: Record<number, number[]> = {
+  6: [14], // Carbon-14 — radiocarbon dating
+  19: [40], // Potassium-40 — natural radioactivity
+  37: [87], // Rubidium-87
+}
+
+/**
+ * Human-readable notes for specific isotopes, keyed by "Symbol-massNumber".
+ */
+export const ISOTOPE_NOTES: Record<string, string> = {
+  'C-14': 'Carbon-14 is radioactive and well known for radiocarbon dating.',
+  'K-40': 'Potassium-40 is naturally radioactive and used in radiometric dating.',
+  'Rb-87': 'Rubidium-87 is long-lived and used in rubidium-strontium dating.',
+}

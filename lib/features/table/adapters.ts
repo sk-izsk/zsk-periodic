@@ -1,7 +1,12 @@
 import { ELEMENT_L3_DATA } from '@/lib/element-l3-data'
 import type { Element } from '@/lib/elements'
 import type { ElementLocaleRecord } from '@/lib/i18n/types'
-import { KEY_RADIOACTIVE_MASS_NUMBERS, STABLE_MASS_NUMBERS } from '@/lib/isotopes'
+import {
+  ISOTOPE_NOTES,
+  KEY_RADIOACTIVE_MASS_NUMBERS,
+  NOTABLE_RADIOACTIVE_MASS_NUMBERS,
+  STABLE_MASS_NUMBERS,
+} from '@/lib/isotopes'
 import type { ElementProfile } from './types'
 
 const VALENCE_BY_GROUP: Record<number, string> = {
@@ -120,10 +125,8 @@ function pickCommonIons(el: Element, locale?: ElementLocaleRecord): string {
   const localeIons = locale?.ions?.trim()
   const hasLocaleIons = Boolean(localeIons)
   const localeSuppressesIons = localeIons === 'No common ions'
-  const preferInferredForFBlock =
-    (el.cat === 'lanthanide' || el.cat === 'actinide') && localeSuppressesIons
 
-  if (!hasLocaleIons || preferInferredForFBlock) {
+  if (!hasLocaleIons || localeSuppressesIons) {
     return inferIons(el)
   }
 
@@ -172,14 +175,24 @@ export function toElementProfile(el: Element, locale?: ElementLocaleRecord): Ele
               name: `${el.sym}-${Math.round(el.mass)}`,
               neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`,
               percent: 'Radioactive',
+              note: undefined as string | undefined,
             },
           ]
         }
-        return masses.map((m) => ({
+        const stableEntries = masses.map((m) => ({
           name: `${el.sym}-${m}`,
           neutron: `${m - el.n}n`,
           percent: hasStableMasses ? 'Stable' : 'Radioactive/Trace',
+          note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
         }))
+        if (!hasStableMasses) return stableEntries
+        const notableRadioactive = (NOTABLE_RADIOACTIVE_MASS_NUMBERS[el.n] ?? []).map((m) => ({
+          name: `${el.sym}-${m}`,
+          neutron: `${m - el.n}n`,
+          percent: 'Radioactive',
+          note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
+        }))
+        return [...stableEntries, ...notableRadioactive]
       })(),
     },
     level3: {
