@@ -599,6 +599,18 @@ export default function ElementModal() {
     [selectedElement, locale],
   );
 
+  const currentIdx = selectedElement ? elements.findIndex((e) => e.n === selectedElement.n) : -1;
+  const hasPrev = currentIdx > 0;
+  const hasNext = currentIdx < elements.length - 1;
+
+  const navigatePrev = useCallback(() => {
+    if (currentIdx > 0) setSelectedElement(elements[currentIdx - 1]);
+  }, [currentIdx, setSelectedElement]);
+
+  const navigateNext = useCallback(() => {
+    if (currentIdx < elements.length - 1) setSelectedElement(elements[currentIdx + 1]);
+  }, [currentIdx, setSelectedElement]);
+
   const close = useCallback(() => {
     const params = new URLSearchParams(searchParamsKey);
     if (params.has('element')) {
@@ -694,13 +706,76 @@ export default function ElementModal() {
                 overflow: 'hidden',
                 background: 'var(--color-bg)',
                 boxShadow: '0 40px 100px rgba(0,0,0,0.4)',
+                position: 'relative',
               }}
               initial={{ scale: 0.88, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.88, opacity: 0, y: 24 }}
               transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              className="group"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* ── PREV element button ── */}
+              {hasPrev && (
+                <button
+                  aria-label="Previous element"
+                  onClick={navigatePrev}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:!bg-black/65"
+                  style={{
+                    position: 'absolute',
+                    left: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 20,
+                    width: 32,
+                    height: 48,
+                    borderRadius: 8,
+                    border: '1px solid rgba(128,128,128,0.25)',
+                    background: 'rgba(0,0,0,0.45)',
+                    color: '#fff',
+                    fontSize: 20,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
+                  }}
+                >
+                  ‹
+                </button>
+              )}
+
+              {/* ── NEXT element button ── */}
+              {hasNext && (
+                <button
+                  aria-label="Next element"
+                  onClick={navigateNext}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:!bg-black/65"
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 20,
+                    width: 32,
+                    height: 48,
+                    borderRadius: 8,
+                    border: '1px solid rgba(128,128,128,0.25)',
+                    background: 'rgba(0,0,0,0.45)',
+                    color: '#fff',
+                    fontSize: 20,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
+                  }}
+                >
+                  ›
+                </button>
+              )}
               {/* ── LEFT PANEL ── */}
               <div
                 style={{
