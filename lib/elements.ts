@@ -3,7 +3,7 @@ export type ElementCategory =
   | 'metalloid' | 'nonmetal' | 'halogen' | 'noble'
   | 'lanthanide' | 'actinide';
 
-export type Phase = 'Solid' | 'Liquid' | 'Gas';
+export type Phase = 'Solid' | 'Liquid' | 'Gas' | 'Unknown';
 
 export interface Element {
   n: number;
@@ -153,21 +153,21 @@ export const elements: Element[] = [
   {n:101,sym:'Md', name:'Mendelevium',   mass:258,     cat:'actinide',   period:7, group:null, phase:'Solid',  config:'[Rn] 5f¹³7s²',              en:1.30, mp:827,    bp:null,   density:null},
   {n:102,sym:'No', name:'Nobelium',      mass:259,     cat:'actinide',   period:7, group:null, phase:'Solid',  config:'[Rn] 5f¹⁴7s²',              en:1.30, mp:827,    bp:null,   density:null},
   {n:103,sym:'Lr', name:'Lawrencium',    mass:266,     cat:'actinide',   period:7, group:3,    phase:'Solid',  config:'[Rn] 5f¹⁴7s²7p¹',           en:1.30, mp:1627,   bp:null,   density:null},
-  {n:104,sym:'Rf', name:'Rutherfordium', mass:267,     cat:'transition', period:7, group:4,    phase:'Solid',  config:'[Rn] 5f¹⁴6d²7s²',           en:null, mp:2100,   bp:5500,   density:23.2},
-  {n:105,sym:'Db', name:'Dubnium',       mass:268,     cat:'transition', period:7, group:5,    phase:'Solid',  config:'[Rn] 5f¹⁴6d³7s²',           en:null, mp:null,   bp:null,   density:29.3},
-  {n:106,sym:'Sg', name:'Seaborgium',    mass:269,     cat:'transition', period:7, group:6,    phase:'Solid',  config:'[Rn] 5f¹⁴6d⁴7s²',           en:null, mp:null,   bp:null,   density:35},
-  {n:107,sym:'Bh', name:'Bohrium',       mass:270,     cat:'transition', period:7, group:7,    phase:'Solid',  config:'[Rn] 5f¹⁴6d⁵7s²',           en:null, mp:null,   bp:null,   density:37.1},
-  {n:108,sym:'Hs', name:'Hassium',       mass:277,     cat:'transition', period:7, group:8,    phase:'Solid',  config:'[Rn] 5f¹⁴6d⁶7s²',           en:null, mp:null,   bp:null,   density:40.7},
-  {n:109,sym:'Mt', name:'Meitnerium',    mass:278,     cat:'transition', period:7, group:9,    phase:'Solid',  config:'[Rn] 5f¹⁴6d⁷7s²',           en:null, mp:null,   bp:null,   density:37.4},
-  {n:110,sym:'Ds', name:'Darmstadtium',  mass:281,     cat:'transition', period:7, group:10,   phase:'Solid',  config:'[Rn] 5f¹⁴6d⁸7s²',           en:null, mp:null,   bp:null,   density:34.8},
-  {n:111,sym:'Rg', name:'Roentgenium',   mass:282,     cat:'transition', period:7, group:11,   phase:'Solid',  config:'[Rn] 5f¹⁴6d⁹7s²',           en:null, mp:null,   bp:null,   density:28.7},
-  {n:112,sym:'Cn', name:'Copernicium',   mass:285,     cat:'transition', period:7, group:12,   phase:'Gas',    config:'[Rn] 5f¹⁴6d¹⁰7s²',          en:null, mp:null,   bp:null,   density:23.7},
-  {n:113,sym:'Nh', name:'Nihonium',      mass:286,     cat:'post',       period:7, group:13,   phase:'Solid',  config:'[Rn] 5f¹⁴6d¹⁰7s²7p¹',       en:null, mp:null,   bp:null,   density:null},
-  {n:114,sym:'Fl', name:'Flerovium',     mass:289,     cat:'post',       period:7, group:14,   phase:'Solid',  config:'[Rn] 5f¹⁴6d¹⁰7s²7p²',       en:null, mp:null,   bp:null,   density:null},
-  {n:115,sym:'Mc', name:'Moscovium',     mass:290,     cat:'post',       period:7, group:15,   phase:'Solid',  config:'[Rn] 5f¹⁴6d¹⁰7s²7p³',       en:null, mp:null,   bp:null,   density:null},
-  {n:116,sym:'Lv', name:'Livermorium',   mass:293,     cat:'post',       period:7, group:16,   phase:'Solid',  config:'[Rn] 5f¹⁴6d¹⁰7s²7p⁴',       en:null, mp:null,   bp:null,   density:null},
-  {n:117,sym:'Ts', name:'Tennessine',    mass:294,     cat:'halogen',    period:7, group:17,   phase:'Solid',  config:'[Rn] 5f¹⁴6d¹⁰7s²7p⁵',       en:null, mp:null,   bp:null,   density:null},
-  {n:118,sym:'Og', name:'Oganesson',     mass:294,     cat:'noble',      period:7, group:18,   phase:'Gas',    config:'[Rn] 5f¹⁴6d¹⁰7s²7p⁶',       en:null, mp:null,   bp:null,   density:null},
+  {n:104,sym:'Rf', name:'Rutherfordium', mass:267,     cat:'transition', period:7, group:4,    phase:'Unknown',config:'[Rn] 5f¹⁴6d²7s²',           en:null, mp:2100,   bp:5500,   density:23.2},
+  {n:105,sym:'Db', name:'Dubnium',       mass:268,     cat:'transition', period:7, group:5,    phase:'Unknown',config:'[Rn] 5f¹⁴6d³7s²',           en:null, mp:null,   bp:null,   density:29.3},
+  {n:106,sym:'Sg', name:'Seaborgium',    mass:269,     cat:'transition', period:7, group:6,    phase:'Unknown',config:'[Rn] 5f¹⁴6d⁴7s²',           en:null, mp:null,   bp:null,   density:35},
+  {n:107,sym:'Bh', name:'Bohrium',       mass:270,     cat:'transition', period:7, group:7,    phase:'Unknown',config:'[Rn] 5f¹⁴6d⁵7s²',           en:null, mp:null,   bp:null,   density:37.1},
+  {n:108,sym:'Hs', name:'Hassium',       mass:277,     cat:'transition', period:7, group:8,    phase:'Unknown',config:'[Rn] 5f¹⁴6d⁶7s²',           en:null, mp:null,   bp:null,   density:40.7},
+  {n:109,sym:'Mt', name:'Meitnerium',    mass:278,     cat:'transition', period:7, group:9,    phase:'Unknown',config:'[Rn] 5f¹⁴6d⁷7s²',           en:null, mp:null,   bp:null,   density:37.4},
+  {n:110,sym:'Ds', name:'Darmstadtium',  mass:281,     cat:'transition', period:7, group:10,   phase:'Unknown',config:'[Rn] 5f¹⁴ 6d⁹ 7s¹',         en:null, mp:null,   bp:null,   density:34.8},
+  {n:111,sym:'Rg', name:'Roentgenium',   mass:282,     cat:'transition', period:7, group:11,   phase:'Unknown',config:'[Rn] 5f¹⁴ 6d¹⁰ 7s¹',        en:null, mp:null,   bp:null,   density:28.7},
+  {n:112,sym:'Cn', name:'Copernicium',   mass:285,     cat:'transition', period:7, group:12,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²',          en:null, mp:null,   bp:null,   density:23.7},
+  {n:113,sym:'Nh', name:'Nihonium',      mass:286,     cat:'post',       period:7, group:13,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²7p¹',       en:null, mp:null,   bp:null,   density:null},
+  {n:114,sym:'Fl', name:'Flerovium',     mass:289,     cat:'post',       period:7, group:14,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²7p²',       en:null, mp:null,   bp:null,   density:null},
+  {n:115,sym:'Mc', name:'Moscovium',     mass:290,     cat:'post',       period:7, group:15,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²7p³',       en:null, mp:null,   bp:null,   density:null},
+  {n:116,sym:'Lv', name:'Livermorium',   mass:293,     cat:'post',       period:7, group:16,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²7p⁴',       en:null, mp:null,   bp:null,   density:null},
+  {n:117,sym:'Ts', name:'Tennessine',    mass:294,     cat:'halogen',    period:7, group:17,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²7p⁵',       en:null, mp:null,   bp:null,   density:null},
+  {n:118,sym:'Og', name:'Oganesson',     mass:294,     cat:'noble',      period:7, group:18,   phase:'Unknown',config:'[Rn] 5f¹⁴6d¹⁰7s²7p⁶',       en:null, mp:null,   bp:null,   density:null},
 ];
 
 export const elementsByNumber: Record<number, Element> =

@@ -99,12 +99,7 @@ function CardRow({
 
 function L1Card({ profile }: { profile: ElementProfile }) {
   const ions = parseCommonIons(profile.level1.commonIons, profile.name);
-  const typeLabel =
-    profile.category === 'actinide'
-      ? 'Actinides'
-      : profile.category === 'lanthanide'
-        ? 'Lanthanides'
-        : (CATEGORY_LABELS[profile.category] ?? profile.level1.type);
+  const typeLabel = profile.level1.type || CATEGORY_LABELS[profile.category] || 'Unknown';
 
   return (
     <div

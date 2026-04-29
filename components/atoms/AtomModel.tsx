@@ -7,22 +7,22 @@ import * as THREE from 'three';
 
 // ─── Per-shell colors (matching original soft palette) ───────────────────────
 const SHELL_COLORS = [
-  '#c9c9c9',
-  '#c3c6cb',
-  '#bfc3ca',
-  '#bcc1c8',
-  '#b9bfc7',
-  '#b7bdc6',
-  '#ddb45a',
+  '#ff6b6b',
+  '#ff9f43',
+  '#ffe66d',
+  '#7bed9f',
+  '#70a1ff',
+  '#a29bfe',
+  '#f78fb3',
 ];
 const SHELL_COLORS_DARK = [
-  '#a3adbc',
-  '#9ca6b6',
-  '#96a0b1',
-  '#8f9aab',
-  '#8893a5',
-  '#818d9f',
-  '#c9a459',
+  '#ff7f7f',
+  '#ffb36b',
+  '#ffe98f',
+  '#94f5ba',
+  '#8cb6ff',
+  '#b7abff',
+  '#ff9ac0',
 ];
 const SHELL_NAMES = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
 
@@ -132,7 +132,7 @@ function Shell({ shellIndex, shellCount, electrons, speedMul, paused, topView, d
 
   const orbitGeo = useMemo(() => new THREE.TorusGeometry(radius, 0.05, 14, 80), [radius]);
   const hitGeo = useMemo(() => new THREE.TorusGeometry(radius, 0.55, 8, 40), [radius]);
-  const electronColor = useMemo(() => new THREE.Color(darkMode ? '#4cf3ff' : '#1b39d1'), [darkMode]);
+  const electronColor = useMemo(() => colorObj.clone().offsetHSL(0, 0, darkMode ? 0.06 : -0.04), [colorObj, darkMode]);
   const hoverRingColor = darkMode ? '#fff27a' : '#ffaa00';
   const orbitOpacity = darkMode ? 0.62 : 0.45;
   const hoverOrbitOpacity = darkMode ? 0.98 : 0.92;

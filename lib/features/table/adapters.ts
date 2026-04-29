@@ -28,6 +28,35 @@ const COMMON_OXIDATION_BY_CATEGORY: Record<string, string[]> = {
   actinide: ['+3', '+4', '+5'],
 };
 
+const TYPE_BY_CATEGORY: Record<Element['cat'], string> = {
+  alkali: 'Alkali Metal',
+  alkaline: 'Alkaline Earth Metal',
+  transition: 'Transition Metal',
+  post: 'Post-transition Metal',
+  metalloid: 'Metalloid',
+  nonmetal: 'Nonmetal',
+  halogen: 'Halogen',
+  noble: 'Noble Gas',
+  lanthanide: 'Lanthanide',
+  actinide: 'Actinide',
+};
+
+type Level1Overrides = {
+  type?: string;
+  phaseAtSTP?: Element['phase'];
+};
+
+const LEVEL1_OVERRIDES: Record<number, Level1Overrides> = {
+  104: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  105: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  106: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  107: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  108: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  109: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  110: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+  111: { type: 'Unknown', phaseAtSTP: 'Unknown' },
+};
+
 function formatMass(mass: number) {
   return mass.toFixed(3).replace(/\.000$/, '');
 }
@@ -79,6 +108,9 @@ export function toElementProfile(
 ): ElementProfile {
   const group = displayGroup(el);
   const l3 = ELEMENT_L3_DATA[el.n];
+  const level1Override = LEVEL1_OVERRIDES[el.n];
+  const phaseAtSTP = level1Override?.phaseAtSTP ?? el.phase;
+  const type = level1Override?.type ?? TYPE_BY_CATEGORY[el.cat];
 
   return {
     id: el.n,
@@ -87,13 +119,13 @@ export function toElementProfile(
     category: el.cat,
     period: el.period,
     group,
-    phaseAtSTP: el.phase,
+    phaseAtSTP,
     electronConfiguration: el.config,
     raw: el,
     level1: {
-      type: el.cat,
+      type,
       groupPeriod: `${group ?? '-'} / ${el.period}`,
-      phaseAtSTP: el.phase,
+      phaseAtSTP,
       valenceElectrons: group ? VALENCE_BY_GROUP[group] ?? 'Variable' : 'Variable',
       electronBlock: inferBlock(el.config),
       commonIons: pickCommonIons(el, locale),
