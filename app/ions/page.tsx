@@ -1,4 +1,3 @@
-import Nav from '@/components/Nav';
 import { ION_SECTION_LABELS, ionsData } from '@/lib/features/ions/data';
 import { groupIonsBySection, sectionOrder } from '@/lib/features/ions/selectors';
 
@@ -6,9 +5,7 @@ export default function IonsPage() {
   const grouped = groupIonsBySection(ionsData);
 
   return (
-    <div>
-      <Nav />
-      <main className="max-w-4xl mx-auto p-6">
+    <main className="max-w-4xl mx-auto p-6">
         <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 4 }}>Common Ions</h1>
         <p style={{ fontSize: 14, color: 'var(--color-muted)', marginBottom: 24 }}>Section-grouped reference for common ions, aligned to the phase-2 data model.</p>
 
@@ -36,7 +33,6 @@ export default function IonsPage() {
             </div>
           </section>
         ))}
-      </main>
-    </div>
+    </main>
   );
 }

@@ -2,9 +2,9 @@
 import type { AppLanguage } from '@/lib/i18n/types';
 import { t } from '@/lib/i18n/ui';
 import { useAppStore } from '@/lib/store';
+import { Link, useRouterState } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 
 const LINKS = [
   { href: '/', key: 'nav.table' },
@@ -26,7 +26,7 @@ const LANGUAGES: { value: AppLanguage; label: string }[] = [
 ];
 
 export default function Nav() {
-  const pathname = useLocation().pathname;
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { darkMode, toggleDarkMode, language, setLanguage, searchQuery, setSearchQuery } = useAppStore();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -59,7 +59,7 @@ export default function Nav() {
       style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
       <span className="mr-4 text-lg font-bold tracking-tight">Zperiod</span>
       {LINKS.map(l => (
-        <Link key={l.href} to={l.href}
+        <Link key={l.href} to={l.href} search={true}
           className={clsx(
             'px-3 py-1.5 rounded text-sm transition-colors',
             pathname === l.href
@@ -118,7 +118,9 @@ export default function Nav() {
               </button>
             ))}
             <Link
-              to="/settings#suggest-language"
+              to="/settings"
+              hash="suggest-language"
+              search={true}
               className="block px-3 py-1.5 text-sm"
               onClick={() => setOpen(false)}
               style={{ color: 'var(--color-muted)' }}

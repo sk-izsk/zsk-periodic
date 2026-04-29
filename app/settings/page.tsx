@@ -1,6 +1,5 @@
 'use client';
 
-import Nav from '@/components/Nav';
 import { changelogData } from '@/lib/changelog';
 import { t } from '@/lib/i18n/ui';
 import { useAppStore } from '@/lib/store';
@@ -29,9 +28,7 @@ export default function SettingsPage() {
   const html = marked.parse(changelogMarkdown());
 
   return (
-    <div className="flex flex-col h-screen w-screen">
-      <Nav />
-      <main className="max-w-4xl mx-auto w-full p-6 overflow-auto">
+    <main className="max-w-4xl mx-auto w-full p-6">
         <h1 style={{ fontSize: 24, fontWeight: 600 }}>{t(language, 'settings.title', 'Settings')}</h1>
         <p style={{ fontSize: 14, color: 'var(--color-muted)', marginTop: 4 }}>
           {t(language, 'settings.subtitle', 'Control language, animation speed, and global preferences.')}
@@ -96,6 +93,5 @@ export default function SettingsPage() {
           <article dangerouslySetInnerHTML={{ __html: html }} />
         </section>
       </main>
-    </div>
   );
 }

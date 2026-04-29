@@ -1,9 +1,14 @@
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
+    TanStackRouterVite({
+      routesDirectory: './routes',
+      generatedRouteTree: './routeTree.gen.ts',
+    }),
     react({
       babel: {
         plugins: [['babel-plugin-react-compiler', { compilationMode: 'infer' }]],

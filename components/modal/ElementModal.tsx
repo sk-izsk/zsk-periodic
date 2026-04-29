@@ -6,9 +6,9 @@ import type { ElementProfile } from '@/lib/features/table/types';
 import { loadElementLocale } from '@/lib/i18n/locale-loaders';
 import type { ElementLocaleRecord } from '@/lib/i18n/types';
 import { useAppStore } from '@/lib/store';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 // ─── Card colors matching original (L1 steel-blue, L2 blue, L3 amber, L4 red) ───
 const CARD_BG: Record<string, string> = {
@@ -515,8 +515,8 @@ function ControlBtn({
 const LEVELS = ['l1', 'l2', 'l3', 'l4'] as const;
 
 export default function ElementModal() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const elementParam = searchParams.get('element');
+  const { element: elementParam } = useSearch({ from: '__root__' });
+  const router = useRouter();
 
   const selectedElement = useAppStore((s) => s.selectedElement);
   const setSelectedElement = useAppStore((s) => s.setSelectedElement);
@@ -531,36 +531,42 @@ export default function ElementModal() {
   const [locale, setLocale] = useState<ElementLocaleRecord | undefined>();
   const [topView, setTopView] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const isClosingRef = useRef(false);
   // Ref so URL→state effect can read selectedElement without it being a dep
   const selectedElementRef = useRef(selectedElement);
   useEffect(() => { selectedElementRef.current = selectedElement; });
 
-  // state -> URL: only fires when the element number changes
+  // state -> URL: fires when selected element changes
   useEffect(() => {
-    const currentParam = searchParams.get('element');
-    const next = selectedElement ? String(selectedElement.n) : null;
-    if (next === currentParam) return;
-    if (!next && !currentParam) return;
-    const params = new URLSearchParams(searchParams);
-    if (next) params.set('element', next);
-    else params.delete('element');
-    setSearchParams(params, { replace: true });
+    const next = selectedElement ? String(selectedElement.n) : undefined;
+    const current = typeof elementParam === 'string' ? elementParam : undefined;
+    if ((next ?? '') === (current ?? '')) return;
+    const url = new URL(window.location.href);
+    if (next) url.searchParams.set('element', next);
+    else url.searchParams.delete('element');
+    router.history.replace(url.pathname + url.search + url.hash);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedElement?.n]); // intentionally omit searchParams to avoid loop
+  }, [selectedElement?.n]);
 
-  // URL -> state: only fires when the URL param string changes
+  // URL -> state: fires when URL element param changes
   useEffect(() => {
-    if (!elementParam) {
+    if (isClosingRef.current) {
+      if (!elementParam) isClosingRef.current = false;
+      return;
+    }
+
+    const q = typeof elementParam === 'string' ? elementParam : String(elementParam ?? '');
+    if (!q) {
       if (selectedElementRef.current) setSelectedElement(null);
       return;
     }
-    const byAtomic = /^\d+$/.test(elementParam) ? elements.find((e) => e.n === Number(elementParam)) : undefined;
-    const bySymbol = elements.find((e) => e.sym.toLowerCase() === elementParam.toLowerCase());
+    const byAtomic = /^\d+$/.test(q) ? elements.find((e) => e.n === Number(q)) : undefined;
+    const bySymbol = elements.find((e) => e.sym.toLowerCase() === q.toLowerCase());
     const match = byAtomic ?? bySymbol;
     if (!match) return;
     if (selectedElementRef.current?.n !== match.n) setSelectedElement(match);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementParam]); // intentionally omit selectedElement to avoid loop
+  }, [elementParam]);
 
 
   // Reset card index and load locale when element changes
@@ -597,9 +603,12 @@ export default function ElementModal() {
   }, [currentIdx, setSelectedElement]);
 
   const close = useCallback(() => {
+    isClosingRef.current = true;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('element');
+    router.history.replace(url.pathname + url.search + url.hash);
     setSelectedElement(null);
-    // setSelectedElement triggers state→URL effect which removes ?element from URL
-  }, [setSelectedElement]);
+  }, [router.history, setSelectedElement]);
 
   // ESC to close
   useEffect(() => {
@@ -1001,7 +1010,7 @@ export default function ElementModal() {
                     position: 'absolute',
                     top: 12,
                     right: 12,
-                    zIndex: 10,
+                    zIndex: 40,
                     width: 32,
                     height: 32,
                     display: 'flex',
@@ -1022,7 +1031,7 @@ export default function ElementModal() {
                 {/* 3D Atom canvas */}
                 <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0 }}>
-                    <AtomModel element={selectedElement} bg={atomBg} fill paused={animationsPaused} speed={animationSpeed} topView={topView} />
+                    <AtomModel key={selectedElement.n} element={selectedElement} bg={atomBg} fill paused={animationsPaused} speed={animationSpeed} topView={topView} />
                   </div>
                 </div>
 

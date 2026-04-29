@@ -1,5 +1,4 @@
 'use client';
-import Nav from '@/components/Nav';
 import type { Difficulty, ReactionType } from '@/lib/worksheet';
 import { useState } from 'react';
 
@@ -30,9 +29,7 @@ export default function WorksheetPage() {
   };
 
   return (
-    <div>
-      <Nav />
-      <main className="max-w-2xl p-6 mx-auto">
+    <main className="max-w-2xl p-6 mx-auto">
         <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 4 }}>Worksheet Generator</h1>
         <p style={{ fontSize: 14, color: 'var(--color-muted)', marginBottom: 24 }}>
           Generate print-ready balanced equation worksheets with answer key.
@@ -104,7 +101,6 @@ export default function WorksheetPage() {
           style={{ background: types.length === 0 ? '#94a3b8' : '#3b82f6' }}>
           {generating ? 'Generating…' : `Generate ${count}-question worksheet (PDF)`}
         </button>
-      </main>
-    </div>
+    </main>
   );
 }
