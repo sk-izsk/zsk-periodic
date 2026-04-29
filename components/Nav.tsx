@@ -56,9 +56,9 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav className="flex items-center gap-1 px-4 py-2 border-b sticky top-0 z-50"
+    <nav className="sticky top-0 z-50 flex items-center gap-1 px-4 py-2 border-b"
       style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-      <span className="font-bold text-lg mr-4 tracking-tight">Zperiod</span>
+      <span className="mr-4 text-lg font-bold tracking-tight">Zperiod</span>
       {LINKS.map(l => (
         <Link key={l.href} href={l.href}
           className={clsx(
@@ -95,7 +95,7 @@ export default function Nav() {
         </button>
         {open && (
           <div
-            className="absolute right-0 mt-1 rounded-md py-1 min-w-44"
+            className="absolute right-0 py-1 mt-1 rounded-md min-w-44"
             style={{
               background: 'var(--color-bg)',
               border: '0.5px solid var(--color-border)',

@@ -268,26 +268,134 @@ function L2Card({
 function L3Card({ profile }: { profile: ElementProfile }) {
   const p = profile.level3.physical;
   const e = profile.level3.electronic;
+  const chips = [
+    ...e.oxidationStates.common.map((state) => ({ state, kind: 'common' as const })),
+    ...e.oxidationStates.possible.map((state) => ({ state, kind: 'possible' as const })),
+  ];
+
+  const metrics = [
+    { label: '1st Ionization', value: p.firstIonization },
+    { label: 'Electron Affinity', value: p.electronAffinity },
+    { label: 'Electronegativity', value: p.electronegativity },
+    { label: 'Density', value: p.density },
+    { label: 'Melting Point', value: p.meltingPoint },
+    { label: 'Boiling Point', value: p.boilingPoint },
+    { label: 'Atomic Radius', value: p.atomicRadius },
+    { label: 'Specific Heat', value: p.specificHeat },
+  ];
+
   return (
     <div
       className="h-full flex flex-col"
       style={{ background: CARD_BG.l3, borderRadius: 16, overflow: 'hidden' }}
     >
-      <CardRow label="Configuration" value={e.configuration} />
-      <CardRow
-        label="Oxidation States"
-        value={e.oxidationStates.common.join(', ') || 'N/A'}
-      />
-      <CardRow label="Electronegativity" value={p.electronegativity} />
-      <CardRow label="Density" value={p.density} />
-      <CardRow label="Melting Point" value={p.meltingPoint} />
-      <CardRow label="Boiling Point" value={p.boilingPoint} />
-      {p.atomicRadius !== 'N/A' && (
-        <CardRow label="Atomic Radius" value={p.atomicRadius} />
-      )}
-      {p.firstIonization !== 'N/A' && (
-        <CardRow label="1st Ionization" value={p.firstIonization} last />
-      )}
+      <CardRow label="Configuration" value={e.configuration} last />
+
+      <div style={{ flex: 1, padding: '12px 14px 14px' }}>
+        <div
+          style={{
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.22)',
+            border: '1px solid rgba(0, 0, 0, 0.18)',
+            borderRadius: 16,
+            padding: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+          }}
+        >
+          <div
+            style={{
+              border: '1px solid rgba(0,0,0,0.15)',
+              borderRadius: 12,
+              padding: '10px 10px 8px',
+              background: 'rgba(0, 0, 0, 0.18)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 10,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.75)',
+                marginBottom: 8,
+                fontWeight: 600,
+              }}
+            >
+              Oxidation States
+              <span style={{ marginLeft: 8, color: 'rgba(160, 220, 255, 0.95)' }}>• Common</span>
+              <span style={{ marginLeft: 8, color: 'rgba(255,255,255,0.6)' }}>Possible</span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {chips.length === 0 ? (
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}>N/A</span>
+              ) : (
+                chips.map((chip, idx) => (
+                  <span
+                    key={`${chip.kind}-${chip.state}-${idx}`}
+                    style={{
+                      fontSize: 12,
+                      lineHeight: '18px',
+                      height: 22,
+                      minWidth: 30,
+                      padding: '0 9px',
+                      borderRadius: 999,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#eaf4ff',
+                      border: chip.kind === 'common'
+                        ? '1px solid rgba(69, 153, 245, 0.55)'
+                        : '1px solid rgba(255,255,255,0.2)',
+                      background: chip.kind === 'common'
+                        ? 'rgba(34, 120, 216, 0.55)'
+                        : 'rgba(148, 168, 189, 0.2)',
+                      fontWeight: chip.kind === 'common' ? 700 : 600,
+                    }}
+                  >
+                    {chip.state}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div
+            style={{
+              border: '1px solid rgba(0,0,0,0.15)',
+              borderRadius: 12,
+              padding: '12px 10px',
+              background: 'rgba(0, 0, 0, 0.18)',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px 12px',
+              flex: 1,
+              alignContent: 'start',
+            }}
+          >
+            {metrics.map((m) => (
+              <div key={m.label} style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.45)', paddingLeft: 10 }}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: '0.07em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.7)',
+                    marginBottom: 3,
+                    fontWeight: 600,
+                  }}
+                >
+                  {m.label}
+                </div>
+                <div style={{ fontSize: 34, display: 'none' }} />
+                <div style={{ fontSize: 13, color: '#ffffff', fontWeight: 700 }}>
+                  {m.value || 'N/A'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

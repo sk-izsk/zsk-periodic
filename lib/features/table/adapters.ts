@@ -1,3 +1,4 @@
+import { ELEMENT_L3_DATA } from '@/lib/element-l3-data';
 import type { Element } from '@/lib/elements';
 import type { ElementLocaleRecord } from '@/lib/i18n/types';
 import { KEY_RADIOACTIVE_MASS_NUMBERS, STABLE_MASS_NUMBERS } from '@/lib/isotopes';
@@ -77,6 +78,7 @@ export function toElementProfile(
   locale?: ElementLocaleRecord
 ): ElementProfile {
   const group = displayGroup(el);
+  const l3 = ELEMENT_L3_DATA[el.n];
 
   return {
     id: el.n,
@@ -123,19 +125,19 @@ export function toElementProfile(
       electronic: {
         configuration: el.config,
         oxidationStates: {
-          common: COMMON_OXIDATION_BY_CATEGORY[el.cat] ?? [],
-          possible: [],
+          common: l3?.oxidationStates.common ?? COMMON_OXIDATION_BY_CATEGORY[el.cat] ?? [],
+          possible: l3?.oxidationStates.possible ?? [],
         },
       },
       physical: {
-        electronegativity: el.en != null ? String(el.en) : 'N/A',
-        firstIonization: 'N/A',
-        density: formatNullable(el.density, ' g/cm3'),
-        meltingPoint: formatNullable(el.mp, ' degC'),
-        boilingPoint: formatNullable(el.bp, ' degC'),
-        electronAffinity: 'N/A',
-        atomicRadius: 'N/A',
-        specificHeat: 'N/A',
+        electronegativity: l3?.physical.electronegativity ?? (el.en != null ? String(el.en) : 'N/A'),
+        firstIonization: l3?.physical.firstIonization ?? 'N/A',
+        density: l3?.physical.density ?? formatNullable(el.density, ' g/cm3'),
+        meltingPoint: l3?.physical.meltingPoint ?? formatNullable(el.mp, ' degC'),
+        boilingPoint: l3?.physical.boilingPoint ?? formatNullable(el.bp, ' degC'),
+        electronAffinity: l3?.physical.electronAffinity ?? 'N/A',
+        atomicRadius: l3?.physical.atomicRadius ?? 'N/A',
+        specificHeat: l3?.physical.specificHeat ?? 'N/A',
       },
     },
     level4: {
