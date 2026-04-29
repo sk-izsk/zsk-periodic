@@ -691,69 +691,90 @@ export default function ElementModal() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.88, opacity: 0, y: 24 }}
               transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-              className="group"
               onClick={(e) => e.stopPropagation()}
             >
               {/* ── PREV element button ── */}
               {hasPrev && (
-                <button
-                  aria-label="Previous element"
-                  onClick={navigatePrev}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:!bg-black/65"
+                <div
+                  className="group/prev"
                   style={{
                     position: 'absolute',
-                    left: 8,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 56,
                     zIndex: 20,
-                    width: 32,
-                    height: 48,
-                    borderRadius: 8,
-                    border: '1px solid rgba(128,128,128,0.25)',
-                    background: 'rgba(0,0,0,0.45)',
-                    color: '#fff',
-                    fontSize: 20,
-                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    backdropFilter: 'blur(6px)',
-                    WebkitBackdropFilter: 'blur(6px)',
+                    justifyContent: 'flex-start',
+                    paddingLeft: 8,
                   }}
                 >
-                  ‹
-                </button>
+                  <button
+                    aria-label="Previous element"
+                    onClick={navigatePrev}
+                    className="opacity-0 group-hover/prev:opacity-100 transition-opacity duration-200 hover:!bg-black/65"
+                    style={{
+                      width: 32,
+                      height: 48,
+                      borderRadius: 8,
+                      border: '1px solid rgba(128,128,128,0.25)',
+                      background: 'rgba(0,0,0,0.45)',
+                      color: '#fff',
+                      fontSize: 20,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backdropFilter: 'blur(6px)',
+                      WebkitBackdropFilter: 'blur(6px)',
+                    }}
+                  >
+                    ‹
+                  </button>
+                </div>
               )}
 
               {/* ── NEXT element button ── */}
               {hasNext && (
-                <button
-                  aria-label="Next element"
-                  onClick={navigateNext}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:!bg-black/65"
+                <div
+                  className="group/next"
                   style={{
                     position: 'absolute',
-                    right: 8,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 56,
                     zIndex: 20,
-                    width: 32,
-                    height: 48,
-                    borderRadius: 8,
-                    border: '1px solid rgba(128,128,128,0.25)',
-                    background: 'rgba(0,0,0,0.45)',
-                    color: '#fff',
-                    fontSize: 20,
-                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    backdropFilter: 'blur(6px)',
-                    WebkitBackdropFilter: 'blur(6px)',
+                    justifyContent: 'flex-end',
+                    paddingRight: 8,
                   }}
                 >
-                  ›
-                </button>
+                  <button
+                    aria-label="Next element"
+                    onClick={navigateNext}
+                    className="opacity-0 group-hover/next:opacity-100 transition-opacity duration-200 hover:!bg-black/65"
+                    style={{
+                      width: 32,
+                      height: 48,
+                      borderRadius: 8,
+                      border: '1px solid rgba(128,128,128,0.25)',
+                      background: 'rgba(0,0,0,0.45)',
+                      color: '#fff',
+                      fontSize: 20,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backdropFilter: 'blur(6px)',
+                      WebkitBackdropFilter: 'blur(6px)',
+                    }}
+                  >
+                    ›
+                  </button>
+                </div>
               )}
               {/* ── LEFT PANEL ── */}
               <div
