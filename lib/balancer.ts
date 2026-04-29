@@ -99,13 +99,13 @@ export function balanceEquation(input: string): BalanceResult {
 
     if (final.some(v => v <= 0)) return { error: 'Could not balance equation.' };
 
-    const fmt = (c: Element[], coef: number[]) =>
+    const fmt = (c: string[], coef: number[]) =>
       c.map((f, i) => (coef[i] === 1 ? '' : coef[i]) + f).join(' + ');
 
     const balanced =
-      fmt(reactants as unknown as Element[], final.slice(0, reactants.length)) +
+      fmt(reactants, final.slice(0, reactants.length)) +
       ' → ' +
-      fmt(products as unknown as Element[], final.slice(reactants.length));
+      fmt(products, final.slice(reactants.length));
 
     return { balanced, coefficients: final };
   } catch {
