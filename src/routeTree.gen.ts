@@ -8,12 +8,12 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './src/routes/__root'
-import { Route as WorksheetRouteImport } from './src/routes/worksheet'
-import { Route as ToolsRouteImport } from './src/routes/tools'
-import { Route as SettingsRouteImport } from './src/routes/settings'
-import { Route as IonsRouteImport } from './src/routes/ions'
-import { Route as IndexRouteImport } from './src/routes/index'
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorksheetRouteImport } from './routes/worksheet'
+import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as IonsRouteImport } from './routes/ions'
+import { Route as IndexRouteImport } from './routes/index'
 
 const WorksheetRoute = WorksheetRouteImport.update({
   id: '/worksheet',

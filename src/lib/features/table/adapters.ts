@@ -185,7 +185,9 @@ export function toElementProfile(el: Element, locale?: ElementLocaleRecord): Ele
           percent: hasStableMasses ? 'Stable' : 'Radioactive/Trace',
           note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
         }))
-        if (!hasStableMasses) return stableEntries
+        if (!hasStableMasses) {
+          return stableEntries
+        }
         const notableRadioactive = (NOTABLE_RADIOACTIVE_MASS_NUMBERS[el.n] ?? []).map((m) => ({
           name: `${el.sym}-${m}`,
           neutron: `${m - el.n}n`,

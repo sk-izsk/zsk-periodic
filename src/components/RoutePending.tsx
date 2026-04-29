@@ -12,7 +12,7 @@ export default function RoutePending({ label = 'Loading...' }: RoutePendingProps
     >
       <div className="flex items-center gap-3 text-sm">
         <span
-          className="inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+          className="inline-block w-4 h-4 border-2 border-current rounded-full border-t-transparent animate-spin"
           aria-hidden="true"
         />
         {label}

@@ -72,15 +72,15 @@ export default function PeriodicTable() {
   return (
     <div className="p-2">
       {/* Controls */}
-      <div className="flex flex-wrap gap-2 items-center mb-3 justify-center">
-        <div className="flex flex-wrap gap-1 justify-center">
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
+        <div className="flex flex-wrap justify-center gap-1">
           {(Object.entries(CATEGORY_LABELS) as [ElementCategory, string][]).map(([k, v]) => (
             <button
               key={k}
               onClick={() => setFilterCategory(k)}
               onMouseEnter={() => setHoveredCategory(k)}
               onMouseLeave={() => setHoveredCategory(null)}
-              className="flex items-center gap-1 px-2 py-1 rounded text-xs border transition-all"
+              className="flex items-center gap-1 px-2 py-1 text-xs transition-all border rounded"
               style={{
                 borderColor: activeCategory === k ? '#2b6ef2' : 'var(--color-border)',
                 background: activeCategory === k ? 'rgba(255,255,255,0.92)' : 'transparent',
