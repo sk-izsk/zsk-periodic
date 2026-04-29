@@ -23,6 +23,24 @@ const SHELL_COLORS_DARK = [
   '#b7abff',
   '#ff9ac0',
 ];
+const ELECTRON_COLORS = [
+  '#ff4d4d',
+  '#ff8a1f',
+  '#ffd400',
+  '#29d87d',
+  '#2f7dff',
+  '#7a5cff',
+  '#ff5ca8',
+];
+const ELECTRON_COLORS_DARK = [
+  '#ff7272',
+  '#ffab55',
+  '#ffe66a',
+  '#64f0a5',
+  '#6ca5ff',
+  '#9a88ff',
+  '#ff86c2',
+];
 const SHELL_NAMES = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
 
 // ─── Fibonacci sphere distribution ───────────────────────────────────────────
@@ -126,12 +144,13 @@ function Shell({ shellIndex, shellCount, electrons, speedMul, paused, topView, d
   const radius = minRadius + shellIndex * step;
   const shellSpeed = 0.018 / (shellIndex + 1);
   const shellPalette = darkMode ? SHELL_COLORS_DARK : SHELL_COLORS;
+  const electronPalette = darkMode ? ELECTRON_COLORS_DARK : ELECTRON_COLORS;
   const color = shellPalette[shellIndex % shellPalette.length];
-  const colorObj = useMemo(() => new THREE.Color(color), [color]);
+  const electronBaseColor = electronPalette[shellIndex % electronPalette.length];
 
   const orbitGeo = useMemo(() => new THREE.TorusGeometry(radius, 0.05, 14, 80), [radius]);
   const hitGeo = useMemo(() => new THREE.TorusGeometry(radius, 0.55, 8, 40), [radius]);
-  const electronColor = useMemo(() => colorObj.clone().offsetHSL(0, 0, darkMode ? 0.06 : -0.04), [colorObj, darkMode]);
+  const electronColor = useMemo(() => new THREE.Color(electronBaseColor), [electronBaseColor]);
   const hoverRingColor = darkMode ? '#fff27a' : '#ffaa00';
   const orbitOpacity = darkMode ? 0.62 : 0.45;
   const hoverOrbitOpacity = darkMode ? 0.98 : 0.92;
@@ -141,7 +160,7 @@ function Shell({ shellIndex, shellCount, electrons, speedMul, paused, topView, d
     roughness: darkMode ? 0.22 : 0.35,
     metalness: darkMode ? 0.62 : 0.5,
     emissive: electronColor,
-    emissiveIntensity: darkMode ? 1.05 : 0.18,
+    emissiveIntensity: darkMode ? 1.12 : 0.24,
   }), [electronColor, darkMode]);
   const trailMats = useMemo(() => Array.from({ length: TRAIL_COUNT }, (_, t) => new THREE.MeshBasicMaterial({
     color: electronColor,

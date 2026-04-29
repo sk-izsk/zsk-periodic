@@ -753,7 +753,7 @@ export default function ElementModal() {
                   style={{
                     position: 'absolute',
                     right: 0,
-                    top: 0,
+                    top: 56,
                     bottom: 0,
                     width: 56,
                     zIndex: 20,
@@ -1012,7 +1012,8 @@ export default function ElementModal() {
                     position: 'absolute',
                     top: 12,
                     right: 12,
-                    zIndex: 40,
+                    zIndex: 120,
+                    pointerEvents: 'auto',
                     width: 32,
                     height: 32,
                     display: 'flex',
