@@ -1,11 +1,11 @@
 import { ION_SECTION_LABELS, ionsData } from '@/lib/features/ions/data'
 import { groupIonsBySection, sectionOrder } from '@/lib/features/ions/selectors'
 
-export default function IonsPage() {
+const IonScreen = () => {
   const grouped = groupIonsBySection(ionsData)
 
   return (
-    <main className="max-w-4xl mx-auto p-6">
+    <main className="max-w-4xl p-6 mx-auto">
       <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 4 }}>Common Ions</h1>
       <p style={{ fontSize: 14, color: 'var(--color-muted)', marginBottom: 24 }}>
         Section-grouped reference for common ions, aligned to the phase-2 data model.
@@ -26,7 +26,7 @@ export default function IonsPage() {
             {grouped[section].map((ion) => (
               <div
                 key={ion.id}
-                className="rounded-lg p-3"
+                className="p-3 rounded-lg"
                 style={{
                   background: 'var(--color-bg2)',
                   border: '0.5px solid var(--color-border)',
@@ -56,3 +56,5 @@ export default function IonsPage() {
     </main>
   )
 }
+
+export default IonScreen

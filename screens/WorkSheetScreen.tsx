@@ -9,7 +9,7 @@ const REACTION_TYPES: { key: ReactionType; label: string; example: string }[] = 
   { key: 'combustion', label: 'Combustion', example: 'CₓHᵧ + O₂ → CO₂ + H₂O' },
 ]
 
-export default function WorksheetPage() {
+const WorksheetScreen = () => {
   const [count, setCount] = useState(10)
   const [types, setTypes] = useState<ReactionType[]>(['synthesis', 'decomposition'])
   const [difficulty, setDifficulty] = useState<Difficulty>('medium')
@@ -132,3 +132,5 @@ export default function WorksheetPage() {
     </main>
   )
 }
+
+export default WorksheetScreen

@@ -5,5 +5,5 @@ const WorksheetPending = () => <RoutePending label="Loading Worksheet..." />
 
 export const Route = createFileRoute('/worksheet')({
   pendingComponent: WorksheetPending,
-  component: lazyRouteComponent(() => import('@/app/worksheet/page'), 'default'),
+  component: lazyRouteComponent(() => import('@/screens/WorkSheetScreen'), 'default'),
 })

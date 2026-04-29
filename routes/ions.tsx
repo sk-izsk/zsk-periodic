@@ -5,5 +5,5 @@ const IonsPending = () => <RoutePending label="Loading Ions..." />
 
 export const Route = createFileRoute('/ions')({
   pendingComponent: IonsPending,
-  component: lazyRouteComponent(() => import('@/app/ions/page'), 'default'),
+  component: lazyRouteComponent(() => import('@/screens/IonScreen'), 'default'),
 })

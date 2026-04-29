@@ -5,5 +5,5 @@ const SettingsPending = () => <RoutePending label="Loading Settings..." />
 
 export const Route = createFileRoute('/settings')({
   pendingComponent: SettingsPending,
-  component: lazyRouteComponent(() => import('@/app/settings/page'), 'default'),
+  component: lazyRouteComponent(() => import('@/screens/SettingScreen'), 'default'),
 })

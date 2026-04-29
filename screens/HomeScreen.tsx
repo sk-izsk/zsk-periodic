@@ -1,5 +1,7 @@
 import PeriodicTable from '@/components/table/PeriodicTable'
 
-export default function HomePage() {
+const HomeScreen = () => {
   return <PeriodicTable />
 }
+
+export default HomeScreen

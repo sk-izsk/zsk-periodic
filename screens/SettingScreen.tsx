@@ -13,7 +13,7 @@ function changelogMarkdown() {
     .join('\n\n')
 }
 
-export default function SettingsPage() {
+const SettingsScreen = () => {
   const language = useAppStore((s) => s.language)
   const animationSpeed = useAppStore((s) => s.animationSpeed)
   const animationsPaused = useAppStore((s) => s.animationsPaused)
@@ -26,7 +26,7 @@ export default function SettingsPage() {
   const html = marked.parse(changelogMarkdown())
 
   return (
-    <main className="max-w-4xl mx-auto w-full p-6">
+    <main className="w-full max-w-4xl p-6 mx-auto">
       <h1 style={{ fontSize: 24, fontWeight: 600 }}>{t(language, 'settings.title', 'Settings')}</h1>
       <p style={{ fontSize: 14, color: 'var(--color-muted)', marginTop: 4 }}>
         {t(
@@ -37,7 +37,7 @@ export default function SettingsPage() {
       </p>
 
       <section
-        className="mt-6 rounded-xl p-4"
+        className="p-4 mt-6 rounded-xl"
         style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
       >
         <label style={{ fontSize: 14, fontWeight: 500, display: 'block' }}>
@@ -52,7 +52,7 @@ export default function SettingsPage() {
           onChange={(e) => setAnimationSpeed(Number(e.target.value))}
           className="w-full mt-2"
         />
-        <label className="mt-3 flex items-center gap-2" style={{ fontSize: 14 }}>
+        <label className="flex items-center gap-2 mt-3" style={{ fontSize: 14 }}>
           <input
             type="checkbox"
             checked={animationsPaused}
@@ -63,7 +63,7 @@ export default function SettingsPage() {
       </section>
 
       <section
-        className="mt-4 rounded-xl p-4"
+        className="p-4 mt-4 rounded-xl"
         style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
       >
         <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
@@ -95,7 +95,7 @@ export default function SettingsPage() {
       </section>
 
       <section
-        className="mt-4 rounded-xl p-4"
+        className="p-4 mt-4 rounded-xl"
         style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
@@ -106,3 +106,5 @@ export default function SettingsPage() {
     </main>
   )
 }
+
+export default SettingsScreen

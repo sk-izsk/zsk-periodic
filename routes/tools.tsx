@@ -5,5 +5,5 @@ const ToolsPending = () => <RoutePending label="Loading Tools..." />
 
 export const Route = createFileRoute('/tools')({
   pendingComponent: ToolsPending,
-  component: lazyRouteComponent(() => import('@/app/tools/page'), 'default'),
+  component: lazyRouteComponent(() => import('@/screens/ToolScreen'), 'default'),
 })
