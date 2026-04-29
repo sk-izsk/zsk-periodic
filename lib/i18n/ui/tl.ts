@@ -1,4 +1,4 @@
-import type { TranslationDict } from '../types';
+import type { TranslationDict } from '../types'
 
 export const tlUI: TranslationDict = {
   nav: {
@@ -23,4 +23,4 @@ export const tlUI: TranslationDict = {
     dark: 'Madilim',
     light: 'Maliwanag',
   },
-};
+}

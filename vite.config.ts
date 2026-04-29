@@ -1,7 +1,7 @@
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
-import react from '@vitejs/plugin-react';
-import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [
@@ -24,4 +24,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./', import.meta.url)),
     },
   },
-});
+})

@@ -1,4 +1,4 @@
-import type { TranslationDict } from '../types';
+import type { TranslationDict } from '../types'
 
 export const zhUI: TranslationDict = {
   nav: {
@@ -23,4 +23,4 @@ export const zhUI: TranslationDict = {
     dark: '深色',
     light: '浅色',
   },
-};
+}

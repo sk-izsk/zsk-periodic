@@ -1,4 +1,4 @@
-import type { TranslationDict } from '../types';
+import type { TranslationDict } from '../types'
 
 export const frUI: TranslationDict = {
   nav: {
@@ -23,4 +23,4 @@ export const frUI: TranslationDict = {
     dark: 'Sombre',
     light: 'Clair',
   },
-};
+}

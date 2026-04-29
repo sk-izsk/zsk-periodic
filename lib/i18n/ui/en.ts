@@ -1,4 +1,4 @@
-import type { TranslationDict } from '../types';
+import type { TranslationDict } from '../types'
 
 export const enUI: TranslationDict = {
   nav: {
@@ -23,4 +23,4 @@ export const enUI: TranslationDict = {
     dark: 'Dark',
     light: 'Light',
   },
-};
+}

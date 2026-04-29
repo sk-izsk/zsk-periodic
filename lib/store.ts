@@ -1,46 +1,42 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { Element, ElementCategory } from './elements';
-import {
-    APP_SETTINGS_STORAGE_KEY,
-    DEFAULT_LANGUAGE,
-    isSupportedLanguage,
-} from './i18n/config';
-import type { AppLanguage } from './i18n/types';
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { Element, ElementCategory } from './elements'
+import { APP_SETTINGS_STORAGE_KEY, DEFAULT_LANGUAGE, isSupportedLanguage } from './i18n/config'
+import type { AppLanguage } from './i18n/types'
 
-export type MassUnit = 'highSchool' | 'universityConventional';
+export type MassUnit = 'highSchool' | 'universityConventional'
 
 interface AppStore {
   // Table state
-  selectedElement: Element | null;
-  filterCategory: ElementCategory | null;
-  searchQuery: string;
-  setSelectedElement: (el: Element | null) => void;
-  setFilterCategory: (cat: ElementCategory | null) => void;
-  setSearchQuery: (q: string) => void;
+  selectedElement: Element | null
+  filterCategory: ElementCategory | null
+  searchQuery: string
+  setSelectedElement: (el: Element | null) => void
+  setFilterCategory: (cat: ElementCategory | null) => void
+  setSearchQuery: (q: string) => void
 
   // Theme
-  darkMode: boolean;
-  toggleDarkMode: () => void;
+  darkMode: boolean
+  toggleDarkMode: () => void
 
   // Language
-  language: AppLanguage;
-  setLanguage: (lang: string) => void;
+  language: AppLanguage
+  setLanguage: (lang: string) => void
 
   // Motion
-  animationSpeed: number;
-  setAnimationSpeed: (speed: number) => void;
-  animationsPaused: boolean;
-  setAnimationsPaused: (paused: boolean) => void;
+  animationSpeed: number
+  setAnimationSpeed: (speed: number) => void
+  animationsPaused: boolean
+  setAnimationsPaused: (paused: boolean) => void
 
   // Global units
-  massUnit: MassUnit;
-  setMassUnit: (unit: MassUnit) => void;
+  massUnit: MassUnit
+  setMassUnit: (unit: MassUnit) => void
 
   // Onboarding state
-  onboardingSeen: boolean;
-  setOnboardingSeen: (seen: boolean) => void;
-  resetOnboarding: () => void;
+  onboardingSeen: boolean
+  setOnboardingSeen: (seen: boolean) => void
+  resetOnboarding: () => void
 }
 
 export const useAppStore = create<AppStore>()(
@@ -50,7 +46,8 @@ export const useAppStore = create<AppStore>()(
       filterCategory: null,
       searchQuery: '',
       setSelectedElement: (el) => set({ selectedElement: el }),
-      setFilterCategory: (cat) => set((s) => ({ filterCategory: s.filterCategory === cat ? null : cat })),
+      setFilterCategory: (cat) =>
+        set((s) => ({ filterCategory: s.filterCategory === cat ? null : cat })),
       setSearchQuery: (q) => set({ searchQuery: q }),
 
       darkMode: true,
@@ -58,8 +55,10 @@ export const useAppStore = create<AppStore>()(
 
       language: DEFAULT_LANGUAGE,
       setLanguage: (lang) => {
-        if (!isSupportedLanguage(lang)) return;
-        set({ language: lang });
+        if (!isSupportedLanguage(lang)) {
+          return
+        }
+        set({ language: lang })
       },
 
       animationSpeed: 1,
@@ -84,6 +83,6 @@ export const useAppStore = create<AppStore>()(
         massUnit: state.massUnit,
         onboardingSeen: state.onboardingSeen,
       }),
-    }
-  )
-);
+    },
+  ),
+)

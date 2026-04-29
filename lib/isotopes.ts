@@ -4,15 +4,15 @@
  * Elements with no stable isotopes (Tc=43, Pm=61, Po-Og=84-118) are omitted.
  */
 export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
-  1:  [1, 2],
-  2:  [3, 4],
-  3:  [6, 7],
-  4:  [9],
-  5:  [10, 11],
-  6:  [12, 13],
-  7:  [14, 15],
-  8:  [16, 17, 18],
-  9:  [19],
+  1: [1, 2],
+  2: [3, 4],
+  3: [6, 7],
+  4: [9],
+  5: [10, 11],
+  6: [12, 13],
+  7: [14, 15],
+  8: [16, 17, 18],
+  9: [19],
   10: [20, 21, 22],
   11: [23],
   12: [24, 25, 26],
@@ -46,7 +46,7 @@ export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
   40: [90, 91, 92, 94, 96],
   41: [93],
   42: [92, 94, 95, 96, 97, 98, 100],
-  43: [],   // Tc — no stable isotopes
+  43: [], // Tc — no stable isotopes
   44: [96, 98, 99, 100, 101, 102, 104],
   45: [103],
   46: [102, 104, 105, 106, 108, 110],
@@ -64,7 +64,7 @@ export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
   58: [136, 138, 140, 142],
   59: [141],
   60: [142, 143, 144, 145, 146, 148, 150],
-  61: [],   // Pm — no stable isotopes
+  61: [], // Pm — no stable isotopes
   62: [144, 147, 148, 149, 150, 152, 154],
   63: [151, 153],
   64: [152, 154, 155, 156, 157, 158, 160],
@@ -88,7 +88,7 @@ export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
   82: [204, 206, 207, 208],
   83: [209],
   // 84–118: all radioactive — no stable isotopes
-};
+}
 
 /**
  * Key radioactive isotope mass numbers used when stable isotopes do not exist.
@@ -132,4 +132,4 @@ export const KEY_RADIOACTIVE_MASS_NUMBERS: Record<number, number[]> = {
   116: [293],
   117: [294],
   118: [294],
-};
+}

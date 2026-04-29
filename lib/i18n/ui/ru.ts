@@ -1,4 +1,4 @@
-import type { TranslationDict } from '../types';
+import type { TranslationDict } from '../types'
 
 export const ruUI: TranslationDict = {
   nav: {
@@ -23,4 +23,4 @@ export const ruUI: TranslationDict = {
     dark: 'Темная',
     light: 'Светлая',
   },
-};
+}

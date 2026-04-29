@@ -1,6 +1,6 @@
 type RoutePendingProps = {
-  label?: string;
-};
+  label?: string
+}
 
 export default function RoutePending({ label = 'Loading...' }: RoutePendingProps) {
   return (
@@ -18,5 +18,5 @@ export default function RoutePending({ label = 'Loading...' }: RoutePendingProps
         {label}
       </div>
     </div>
-  );
+  )
 }

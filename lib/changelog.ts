@@ -1,8 +1,8 @@
 export type ChangelogEntry = {
-  version: string;
-  date: string;
-  changes: string[];
-};
+  version: string
+  date: string
+  changes: string[]
+}
 
 export const changelogData: ChangelogEntry[] = [
   {
@@ -24,4 +24,4 @@ export const changelogData: ChangelogEntry[] = [
       'Expanded README documentation',
     ],
   },
-];
+]

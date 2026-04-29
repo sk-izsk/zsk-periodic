@@ -1,13 +1,13 @@
-import AtomModel from '@/components/atoms/AtomModel';
-import { CATEGORY_COLORS, CATEGORY_LABELS, elements } from '@/lib/elements';
-import { toElementProfile } from '@/lib/features/table/adapters';
-import type { ElementProfile } from '@/lib/features/table/types';
-import { loadElementLocale } from '@/lib/i18n/locale-loaders';
-import type { ElementLocaleRecord } from '@/lib/i18n/types';
-import { useAppStore } from '@/lib/store';
-import { useRouter, useSearch } from '@tanstack/react-router';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import AtomModel from '@/components/atoms/AtomModel'
+import { CATEGORY_COLORS, CATEGORY_LABELS, elements } from '@/lib/elements'
+import { toElementProfile } from '@/lib/features/table/adapters'
+import type { ElementProfile } from '@/lib/features/table/types'
+import { loadElementLocale } from '@/lib/i18n/locale-loaders'
+import type { ElementLocaleRecord } from '@/lib/i18n/types'
+import { useAppStore } from '@/lib/store'
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 // ─── Card colors matching original (L1 steel-blue, L2 blue, L3 amber, L4 red) ───
 const CARD_BG: Record<string, string> = {
@@ -15,63 +15,85 @@ const CARD_BG: Record<string, string> = {
   l2: '#5a7cbf',
   l3: '#c4a34e',
   l4: '#c45858',
-};
+}
 
 // ─── Superscript helper ───────────────────────────────────────────────────────
 const SUP_DIGITS: Record<string, string> = {
-  '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-  '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
-};
+  '0': '⁰',
+  '1': '¹',
+  '2': '²',
+  '3': '³',
+  '4': '⁴',
+  '5': '⁵',
+  '6': '⁶',
+  '7': '⁷',
+  '8': '⁸',
+  '9': '⁹',
+}
 function toSuperscript(n: number): string {
-  return String(n).split('').map((c) => SUP_DIGITS[c] ?? c).join('');
+  return String(n)
+    .split('')
+    .map((c) => SUP_DIGITS[c] ?? c)
+    .join('')
 }
 const SUPS: Record<string, string> = {
-  '1': '¹', '2': '²', '3': '³', '4': '⁴',
-  '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸',
-};
+  '1': '¹',
+  '2': '²',
+  '3': '³',
+  '4': '⁴',
+  '5': '⁵',
+  '6': '⁶',
+  '7': '⁷',
+  '8': '⁸',
+}
 const ROMAN: Record<string, string> = {
-  '+1': 'I', '+2': 'II', '+3': 'III', '+4': 'IV',
-  '+5': 'V', '+6': 'VI', '+7': 'VII',
-};
+  '+1': 'I',
+  '+2': 'II',
+  '+3': 'III',
+  '+4': 'IV',
+  '+5': 'V',
+  '+6': 'VI',
+  '+7': 'VII',
+}
 
 function formatIonSymbol(ionStr: string): string {
-  const m = ionStr.match(/^([A-Za-z]+)([+-])(\d+)?$/);
-  if (!m) return ionStr;
-  const [, sym, sign, num] = m;
-  if (!num || num === '1') return `${sym}${sign === '+' ? '⁺' : '⁻'}`;
-  return `${sym}${SUPS[num] ?? num}${sign === '+' ? '⁺' : '⁻'}`;
+  const m = ionStr.match(/^([A-Za-z]+)([+-])(\d+)?$/)
+  if (!m) {
+    return ionStr
+  }
+  const [, sym, sign, num] = m
+  if (!num || num === '1') {
+    return `${sym}${sign === '+' ? '⁺' : '⁻'}`
+  }
+  return `${sym}${SUPS[num] ?? num}${sign === '+' ? '⁺' : '⁻'}`
 }
 
 function parseCommonIons(
   ionStr: string,
   elementName: string,
 ): { notation: string; label: string }[] {
-  if (!ionStr || ionStr === 'No common ions') return [];
+  if (!ionStr || ionStr === 'No common ions') {
+    return []
+  }
   return ionStr.split(', ').map((raw) => {
-    const m = raw.match(/^([A-Za-z]+)([+-]\d+)$/);
-    if (!m) return { notation: formatIonSymbol(raw), label: '' };
-    const charge = m[2];
-    const notation = formatIonSymbol(raw);
+    const m = raw.match(/^([A-Za-z]+)([+-]\d+)$/)
+    if (!m) {
+      return { notation: formatIonSymbol(raw), label: '' }
+    }
+    const charge = m[2]
+    const notation = formatIonSymbol(raw)
     const label = ROMAN[charge]
       ? `${elementName}(${ROMAN[charge]})`
       : charge.startsWith('-')
         ? `${elementName}ide`
-        : elementName;
-    return { notation, label };
-  });
+        : elementName
+    return { notation, label }
+  })
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function CardRow({
-  label,
-  value,
-  last = false,
-}: {
-  label: string;
-  value: string;
-  last?: boolean;
-}) {
+function CardRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
   return (
     <div
       className="flex items-center justify-between"
@@ -93,12 +115,12 @@ function CardRow({
       </span>
       <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{value}</span>
     </div>
-  );
+  )
 }
 
 function L1Card({ profile }: { profile: ElementProfile }) {
-  const ions = parseCommonIons(profile.level1.commonIons, profile.name);
-  const typeLabel = profile.level1.type || CATEGORY_LABELS[profile.category] || 'Unknown';
+  const ions = parseCommonIons(profile.level1.commonIons, profile.name)
+  const typeLabel = profile.level1.type || CATEGORY_LABELS[profile.category] || 'Unknown'
 
   return (
     <div
@@ -184,20 +206,14 @@ function L1Card({ profile }: { profile: ElementProfile }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-function L2Card({
-  profile,
-  massUnit,
-}: {
-  profile: ElementProfile;
-  massUnit: string;
-}) {
+function L2Card({ profile, massUnit }: { profile: ElementProfile; massUnit: string }) {
   const mass =
     massUnit === 'highSchool'
       ? profile.level2.mass.highSchool
-      : (profile.level2.mass.universityConventional ?? profile.level2.mass.highSchool);
+      : (profile.level2.mass.universityConventional ?? profile.level2.mass.highSchool)
 
   return (
     <div
@@ -210,25 +226,55 @@ function L2Card({
       <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         {[
           { label: `${profile.level2.protons}`, sub: 'P⁺ Protons' },
-          { label: `${Math.round(parseFloat(profile.level2.mass.highSchool)) - profile.level2.protons}`, sub: 'N° Neutrons' },
+          {
+            label: `${Math.round(parseFloat(profile.level2.mass.highSchool)) - profile.level2.protons}`,
+            sub: 'N° Neutrons',
+          },
           { label: `${profile.level2.electronsNeutral}`, sub: 'E⁻ Electrons' },
         ].map(({ label, sub }) => (
-          <div key={sub} style={{ flex: 1, textAlign: 'center', padding: '10px 4px', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+          <div
+            key={sub}
+            style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: '10px 4px',
+              borderRight: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
             <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{label}</div>
-            <div style={{ fontSize: 9, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{sub}</div>
+            <div
+              style={{
+                fontSize: 9,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.55)',
+                marginTop: 2,
+              }}
+            >
+              {sub}
+            </div>
           </div>
         ))}
       </div>
 
       {/* Isotope list */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-        <div style={{ fontSize: 10, letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', padding: '4px 14px 8px', fontWeight: 500 }}>
+        <div
+          style={{
+            fontSize: 10,
+            letterSpacing: '0.07em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.5)',
+            padding: '4px 14px 8px',
+            fontWeight: 500,
+          }}
+        >
           Isotopes
         </div>
         {profile.level2.isotopes.map((iso, i) => {
-          const massNum = parseInt(iso.name.split('-')[1] ?? '0', 10);
-          const symWithSup = `${toSuperscript(massNum)}${profile.symbol}`;
-          const isLast = i === profile.level2.isotopes.length - 1;
+          const massNum = parseInt(iso.name.split('-')[1] ?? '0', 10)
+          const symWithSup = `${toSuperscript(massNum)}${profile.symbol}`
+          const isLast = i === profile.level2.isotopes.length - 1
           return (
             <div
               key={iso.name}
@@ -240,30 +286,38 @@ function L2Card({
                 gap: 10,
               }}
             >
-              <span style={{ fontWeight: 700, fontSize: 18, color: '#ffd77a', minWidth: 64 }}>{symWithSup}</span>
-              <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>{iso.neutron}</span>
-              <span style={{
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
-                textTransform: 'uppercase',
-              }}>{iso.percent}</span>
+              <span style={{ fontWeight: 700, fontSize: 18, color: '#ffd77a', minWidth: 64 }}>
+                {symWithSup}
+              </span>
+              <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>
+                {iso.neutron}
+              </span>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
+                  color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {iso.percent}
+              </span>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
 function L3Card({ profile }: { profile: ElementProfile }) {
-  const p = profile.level3.physical;
-  const e = profile.level3.electronic;
+  const p = profile.level3.physical
+  const e = profile.level3.electronic
   const chips = [
     ...e.oxidationStates.common.map((state) => ({ state, kind: 'common' as const })),
     ...e.oxidationStates.possible.map((state) => ({ state, kind: 'possible' as const })),
-  ];
+  ]
 
   const metrics = [
     { label: '1st Ionization', value: p.firstIonization },
@@ -274,7 +328,7 @@ function L3Card({ profile }: { profile: ElementProfile }) {
     { label: 'Boiling Point', value: p.boilingPoint },
     { label: 'Atomic Radius', value: p.atomicRadius },
     { label: 'Specific Heat', value: p.specificHeat },
-  ];
+  ]
 
   return (
     <div
@@ -336,12 +390,14 @@ function L3Card({ profile }: { profile: ElementProfile }) {
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: '#eaf4ff',
-                      border: chip.kind === 'common'
-                        ? '1px solid rgba(69, 153, 245, 0.55)'
-                        : '1px solid rgba(255,255,255,0.2)',
-                      background: chip.kind === 'common'
-                        ? 'rgba(34, 120, 216, 0.55)'
-                        : 'rgba(148, 168, 189, 0.2)',
+                      border:
+                        chip.kind === 'common'
+                          ? '1px solid rgba(69, 153, 245, 0.55)'
+                          : '1px solid rgba(255,255,255,0.2)',
+                      background:
+                        chip.kind === 'common'
+                          ? 'rgba(34, 120, 216, 0.55)'
+                          : 'rgba(148, 168, 189, 0.2)',
                       fontWeight: chip.kind === 'common' ? 700 : 600,
                     }}
                   >
@@ -366,7 +422,10 @@ function L3Card({ profile }: { profile: ElementProfile }) {
             }}
           >
             {metrics.map((m) => (
-              <div key={m.label} style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.45)', paddingLeft: 10 }}>
+              <div
+                key={m.label}
+                style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.45)', paddingLeft: 10 }}
+              >
                 <div
                   style={{
                     fontSize: 10,
@@ -389,14 +448,14 @@ function L3Card({ profile }: { profile: ElementProfile }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function L4Card({ profile }: { profile: ElementProfile }) {
-  const h = profile.level4.history;
-  const uses = profile.level4.uses;
-  const hazards = profile.level4.hazards;
-  const stse = profile.level4.stseContext;
+  const h = profile.level4.history
+  const uses = profile.level4.uses
+  const hazards = profile.level4.hazards
+  const stse = profile.level4.stseContext
 
   return (
     <div
@@ -421,9 +480,7 @@ function L4Card({ profile }: { profile: ElementProfile }) {
           >
             Common Uses
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>
-            {uses.join(' · ')}
-          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{uses.join(' · ')}</div>
         </div>
       )}
 
@@ -441,9 +498,7 @@ function L4Card({ profile }: { profile: ElementProfile }) {
           >
             Hazards
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>
-            {hazards.join(' · ')}
-          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{hazards.join(' · ')}</div>
         </div>
       )}
 
@@ -461,13 +516,11 @@ function L4Card({ profile }: { profile: ElementProfile }) {
           >
             STSE Context
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>
-            {stse.join(' · ')}
-          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{stse.join(' · ')}</div>
         </div>
       )}
     </div>
-  );
+  )
 }
 
 function ControlBtn({
@@ -476,10 +529,10 @@ function ControlBtn({
   onClick,
   active,
 }: {
-  children: React.ReactNode;
-  title?: string;
-  onClick?: () => void;
-  active?: boolean;
+  children: React.ReactNode
+  title?: string
+  onClick?: () => void
+  active?: boolean
 }) {
   return (
     <button
@@ -501,152 +554,183 @@ function ControlBtn({
     >
       {children}
     </button>
-  );
+  )
 }
 
 // ─── Main modal ───────────────────────────────────────────────────────────────
 
-const LEVELS = ['l1', 'l2', 'l3', 'l4'] as const;
+const LEVELS = ['l1', 'l2', 'l3', 'l4'] as const
 
 export default function ElementModal() {
-  const { element: elementParam } = useSearch({ from: '__root__' });
-  const router = useRouter();
+  const { element: elementParam } = useSearch({ from: '__root__' })
+  const router = useRouter()
 
-  const selectedElement = useAppStore((s) => s.selectedElement);
-  const setSelectedElement = useAppStore((s) => s.setSelectedElement);
-  const massUnit = useAppStore((s) => s.massUnit);
-  const language = useAppStore((s) => s.language);
-  const animationsPaused = useAppStore((s) => s.animationsPaused);
-  const setAnimationsPaused = useAppStore((s) => s.setAnimationsPaused);
-  const animationSpeed = useAppStore((s) => s.animationSpeed);
-  const darkMode = useAppStore((s) => s.darkMode);
+  const selectedElement = useAppStore((s) => s.selectedElement)
+  const setSelectedElement = useAppStore((s) => s.setSelectedElement)
+  const massUnit = useAppStore((s) => s.massUnit)
+  const language = useAppStore((s) => s.language)
+  const animationsPaused = useAppStore((s) => s.animationsPaused)
+  const setAnimationsPaused = useAppStore((s) => s.setAnimationsPaused)
+  const animationSpeed = useAppStore((s) => s.animationSpeed)
+  const darkMode = useAppStore((s) => s.darkMode)
 
-  const [activeCard, setActiveCard] = useState(0);
-  const [locale, setLocale] = useState<ElementLocaleRecord | undefined>();
-  const [topView, setTopView] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const isClosingRef = useRef(false);
+  const [activeCard, setActiveCard] = useState(0)
+  const [locale, setLocale] = useState<ElementLocaleRecord | undefined>()
+  const [topView, setTopView] = useState(false)
+  const touchStartX = useRef<number | null>(null)
+  const isClosingRef = useRef(false)
   // Ref so URL→state effect can read selectedElement without it being a dep
-  const selectedElementRef = useRef(selectedElement);
-  useEffect(() => { selectedElementRef.current = selectedElement; });
+  const selectedElementRef = useRef(selectedElement)
+  useEffect(() => {
+    selectedElementRef.current = selectedElement
+  })
 
   // state -> URL: fires when selected element changes
   useEffect(() => {
-    const next = selectedElement ? String(selectedElement.n) : undefined;
-    const current = typeof elementParam === 'string' ? elementParam : undefined;
-    if ((next ?? '') === (current ?? '')) return;
-    const url = new URL(window.location.href);
-    if (next) url.searchParams.set('element', next);
-    else url.searchParams.delete('element');
-    router.history.replace(url.pathname + url.search + url.hash);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedElement?.n]);
+    const next = selectedElement ? String(selectedElement.n) : undefined
+    const current = typeof elementParam === 'string' ? elementParam : undefined
+    if ((next ?? '') === (current ?? '')) {
+      return
+    }
+    const url = new URL(window.location.href)
+    if (next) {
+      url.searchParams.set('element', next)
+    } else {
+      url.searchParams.delete('element')
+    }
+    router.history.replace(url.pathname + url.search + url.hash)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedElement?.n])
 
   // URL -> state: fires when URL element param changes
   useEffect(() => {
     if (isClosingRef.current) {
-      if (!elementParam) isClosingRef.current = false;
-      return;
+      if (!elementParam) {
+        isClosingRef.current = false
+      }
+      return
     }
 
-    const q = typeof elementParam === 'string' ? elementParam : String(elementParam ?? '');
+    const q = typeof elementParam === 'string' ? elementParam : String(elementParam ?? '')
     if (!q) {
-      if (selectedElementRef.current) setSelectedElement(null);
-      return;
+      if (selectedElementRef.current) {
+        setSelectedElement(null)
+      }
+      return
     }
-    const byAtomic = /^\d+$/.test(q) ? elements.find((e) => e.n === Number(q)) : undefined;
-    const bySymbol = elements.find((e) => e.sym.toLowerCase() === q.toLowerCase());
-    const match = byAtomic ?? bySymbol;
-    if (!match) return;
-    if (selectedElementRef.current?.n !== match.n) setSelectedElement(match);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementParam]);
-
+    const byAtomic = /^\d+$/.test(q) ? elements.find((e) => e.n === Number(q)) : undefined
+    const bySymbol = elements.find((e) => e.sym.toLowerCase() === q.toLowerCase())
+    const match = byAtomic ?? bySymbol
+    if (!match) {
+      return
+    }
+    if (selectedElementRef.current?.n !== match.n) {
+      setSelectedElement(match)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elementParam])
 
   // Reset card index and load locale when element changes
   useEffect(() => {
-    if (!selectedElement) return;
-    setActiveCard(0);
-    setTopView(false);
-    
-    let mounted = true;
+    if (!selectedElement) {
+      return
+    }
+    setActiveCard(0)
+    setTopView(false)
+
+    let mounted = true
     loadElementLocale(language).then((records) => {
-      if (!mounted) return;
-      setLocale(records[String(selectedElement.n)]);
-    });
+      if (!mounted) {
+        return
+      }
+      setLocale(records[String(selectedElement.n)])
+    })
     return () => {
-      mounted = false;
-    };
-  }, [selectedElement, language]);
+      mounted = false
+    }
+  }, [selectedElement, language])
 
   const profile: ElementProfile | null = useMemo(
     () => (selectedElement ? toElementProfile(selectedElement, locale) : null),
     [selectedElement, locale],
-  );
+  )
 
-  const currentIdx = selectedElement ? elements.findIndex((e) => e.n === selectedElement.n) : -1;
-  const hasPrev = currentIdx > 0;
-  const hasNext = currentIdx < elements.length - 1;
+  const currentIdx = selectedElement ? elements.findIndex((e) => e.n === selectedElement.n) : -1
+  const hasPrev = currentIdx > 0
+  const hasNext = currentIdx < elements.length - 1
 
   const navigatePrev = useCallback(() => {
-    if (currentIdx > 0) setSelectedElement(elements[currentIdx - 1]);
-  }, [currentIdx, setSelectedElement]);
+    if (currentIdx > 0) {
+      setSelectedElement(elements[currentIdx - 1])
+    }
+  }, [currentIdx, setSelectedElement])
 
   const navigateNext = useCallback(() => {
-    if (currentIdx < elements.length - 1) setSelectedElement(elements[currentIdx + 1]);
-  }, [currentIdx, setSelectedElement]);
+    if (currentIdx < elements.length - 1) {
+      setSelectedElement(elements[currentIdx + 1])
+    }
+  }, [currentIdx, setSelectedElement])
 
   const close = useCallback(() => {
-    isClosingRef.current = true;
-    const url = new URL(window.location.href);
-    url.searchParams.delete('element');
-    router.history.replace(url.pathname + url.search + url.hash);
-    setSelectedElement(null);
-  }, [router.history, setSelectedElement]);
+    isClosingRef.current = true
+    const url = new URL(window.location.href)
+    url.searchParams.delete('element')
+    router.history.replace(url.pathname + url.search + url.hash)
+    setSelectedElement(null)
+  }, [router.history, setSelectedElement])
 
   // ESC to close
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [close]);
+      if (e.key === 'Escape') {
+        close()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [close])
 
   // Touch swipe handlers for card slider
   const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
+    touchStartX.current = e.touches[0].clientX
+  }
   const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 48) {
-      if (dx < 0) setActiveCard((c) => Math.min(c + 1, LEVELS.length - 1));
-      else setActiveCard((c) => Math.max(c - 1, 0));
+    if (touchStartX.current === null) {
+      return
     }
-    touchStartX.current = null;
-  };
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    if (Math.abs(dx) > 48) {
+      if (dx < 0) {
+        setActiveCard((c) => Math.min(c + 1, LEVELS.length - 1))
+      } else {
+        setActiveCard((c) => Math.max(c - 1, 0))
+      }
+    }
+    touchStartX.current = null
+  }
 
   // Keyboard arrow navigation when modal is open
   useEffect(() => {
-    if (!selectedElement) return;
+    if (!selectedElement) {
+      return
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        navigateNext();
-        return;
+        e.preventDefault()
+        navigateNext()
+        return
       }
       if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        navigatePrev();
-        return;
+        e.preventDefault()
+        navigatePrev()
+        return
       }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [selectedElement, navigateNext, navigatePrev]);
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [selectedElement, navigateNext, navigatePrev])
 
-  const atomBg = darkMode ? '#000000' : '#e8ecf4';
+  const atomBg = darkMode ? '#000000' : '#e8ecf4'
 
   return (
     <AnimatePresence>
@@ -821,9 +905,7 @@ export default function ElementModal() {
                         fontWeight: 600,
                       }}
                     >
-                      <span>
-                        {Math.round(parseFloat(profile.level2.mass.highSchool))}
-                      </span>
+                      <span>{Math.round(parseFloat(profile.level2.mass.highSchool))}</span>
                       <span>{profile.level2.protons}</span>
                     </div>
 
@@ -885,7 +967,9 @@ export default function ElementModal() {
                     style={{ height: '100%' }}
                   >
                     {LEVELS[activeCard] === 'l1' && <L1Card profile={profile} />}
-                    {LEVELS[activeCard] === 'l2' && <L2Card profile={profile} massUnit={massUnit} />}
+                    {LEVELS[activeCard] === 'l2' && (
+                      <L2Card profile={profile} massUnit={massUnit} />
+                    )}
                     {LEVELS[activeCard] === 'l3' && <L3Card profile={profile} />}
                     {LEVELS[activeCard] === 'l4' && <L4Card profile={profile} />}
                   </motion.div>
@@ -933,10 +1017,7 @@ export default function ElementModal() {
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        background:
-                          i === activeCard
-                            ? CARD_BG[lvl]
-                            : 'var(--color-muted)',
+                        background: i === activeCard ? CARD_BG[lvl] : 'var(--color-muted)',
                         opacity: i === activeCard ? 1 : 0.3,
                         border: 'none',
                         padding: 0,
@@ -972,11 +1053,7 @@ export default function ElementModal() {
                       stroke="currentColor"
                       strokeWidth="1.4"
                     />
-                    <path
-                      d="M4 6V4a2 2 0 0 1 4 0v2"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
+                    <path d="M4 6V4a2 2 0 0 1 4 0v2" stroke="currentColor" strokeWidth="1.4" />
                   </svg>
 
                   <button
@@ -1004,7 +1081,9 @@ export default function ElementModal() {
               </div>
 
               {/* ── RIGHT PANEL (3D Atom) ── */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+              <div
+                style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}
+              >
                 {/* Close button */}
                 <button
                   onClick={close}
@@ -1034,7 +1113,15 @@ export default function ElementModal() {
                 {/* 3D Atom canvas */}
                 <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0 }}>
-                    <AtomModel key={selectedElement.n} element={selectedElement} bg={atomBg} fill paused={animationsPaused} speed={animationSpeed} topView={topView} />
+                    <AtomModel
+                      key={selectedElement.n}
+                      element={selectedElement}
+                      bg={atomBg}
+                      fill
+                      paused={animationsPaused}
+                      speed={animationSpeed}
+                      topView={topView}
+                    />
                   </div>
                 </div>
 
@@ -1071,7 +1158,11 @@ export default function ElementModal() {
                     </ControlBtn>
 
                     {/* Layers / detail level */}
-                    <ControlBtn title="Top view" active={topView} onClick={() => setTopView((v) => !v)}>
+                    <ControlBtn
+                      title="Top view"
+                      active={topView}
+                      onClick={() => setTopView((v) => !v)}
+                    >
                       <svg
                         width="16"
                         height="12"
@@ -1089,9 +1180,7 @@ export default function ElementModal() {
 
                   {/* Help */}
                   <ControlBtn title="Help">
-                    <span
-                      style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-muted)' }}
-                    >
+                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-muted)' }}>
                       ?
                     </span>
                   </ControlBtn>
@@ -1102,5 +1191,5 @@ export default function ElementModal() {
         </>
       )}
     </AnimatePresence>
-  );
+  )
 }

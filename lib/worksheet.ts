@@ -1,7 +1,7 @@
-import jsPDF from 'jspdf';
+import jsPDF from 'jspdf'
 
-export type ReactionType = 'synthesis' | 'decomposition' | 'single' | 'double' | 'combustion';
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type ReactionType = 'synthesis' | 'decomposition' | 'single' | 'double' | 'combustion'
+export type Difficulty = 'easy' | 'medium' | 'hard'
 
 const REACTIONS: Record<ReactionType, { eq: string; balanced: string }[]> = {
   synthesis: [
@@ -32,73 +32,86 @@ const REACTIONS: Record<ReactionType, { eq: string; balanced: string }[]> = {
     { eq: 'C₃H₈ + O₂ →', balanced: 'C₃H₈ + 5O₂ → 3CO₂ + 4H₂O' },
     { eq: 'C₂H₅OH + O₂ →', balanced: 'C₂H₅OH + 3O₂ → 2CO₂ + 3H₂O' },
   ],
-};
+}
 
 function pickRandom<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+  return arr[Math.floor(Math.random() * arr.length)]
 }
 
 export function generateWorksheet(opts: {
-  count: number;
-  types: ReactionType[];
-  difficulty: Difficulty;
-  includeAnswers: boolean;
+  count: number
+  types: ReactionType[]
+  difficulty: Difficulty
+  includeAnswers: boolean
 }): void {
-  const { count, types, difficulty, includeAnswers } = opts;
+  const { count, types, difficulty, includeAnswers } = opts
 
-  const pool = types.flatMap(t => REACTIONS[t]);
-  const questions: typeof pool = [];
-  for (let i = 0; i < count; i++) questions.push(pickRandom(pool));
-
-  const doc = new jsPDF();
-  const pageW = doc.internal.pageSize.getWidth();
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('Chemical Equation Worksheet', pageW / 2, 20, { align: 'center' });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text(`Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}   |   Questions: ${count}`, pageW / 2, 28, { align: 'center' });
-
-  doc.setDrawColor(180);
-  doc.line(14, 32, pageW - 14, 32);
-
-  doc.setFontSize(11);
-  let y = 44;
-
-  doc.setFont('helvetica', 'normal');
-  doc.text('Name: ___________________________   Date: ___________   Score: ______', 14, y);
-  y += 12;
-
-  doc.setFont('helvetica', 'bold');
-  doc.text('Balance the following chemical equations:', 14, y);
-  y += 10;
-
-  doc.setFont('helvetica', 'normal');
-  questions.forEach((q, i) => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    doc.text(`${i + 1}.  ${q.eq}`, 14, y);
-    y += 12;
-    doc.setDrawColor(200);
-    doc.line(80, y, pageW - 14, y);
-    y += 8;
-  });
-
-  if (includeAnswers) {
-    doc.addPage();
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Answer Key', pageW / 2, 20, { align: 'center' });
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
-    y = 34;
-    questions.forEach((q, i) => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      doc.text(`${i + 1}.  ${q.balanced}`, 14, y);
-      y += 10;
-    });
+  const pool = types.flatMap((t) => REACTIONS[t])
+  const questions: typeof pool = []
+  for (let i = 0; i < count; i++) {
+    questions.push(pickRandom(pool))
   }
 
-  doc.save(`chemistry-worksheet-${difficulty}.pdf`);
+  const doc = new jsPDF()
+  const pageW = doc.internal.pageSize.getWidth()
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(16)
+  doc.text('Chemical Equation Worksheet', pageW / 2, 20, { align: 'center' })
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  doc.text(
+    `Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}   |   Questions: ${count}`,
+    pageW / 2,
+    28,
+    { align: 'center' },
+  )
+
+  doc.setDrawColor(180)
+  doc.line(14, 32, pageW - 14, 32)
+
+  doc.setFontSize(11)
+  let y = 44
+
+  doc.setFont('helvetica', 'normal')
+  doc.text('Name: ___________________________   Date: ___________   Score: ______', 14, y)
+  y += 12
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Balance the following chemical equations:', 14, y)
+  y += 10
+
+  doc.setFont('helvetica', 'normal')
+  questions.forEach((q, i) => {
+    if (y > 270) {
+      doc.addPage()
+      y = 20
+    }
+    doc.text(`${i + 1}.  ${q.eq}`, 14, y)
+    y += 12
+    doc.setDrawColor(200)
+    doc.line(80, y, pageW - 14, y)
+    y += 8
+  })
+
+  if (includeAnswers) {
+    doc.addPage()
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(14)
+    doc.text('Answer Key', pageW / 2, 20, { align: 'center' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
+    y = 34
+    questions.forEach((q, i) => {
+      if (y > 270) {
+        doc.addPage()
+        y = 20
+      }
+      doc.text(`${i + 1}.  ${q.balanced}`, 14, y)
+      y += 10
+    })
+  }
+
+  doc.save(`chemistry-worksheet-${difficulty}.pdf`)
 }

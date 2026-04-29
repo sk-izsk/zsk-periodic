@@ -5,7 +5,7 @@ Full-stack recreation of zperiod.app built from scratch with Next.js 14, TypeScr
 ## Features
 
 - **Periodic table** — all 118 elements, color-coded by category, click for full detail panel
-- **3D atom models** — interactive Three.js/R3F electron shell models for every element  
+- **3D atom models** — interactive Three.js/R3F electron shell models for every element
 - **Ions** — 50+ common cations and anions with charges and molar masses
 - **Tools** — equation balancer (Gaussian elimination), molar mass calculator, solubility table
 - **Worksheet generator** — PDF export with adjustable difficulty, reaction types, answer key
@@ -66,5 +66,7 @@ zperiod/
 - Add virtual lab at `app/tools/lab/page.tsx` using Canvas API
 - Add i18n with `next-intl` (language files go in `messages/`)
 - Add `app/element/[n]/page.tsx` for deep-linked element URLs
+
 # zsk-periodic
+
 # zsk-periodic

@@ -1,8 +1,8 @@
-import { ELEMENT_L3_DATA } from '@/lib/element-l3-data';
-import type { Element } from '@/lib/elements';
-import type { ElementLocaleRecord } from '@/lib/i18n/types';
-import { KEY_RADIOACTIVE_MASS_NUMBERS, STABLE_MASS_NUMBERS } from '@/lib/isotopes';
-import type { ElementProfile } from './types';
+import { ELEMENT_L3_DATA } from '@/lib/element-l3-data'
+import type { Element } from '@/lib/elements'
+import type { ElementLocaleRecord } from '@/lib/i18n/types'
+import { KEY_RADIOACTIVE_MASS_NUMBERS, STABLE_MASS_NUMBERS } from '@/lib/isotopes'
+import type { ElementProfile } from './types'
 
 const VALENCE_BY_GROUP: Record<number, string> = {
   1: '1',
@@ -13,7 +13,7 @@ const VALENCE_BY_GROUP: Record<number, string> = {
   16: '6',
   17: '7',
   18: '8',
-};
+}
 
 const COMMON_OXIDATION_BY_CATEGORY: Record<string, string[]> = {
   alkali: ['+1'],
@@ -26,7 +26,7 @@ const COMMON_OXIDATION_BY_CATEGORY: Record<string, string[]> = {
   metalloid: ['+3', '+4'],
   lanthanide: ['+3'],
   actinide: ['+3', '+4', '+5'],
-};
+}
 
 const TYPE_BY_CATEGORY: Record<Element['cat'], string> = {
   alkali: 'Alkali Metal',
@@ -39,12 +39,12 @@ const TYPE_BY_CATEGORY: Record<Element['cat'], string> = {
   noble: 'Noble Gas',
   lanthanide: 'Lanthanide',
   actinide: 'Actinide',
-};
+}
 
 type Level1Overrides = {
-  type?: string;
-  phaseAtSTP?: Element['phase'];
-};
+  type?: string
+  phaseAtSTP?: Element['phase']
+}
 
 const LEVEL1_OVERRIDES: Record<number, Level1Overrides> = {
   104: { type: 'Unknown', phaseAtSTP: 'Unknown' },
@@ -55,62 +55,87 @@ const LEVEL1_OVERRIDES: Record<number, Level1Overrides> = {
   109: { type: 'Unknown', phaseAtSTP: 'Unknown' },
   110: { type: 'Unknown', phaseAtSTP: 'Unknown' },
   111: { type: 'Unknown', phaseAtSTP: 'Unknown' },
-};
+}
 
 function formatMass(mass: number) {
-  return mass.toFixed(3).replace(/\.000$/, '');
+  return mass.toFixed(3).replace(/\.000$/, '')
 }
 
 function formatNullable(value: number | null, unit: string) {
-  if (value == null) return 'N/A';
-  return `${value}${unit}`;
+  if (value == null) {
+    return 'N/A'
+  }
+  return `${value}${unit}`
 }
 
 function inferBlock(config: string): string {
   // Scan all orbitals present in the config (after noble gas core) for highest angular momentum
-  const norm = config.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (c) =>
-    ({ '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' }[c] ?? c)
-  );
-  if (/\df\d/.test(norm)) return 'f';
-  if (/\dd\d/.test(norm)) return 'd';
-  if (/\dp\d/.test(norm)) return 'p';
-  return 's';
+  const norm = config.replace(
+    /[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,
+    (c) =>
+      ({
+        '⁰': '0',
+        '¹': '1',
+        '²': '2',
+        '³': '3',
+        '⁴': '4',
+        '⁵': '5',
+        '⁶': '6',
+        '⁷': '7',
+        '⁸': '8',
+        '⁹': '9',
+      })[c] ?? c,
+  )
+  if (/\df\d/.test(norm)) {
+    return 'f'
+  }
+  if (/\dd\d/.test(norm)) {
+    return 'd'
+  }
+  if (/\dp\d/.test(norm)) {
+    return 'p'
+  }
+  return 's'
 }
 
 function inferIons(el: Element): string {
-  const common = COMMON_OXIDATION_BY_CATEGORY[el.cat] ?? [];
-  if (common.length === 0) return 'No common ions';
-  return common.map((state) => `${el.sym}${state}`).join(', ');
+  const common = COMMON_OXIDATION_BY_CATEGORY[el.cat] ?? []
+  if (common.length === 0) {
+    return 'No common ions'
+  }
+  return common.map((state) => `${el.sym}${state}`).join(', ')
 }
 
 function displayGroup(el: Element): number | null {
-  if (el.group != null) return el.group;
-  if (el.cat === 'lanthanide' || el.cat === 'actinide') return 3;
-  return null;
+  if (el.group != null) {
+    return el.group
+  }
+  if (el.cat === 'lanthanide' || el.cat === 'actinide') {
+    return 3
+  }
+  return null
 }
 
 function pickCommonIons(el: Element, locale?: ElementLocaleRecord): string {
-  const localeIons = locale?.ions?.trim();
-  const hasLocaleIons = Boolean(localeIons);
-  const localeSuppressesIons = localeIons === 'No common ions';
-  const preferInferredForFBlock = (el.cat === 'lanthanide' || el.cat === 'actinide') && localeSuppressesIons;
+  const localeIons = locale?.ions?.trim()
+  const hasLocaleIons = Boolean(localeIons)
+  const localeSuppressesIons = localeIons === 'No common ions'
+  const preferInferredForFBlock =
+    (el.cat === 'lanthanide' || el.cat === 'actinide') && localeSuppressesIons
 
   if (!hasLocaleIons || preferInferredForFBlock) {
-    return inferIons(el);
+    return inferIons(el)
   }
 
-  return localeIons as string;
+  return localeIons as string
 }
 
-export function toElementProfile(
-  el: Element,
-  locale?: ElementLocaleRecord
-): ElementProfile {
-  const group = displayGroup(el);
-  const l3 = ELEMENT_L3_DATA[el.n];
-  const level1Override = LEVEL1_OVERRIDES[el.n];
-  const phaseAtSTP = level1Override?.phaseAtSTP ?? el.phase;
-  const type = level1Override?.type ?? TYPE_BY_CATEGORY[el.cat];
+export function toElementProfile(el: Element, locale?: ElementLocaleRecord): ElementProfile {
+  const group = displayGroup(el)
+  const l3 = ELEMENT_L3_DATA[el.n]
+  const level1Override = LEVEL1_OVERRIDES[el.n]
+  const phaseAtSTP = level1Override?.phaseAtSTP ?? el.phase
+  const type = level1Override?.type ?? TYPE_BY_CATEGORY[el.cat]
 
   return {
     id: el.n,
@@ -126,7 +151,7 @@ export function toElementProfile(
       type,
       groupPeriod: `${group ?? '-'} / ${el.period}`,
       phaseAtSTP,
-      valenceElectrons: group ? VALENCE_BY_GROUP[group] ?? 'Variable' : 'Variable',
+      valenceElectrons: group ? (VALENCE_BY_GROUP[group] ?? 'Variable') : 'Variable',
       electronBlock: inferBlock(el.config),
       commonIons: pickCommonIons(el, locale),
     },
@@ -138,19 +163,23 @@ export function toElementProfile(
       protons: el.n,
       electronsNeutral: el.n,
       isotopes: (() => {
-        const stableMasses = STABLE_MASS_NUMBERS[el.n] ?? [];
-        const hasStableMasses = stableMasses.length > 0;
-        const masses = hasStableMasses
-          ? stableMasses
-          : (KEY_RADIOACTIVE_MASS_NUMBERS[el.n] ?? []);
+        const stableMasses = STABLE_MASS_NUMBERS[el.n] ?? []
+        const hasStableMasses = stableMasses.length > 0
+        const masses = hasStableMasses ? stableMasses : (KEY_RADIOACTIVE_MASS_NUMBERS[el.n] ?? [])
         if (masses.length === 0) {
-          return [{ name: `${el.sym}-${Math.round(el.mass)}`, neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`, percent: 'Radioactive' }];
+          return [
+            {
+              name: `${el.sym}-${Math.round(el.mass)}`,
+              neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`,
+              percent: 'Radioactive',
+            },
+          ]
         }
         return masses.map((m) => ({
           name: `${el.sym}-${m}`,
           neutron: `${m - el.n}n`,
           percent: hasStableMasses ? 'Stable' : 'Radioactive/Trace',
-        }));
+        }))
       })(),
     },
     level3: {
@@ -162,7 +191,8 @@ export function toElementProfile(
         },
       },
       physical: {
-        electronegativity: l3?.physical.electronegativity ?? (el.en != null ? String(el.en) : 'N/A'),
+        electronegativity:
+          l3?.physical.electronegativity ?? (el.en != null ? String(el.en) : 'N/A'),
         firstIonization: l3?.physical.firstIonization ?? 'N/A',
         density: l3?.physical.density ?? formatNullable(el.density, ' g/cm3'),
         meltingPoint: l3?.physical.meltingPoint ?? formatNullable(el.mp, ' degC'),
@@ -174,7 +204,9 @@ export function toElementProfile(
     },
     level4: {
       history: {
-        discoveryYear: el.discovered ? String(el.discovered) : locale?.history?.discoveryYear ?? 'Unknown',
+        discoveryYear: el.discovered
+          ? String(el.discovered)
+          : (locale?.history?.discoveryYear ?? 'Unknown'),
         discoveredBy: el.discoveredBy ?? locale?.history?.discoveredBy ?? 'Unknown',
         namedBy: locale?.history?.namedBy ?? 'Unknown',
       },
@@ -182,5 +214,5 @@ export function toElementProfile(
       uses: locale?.uses ?? ['Educational reference'],
       hazards: locale?.hazards ?? ['Refer to standard material safety data'],
     },
-  };
+  }
 }

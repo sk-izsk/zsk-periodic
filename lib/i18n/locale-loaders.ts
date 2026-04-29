@@ -1,7 +1,7 @@
-import type { AppLanguage, ElementLocaleRecord, IonLocaleRecord } from './types';
+import type { AppLanguage, ElementLocaleRecord, IonLocaleRecord } from './types'
 
-const elementLocaleCache: Partial<Record<AppLanguage, Record<string, ElementLocaleRecord>>> = {};
-const ionLocaleCache: Partial<Record<AppLanguage, Record<string, IonLocaleRecord>>> = {};
+const elementLocaleCache: Partial<Record<AppLanguage, Record<string, ElementLocaleRecord>>> = {}
+const ionLocaleCache: Partial<Record<AppLanguage, Record<string, IonLocaleRecord>>> = {}
 
 const elementLoaders: Record<AppLanguage, () => Promise<Record<string, ElementLocaleRecord>>> = {
   en: async () => (await import('./locales/elements/en')).default,
@@ -12,7 +12,7 @@ const elementLoaders: Record<AppLanguage, () => Promise<Record<string, ElementLo
   fa: async () => (await import('./locales/elements/fa')).default,
   ur: async () => (await import('./locales/elements/ur')).default,
   tl: async () => (await import('./locales/elements/tl')).default,
-};
+}
 
 const ionLoaders: Record<AppLanguage, () => Promise<Record<string, IonLocaleRecord>>> = {
   en: async () => ({}),
@@ -23,27 +23,29 @@ const ionLoaders: Record<AppLanguage, () => Promise<Record<string, IonLocaleReco
   fa: async () => (await import('./locales/ions/fa')).default,
   ur: async () => (await import('./locales/ions/ur')).default,
   tl: async () => (await import('./locales/ions/tl')).default,
-};
+}
 
-export async function loadElementLocale(lang: AppLanguage): Promise<Record<string, ElementLocaleRecord>> {
+export async function loadElementLocale(
+  lang: AppLanguage,
+): Promise<Record<string, ElementLocaleRecord>> {
   if (!elementLocaleCache[lang]) {
-    elementLocaleCache[lang] = await elementLoaders[lang]();
+    elementLocaleCache[lang] = await elementLoaders[lang]()
   }
-  return elementLocaleCache[lang] ?? {};
+  return elementLocaleCache[lang] ?? {}
 }
 
 export async function loadIonLocale(lang: AppLanguage): Promise<Record<string, IonLocaleRecord>> {
   if (!ionLocaleCache[lang]) {
-    ionLocaleCache[lang] = await ionLoaders[lang]();
+    ionLocaleCache[lang] = await ionLoaders[lang]()
   }
-  return ionLocaleCache[lang] ?? {};
+  return ionLocaleCache[lang] ?? {}
 }
 
 export function clearLocaleCaches() {
   for (const key of Object.keys(elementLocaleCache) as AppLanguage[]) {
-    delete elementLocaleCache[key];
+    delete elementLocaleCache[key]
   }
   for (const key of Object.keys(ionLocaleCache) as AppLanguage[]) {
-    delete ionLocaleCache[key];
+    delete ionLocaleCache[key]
   }
 }

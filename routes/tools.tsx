@@ -1,9 +1,9 @@
-import RoutePending from '@/components/RoutePending';
-import { createFileRoute, lazyRouteComponent } from '@tanstack/react-router';
+import RoutePending from '@/components/RoutePending'
+import { createFileRoute, lazyRouteComponent } from '@tanstack/react-router'
 
-const ToolsPending = () => <RoutePending label="Loading Tools..." />;
+const ToolsPending = () => <RoutePending label="Loading Tools..." />
 
 export const Route = createFileRoute('/tools')({
   pendingComponent: ToolsPending,
   component: lazyRouteComponent(() => import('@/app/tools/page'), 'default'),
-});
+})
