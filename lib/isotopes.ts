@@ -86,8 +86,7 @@ export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
   80: [196, 198, 199, 200, 201, 202, 204],
   81: [203, 205],
   82: [204, 206, 207, 208],
-  83: [209],
-  // 84–118: all radioactive — no stable isotopes
+  // 83–118: all radioactive — no stable isotopes
 }
 
 /**
@@ -97,6 +96,7 @@ export const STABLE_MASS_NUMBERS: Record<number, number[]> = {
 export const KEY_RADIOACTIVE_MASS_NUMBERS: Record<number, number[]> = {
   43: [97, 99],
   61: [145, 147],
+  83: [209],
   84: [209, 210],
   85: [210, 211],
   86: [220, 222],
