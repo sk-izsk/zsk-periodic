@@ -138,10 +138,9 @@ export const toElementLevel4 = (
   locale?: ElementLocaleRecord,
 ): ElementProfile['level4'] => ({
   history: {
-    discoveryYear: el.discovered
-      ? String(el.discovered)
-      : (locale?.history?.discoveryYear ?? 'Unknown'),
-    discoveredBy: el.discoveredBy ?? locale?.history?.discoveredBy ?? 'Unknown',
+    discoveryYear:
+      locale?.history?.discoveryYear ?? (el.discovered ? String(el.discovered) : 'Unknown'),
+    discoveredBy: locale?.history?.discoveredBy ?? el.discoveredBy ?? 'Unknown',
     namedBy: locale?.history?.namedBy ?? 'Unknown',
   },
   stseContext: locale?.stse ?? ['Chemistry education context'],

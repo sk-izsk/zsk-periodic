@@ -7,6 +7,27 @@ import { useMemo, useState } from 'react'
 import AtomScene from './AtomScene'
 import type { AtomModelProps } from './types'
 
+interface AtomOrbitControlsProps {
+  cameraPosition: readonly [number, number, number]
+  resetToken: number
+}
+
+const AtomOrbitControls = ({ cameraPosition, resetToken }: AtomOrbitControlsProps) => {
+  const controlsRef = useResettableOrbitControls(resetToken, cameraPosition)
+
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      enablePan={false}
+      enableZoom
+      enableRotate
+      minDistance={5}
+      maxDistance={55}
+      target={[0, 0, 0]}
+    />
+  )
+}
+
 const AtomModel = ({
   element,
   bg = '#0f0f1a',
@@ -18,7 +39,6 @@ const AtomModel = ({
   resetToken = 0,
 }: AtomModelProps) => {
   const [hoveredShell, setHoveredShell] = useState<number | null>(null)
-  const controlsRef = useResettableOrbitControls(resetToken)
   const shells = useAtomShells(element)
   const { isLight, isDarkMode, textColor } = useMemo(() => getAtomTextColors(bg), [bg])
   const cameraPosition = useMemo<[number, number, number]>(
@@ -100,15 +120,7 @@ const AtomModel = ({
           darkMode={isDarkMode}
           onShellHover={setHoveredShell}
         />
-        <OrbitControls
-          ref={controlsRef}
-          enablePan={false}
-          enableZoom
-          enableRotate
-          minDistance={5}
-          maxDistance={55}
-          target={[0, 0, 0]}
-        />
+        <AtomOrbitControls cameraPosition={cameraPosition} resetToken={resetToken} />
       </Canvas>
 
       {!fill && (

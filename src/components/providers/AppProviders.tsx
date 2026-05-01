@@ -1,4 +1,3 @@
-import { RTL_LANGUAGES } from '@/lib/i18n/config'
 import { changeLanguage, LocalizeProvider } from '@/lib/i18n/localize'
 import { useAppStore } from '@/lib/store'
 import { useEffect } from 'react'
@@ -13,7 +12,6 @@ const AppProviders = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     document.documentElement.lang = language
-    document.documentElement.dir = RTL_LANGUAGES.has(language) ? 'rtl' : 'ltr'
     void changeLanguage(language)
   }, [language])
 
