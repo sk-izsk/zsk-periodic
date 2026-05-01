@@ -21,4 +21,4 @@ const RoutePending = ({ label = 'Loading...' }: RoutePendingProps) => {
   )
 }
 
-export default RoutePending
+export { RoutePending }

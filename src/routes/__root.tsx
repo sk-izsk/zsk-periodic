@@ -1,5 +1,5 @@
-import ElementModal from '@/components/modal/ElementModal'
-import Nav from '@/components/Nav'
+import { ElementModal } from '@/components/modal/ElementModal'
+import { Nav } from '@/components/Nav'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 
 const RootLayout = () => {
@@ -14,10 +14,12 @@ const RootLayout = () => {
   )
 }
 
-export const Route = createRootRoute({
+const Route = createRootRoute({
   validateSearch: (search: Record<string, unknown>): { element?: string } => {
     const val = typeof search.element === 'string' ? search.element : undefined
     return val !== undefined ? { element: val } : {}
   },
   component: RootLayout,
 })
+
+export { Route }

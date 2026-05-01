@@ -183,4 +183,4 @@ const ElementDetail = ({ element, onClose }: Props) => {
   )
 }
 
-export default ElementDetail
+export { ElementDetail }

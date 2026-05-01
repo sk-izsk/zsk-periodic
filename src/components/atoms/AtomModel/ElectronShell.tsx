@@ -204,4 +204,4 @@ const ElectronShell = ({
   )
 }
 
-export default ElectronShell
+export { ElectronShell }

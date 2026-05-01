@@ -4,4 +4,4 @@ const HomeScreen = () => {
   return <PeriodicTable />
 }
 
-export default HomeScreen
+export { HomeScreen }

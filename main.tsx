@@ -1,4 +1,4 @@
-import AppProviders from '@/components/providers/AppProviders'
+import { AppProviders } from '@/components/providers/AppProviders'
 import { routeTree } from '@/routeTree.gen'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import React from 'react'

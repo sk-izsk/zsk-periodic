@@ -54,7 +54,7 @@ const ElementCell = ({ element, dimmed, highlighted, onClick }: Props) => {
   )
 }
 
-export default memo(
+const MemoizedElementCell = memo(
   ElementCell,
   (prev, next) =>
     prev.element === next.element &&
@@ -62,3 +62,5 @@ export default memo(
     prev.highlighted === next.highlighted &&
     prev.onClick === next.onClick,
 )
+
+export { MemoizedElementCell as ElementCell }

@@ -4,7 +4,7 @@ import { getAtomTextColors, SHELL_NAMES } from '@/utils/atomModel'
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { useMemo, useState } from 'react'
-import AtomScene from './AtomScene'
+import { AtomScene } from './AtomScene'
 import type { AtomModelProps } from './types'
 
 interface AtomOrbitControlsProps {

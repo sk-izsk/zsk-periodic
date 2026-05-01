@@ -1,6 +1,6 @@
-import EquationBalancer from '@/components/tools/EquationBalancer'
-import MolarMassCalc from '@/components/tools/MolarMassCalc'
-import SolubilityTable from '@/components/tools/SolubilityTable'
+import { EquationBalancer } from '@/components/tools/EquationBalancer'
+import { MolarMassCalc } from '@/components/tools/MolarMassCalc'
+import { SolubilityTable } from '@/components/tools/SolubilityTable'
 
 const ToolsScreen = () => {
   return (

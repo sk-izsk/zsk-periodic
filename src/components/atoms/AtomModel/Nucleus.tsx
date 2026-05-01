@@ -61,4 +61,4 @@ const Nucleus = ({ protons, neutrons, speedMul, paused }: NucleusProps) => {
   )
 }
 
-export default Nucleus
+export { Nucleus }

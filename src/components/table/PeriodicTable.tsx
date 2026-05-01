@@ -4,7 +4,7 @@ import { loadElementLocale } from '@/lib/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/lib/i18n/types'
 import { useAppStore } from '@/lib/store'
 import { useEffect, useMemo, useState } from 'react'
-import ElementCell from './ElementCell'
+import { ElementCell } from './ElementCell'
 
 // Grid positions: [atomicNumber] -> { row, col } in 18-col layout
 const GRID: Record<number, { row: number; col: number }> = {}

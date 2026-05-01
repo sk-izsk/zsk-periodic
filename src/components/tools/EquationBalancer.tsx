@@ -57,4 +57,4 @@ const EquationBalancer = () => {
   )
 }
 
-export default EquationBalancer
+export { EquationBalancer }

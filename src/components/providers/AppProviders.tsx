@@ -18,4 +18,4 @@ const AppProviders = ({ children }: { children: React.ReactNode }) => {
   return <LocalizeProvider>{children}</LocalizeProvider>
 }
 
-export default AppProviders
+export { AppProviders }

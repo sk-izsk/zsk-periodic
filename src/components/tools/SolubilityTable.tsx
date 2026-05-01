@@ -217,4 +217,4 @@ const SolubilityTable = () => {
   )
 }
 
-export default SolubilityTable
+export { SolubilityTable }

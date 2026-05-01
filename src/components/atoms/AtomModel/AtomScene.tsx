@@ -4,8 +4,8 @@ import { getNeutronCount } from '@/utils/atomModel'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import ElectronShell from './ElectronShell'
-import Nucleus from './Nucleus'
+import { ElectronShell } from './ElectronShell'
+import { Nucleus } from './Nucleus'
 
 interface AtomSceneProps {
   element: Element
@@ -77,4 +77,4 @@ const AtomScene = ({ element, paused, speed, topView, darkMode, onShellHover }: 
   )
 }
 
-export default AtomScene
+export { AtomScene }

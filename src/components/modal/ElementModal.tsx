@@ -1247,4 +1247,4 @@ const ElementModal = () => {
   )
 }
 
-export default ElementModal
+export { ElementModal }

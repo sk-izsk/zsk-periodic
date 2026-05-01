@@ -75,4 +75,4 @@ const MolarMassCalc = () => {
   )
 }
 
-export default MolarMassCalc
+export { MolarMassCalc }
