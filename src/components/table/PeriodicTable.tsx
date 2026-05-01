@@ -103,13 +103,13 @@ const PeriodicTable = () => {
       </div>
 
       {/* Main table */}
-      <div className="rounded-lg border border-line bg-surface/80 p-4 shadow-[var(--shadow-panel)] backdrop-blur-xl">
+      <div className="lab-scan-stage rounded-lg border border-line bg-surface/80 p-4 shadow-[var(--shadow-panel)] backdrop-blur-xl">
         <div className="mb-3 flex items-center justify-between text-xs text-muted">
           <span className="font-semibold uppercase tracking-[0.18em]">ZTable matrix</span>
           <span>{elements.length} elements indexed</span>
         </div>
-        <div className="overflow-x-auto rounded-md">
-          <div style={{ width: 'fit-content', margin: '0 auto' }}>
+        <div className="overflow-x-auto overflow-y-hidden rounded-md px-3 pb-6 pt-1">
+          <div style={{ width: 'fit-content', margin: '0 auto', paddingRight: 18 }}>
             <div
               style={{
                 display: 'grid',

@@ -45,8 +45,8 @@ const ElectronShell = ({
   )
   const [hovered, setHovered] = useState(false)
 
-  const minRadius = shellCount === 1 ? 8.6 : 3.7
-  const maxRadius = shellCount === 1 ? 8.6 : 11.4
+  const minRadius = shellCount === 1 ? 8.4 : 3.25
+  const maxRadius = shellCount === 1 ? 8.4 : 11.8
   const step = shellCount > 1 ? (maxRadius - minRadius) / (shellCount - 1) : 0
   const radius = minRadius + shellIndex * step
   const shellSpeed = 0.018 / (shellIndex + 1)
@@ -55,11 +55,18 @@ const ElectronShell = ({
   const color = shellPalette[shellIndex % shellPalette.length]
   const electronBaseColor = electronPalette[shellIndex % electronPalette.length]
   const electronColor = useMemo(() => new THREE.Color(electronBaseColor), [electronBaseColor])
-  const orbitGeometry = useMemo(() => getTorusGeometry(radius, 0.05, 14, 80), [radius])
-  const hitGeometry = useMemo(() => getTorusGeometry(radius, 0.55, 8, 40), [radius])
+  const orbitGeometry = useMemo(
+    () => getTorusGeometry(radius, topView ? 0.075 : 0.13, 18, 112),
+    [radius, topView],
+  )
+  const glowGeometry = useMemo(
+    () => getTorusGeometry(radius, topView ? 0.2 : 0.38, 16, 112),
+    [radius, topView],
+  )
+  const hitGeometry = useMemo(() => getTorusGeometry(radius, 0.7, 8, 40), [radius])
   const electronGeometry = useMemo(
-    () => getSphereGeometry(darkMode ? 0.215 : 0.19, 14, 14),
-    [darkMode],
+    () => getSphereGeometry(topView ? 0.18 : darkMode ? 0.3 : 0.27, 16, 16),
+    [darkMode, topView],
   )
   const electronMaterial = useMemo(
     () =>
@@ -68,7 +75,7 @@ const ElectronShell = ({
         roughness: darkMode ? 0.22 : 0.35,
         metalness: darkMode ? 0.62 : 0.5,
         emissive: electronColor,
-        emissiveIntensity: darkMode ? 1.12 : 0.24,
+        emissiveIntensity: darkMode ? 1.15 : 0.38,
       }),
     [darkMode, electronBaseColor, electronColor],
   )
@@ -93,8 +100,8 @@ const ElectronShell = ({
     [],
   )
   const orbitRotation: [number, number, number] = topView ? [0, 0, 0] : [Math.PI / 2, 0, 0]
-  const hoverRingColor = darkMode ? '#fff27a' : '#ffaa00'
-  const orbitOpacity = darkMode ? 0.62 : 0.45
+  const orbitOpacity = darkMode ? 0.72 : 0.78
+  const glowOpacity = hovered ? (darkMode ? 0.34 : 0.52) : darkMode ? 0.18 : 0.34
   const hoverOrbitOpacity = darkMode ? 0.98 : 0.92
 
   useFrame((state, delta) => {
@@ -149,10 +156,13 @@ const ElectronShell = ({
     >
       <mesh geometry={orbitGeometry} rotation={orbitRotation}>
         <meshBasicMaterial
-          color={hovered ? hoverRingColor : color}
+          color={color}
           transparent
           opacity={hovered ? hoverOrbitOpacity : orbitOpacity}
         />
+      </mesh>
+      <mesh geometry={glowGeometry} rotation={orbitRotation}>
+        <meshBasicMaterial color={color} transparent opacity={glowOpacity} depthWrite={false} />
       </mesh>
       <mesh
         geometry={hitGeometry}

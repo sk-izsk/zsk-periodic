@@ -9,4 +9,6 @@ export interface AtomModelProps {
   speed?: number
   topView?: boolean
   resetToken?: number
+  neutronOverride?: number
+  isotopeLabel?: string
 }

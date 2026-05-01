@@ -17,7 +17,6 @@ export const frUI: TranslationDict = {
     pauseAnimations: 'Mettre en pause les animations',
     globalUnit: 'Preference d unite globale',
     replayWelcome: 'Ouvrir l accueil',
-    changelog: 'Journal des modifications',
   },
   common: {
     dark: 'Sombre',

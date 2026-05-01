@@ -17,7 +17,6 @@ export const enUI: TranslationDict = {
     pauseAnimations: 'Pause animations',
     globalUnit: 'Global unit preference',
     replayWelcome: 'Open welcome',
-    changelog: 'Changelog',
   },
   common: {
     dark: 'Dark',

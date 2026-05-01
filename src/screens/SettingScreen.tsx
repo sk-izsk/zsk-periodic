@@ -1,6 +1,5 @@
-import { changelogData } from '@/lib/changelog'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { useAppTranslation } from '@/lib/i18n/localize'
 import { useAppStore } from '@/lib/store'
 
@@ -64,29 +63,6 @@ const SettingsScreen = () => {
           <Button onClick={resetOnboarding} className="mt-3">
             {t('settings.replayWelcome')}
           </Button>
-        </CardContent>
-      </Card>
-
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle>{t('settings.changelog')}</CardTitle>
-          <CardDescription>ZTable release notes and refinements.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <article>
-            {changelogData.map((entry) => (
-              <section key={entry.version}>
-                <h2>
-                  {entry.version} ({entry.date})
-                </h2>
-                <ul>
-                  {entry.changes.map((change) => (
-                    <li key={change}>{change}</li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </article>
         </CardContent>
       </Card>
     </main>

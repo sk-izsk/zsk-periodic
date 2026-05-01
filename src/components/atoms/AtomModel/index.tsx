@@ -37,12 +37,14 @@ const AtomModel = ({
   speed = 1,
   topView = false,
   resetToken = 0,
+  neutronOverride,
+  isotopeLabel,
 }: AtomModelProps) => {
   const [hoveredShell, setHoveredShell] = useState<number | null>(null)
   const shells = useAtomShells(element)
   const { isLight, isDarkMode, textColor } = useMemo(() => getAtomTextColors(bg), [bg])
   const cameraPosition = useMemo<[number, number, number]>(
-    () => (topView ? [0, 10, 34] : [0, 2, 34]),
+    () => (topView ? [0, 0, 31] : [0, 6, 30]),
     [topView],
   )
 
@@ -60,10 +62,20 @@ const AtomModel = ({
       <div
         style={{
           position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          background:
+            'radial-gradient(circle at 52% 42%, rgba(255,255,255,0.54), transparent 27rem), radial-gradient(circle at 70% 68%, rgba(135,177,204,0.24), transparent 20rem)',
+          zIndex: 0,
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
           top: 10,
           left: 12,
           zIndex: 10,
-          background: isLight ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.35)',
+          background: isLight ? 'rgba(255,255,255,0.74)' : 'rgba(0,0,0,0.35)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           border: isLight ? '1px solid rgba(0,0,0,0.12)' : '1px solid rgba(255,255,255,0.18)',
@@ -104,13 +116,39 @@ const AtomModel = ({
         </div>
       )}
 
+      {isotopeLabel && (
+        <div
+          className="atom-isotope-pulse"
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 54,
+            zIndex: 10,
+            background: isLight ? 'rgba(255,255,255,0.72)' : 'rgba(34,211,238,0.16)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: isLight ? '1px solid rgba(0,0,0,0.12)' : '1px solid rgba(34,211,238,0.35)',
+            borderRadius: 999,
+            padding: '4px 12px',
+            fontSize: 12,
+            fontFamily: 'monospace',
+            color: textColor,
+            letterSpacing: '0.03em',
+            pointerEvents: 'none',
+          }}
+        >
+          {isotopeLabel} · {neutronOverride}n
+        </div>
+      )}
+
       <Canvas
-        camera={{ position: cameraPosition, fov: 46 }}
+        camera={{ position: cameraPosition, fov: topView ? 42 : 46 }}
         gl={{ antialias: true, alpha: true }}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }}
       >
-        <ambientLight intensity={isDarkMode ? 0.85 : 1.0} />
-        <directionalLight position={[10, 10, 10]} intensity={isDarkMode ? 0.7 : 0.4} />
+        <ambientLight intensity={isDarkMode ? 0.85 : 1.25} />
+        <directionalLight position={[10, 12, 12]} intensity={isDarkMode ? 0.7 : 0.72} />
+        <directionalLight position={[-8, 5, 4]} intensity={isDarkMode ? 0.28 : 0.35} />
         {isDarkMode && <pointLight position={[0, 0, 10]} intensity={0.95} color={0x8b5b2d} />}
         <AtomScene
           element={element}
@@ -118,6 +156,7 @@ const AtomModel = ({
           speed={speed}
           topView={topView}
           darkMode={isDarkMode}
+          neutronOverride={neutronOverride}
           onShellHover={setHoveredShell}
         />
         <AtomOrbitControls cameraPosition={cameraPosition} resetToken={resetToken} />
