@@ -9,6 +9,13 @@ module.exports = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       colors: {
+        app: 'var(--color-bg)',
+        surface: 'var(--color-surface)',
+        elevated: 'var(--color-elevated)',
+        ink: 'var(--color-text)',
+        muted: 'var(--color-muted)',
+        line: 'var(--color-border)',
+        accent: 'var(--color-accent)',
         alkali: '#c0392b',
         alkaline: '#d35400',
         transition: '#2980b9',

@@ -1,4 +1,6 @@
 import { ION_SECTION_LABELS, ionsData } from '@/lib/features/ions/data'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
 import { groupIonsBySection, sectionOrder } from '@/lib/features/ions/selectors'
 import { useMemo } from 'react'
 
@@ -7,50 +9,43 @@ const IonScreen = () => {
   const sections = useMemo(() => sectionOrder(), [])
 
   return (
-    <main className="max-w-4xl p-6 mx-auto">
-      <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 4 }}>Common Ions</h1>
-      <p style={{ fontSize: 14, color: 'var(--color-muted)', marginBottom: 24 }}>
-        Section-grouped reference for common ions, aligned to the phase-2 data model.
-      </p>
+    <main className="mx-auto max-w-5xl p-6">
+      <header className="mb-6 rounded-lg border border-line bg-surface p-5 shadow-[var(--shadow-panel)] backdrop-blur-xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+          Reference deck
+        </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">Common Ions</h1>
+        <p className="mt-2 text-sm text-muted">
+          Section-grouped reference for common ions, aligned to the phase-2 data model.
+        </p>
+      </header>
 
       {sections.map((section) => (
         <section key={section} className="mb-8">
-          <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
-            {ION_SECTION_LABELS[section]}
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-              gap: 8,
-            }}
-          >
+          <h2 className="mb-3 text-base font-semibold">{ION_SECTION_LABELS[section]}</h2>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
             {grouped[section].map((ion) => (
-              <div
+              <Card
                 key={ion.id}
-                className="p-3 rounded-lg"
-                style={{
-                  background: 'var(--color-bg2)',
-                  border: '0.5px solid var(--color-border)',
-                }}
+                className="p-3 shadow-sm transition-transform hover:-translate-y-0.5"
               >
                 <div
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 500,
-                    color: ion.type === 'Cation' ? '#2563eb' : '#dc2626',
-                  }}
+                  className={`text-xl font-semibold ${
+                    ion.type === 'Cation'
+                      ? 'text-[var(--color-accent)]'
+                      : 'text-[var(--color-danger)]'
+                  }`}
                 >
                   {ion.formula}
                 </div>
-                <div style={{ fontSize: 13, marginTop: 2 }}>{ion.name}</div>
-                <div style={{ fontSize: 11, color: 'var(--color-muted)', marginTop: 2 }}>
-                  {ion.category}
+                <div className="mt-1 text-sm">{ion.name}</div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  <Badge>{ion.type}</Badge>
+                  <Badge>{ion.category}</Badge>
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--color-muted)', marginTop: 2 }}>
-                  {ion.mass} g/mol
-                </div>
-              </div>
+                <div className="mt-2 text-xs text-muted">{ion.category}</div>
+                <div className="mt-1 text-xs text-muted">{ion.mass} g/mol</div>
+              </Card>
             ))}
           </div>
         </section>

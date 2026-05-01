@@ -765,7 +765,7 @@ const ElementModal = () => {
     return () => window.removeEventListener('keydown', onKey)
   }, [selectedElement, navigateNext, navigatePrev])
 
-  const atomBg = darkMode ? '#000000' : '#e8ecf4'
+  const atomBg = darkMode ? '#061015' : '#e8f1f6'
 
   return (
     <AnimatePresence>
@@ -780,7 +780,7 @@ const ElementModal = () => {
               zIndex: 50,
               backdropFilter: 'blur(14px)',
               WebkitBackdropFilter: 'blur(14px)',
-              background: 'rgba(0,0,0,0.48)',
+              background: darkMode ? 'rgba(2,8,12,0.68)' : 'rgba(11,28,37,0.34)',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -811,10 +811,11 @@ const ElementModal = () => {
                 maxWidth: 1240,
                 height: '84vh',
                 maxHeight: 760,
-                borderRadius: 22,
+                borderRadius: 18,
                 overflow: 'hidden',
-                background: 'var(--color-bg)',
-                boxShadow: '0 40px 100px rgba(0,0,0,0.4)',
+                background: 'var(--color-elevated)',
+                border: '1px solid var(--color-border)',
+                boxShadow: 'var(--shadow-panel)',
                 position: 'relative',
               }}
               initial={{ scale: 0.88, opacity: 0, y: 24 }}
@@ -919,7 +920,7 @@ const ElementModal = () => {
                 {/* Header */}
                 <div
                   style={{
-                    background: 'var(--color-bg2)',
+                    background: 'var(--color-surface)',
                     padding: '20px 20px 16px',
                     borderBottom: '1px solid var(--color-border)',
                     flexShrink: 0,
@@ -1134,8 +1135,8 @@ const ElementModal = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: '50%',
-                    background: 'rgba(128,128,128,0.18)',
-                    border: 'none',
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
                     cursor: 'pointer',
                     fontSize: 20,
                     color: 'var(--color-text)',

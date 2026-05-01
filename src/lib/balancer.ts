@@ -75,7 +75,9 @@ const divide = (a: Fraction, b: Fraction): Fraction =>
 
 const negate = (value: Fraction): Fraction => fraction(-value.numerator, value.denominator)
 
-const parseSide = (side: string): { ok: true; compounds: string[] } | { ok: false; error: string } => {
+const parseSide = (
+  side: string,
+): { ok: true; compounds: string[] } | { ok: false; error: string } => {
   if (!side.trim()) {
     return { ok: true, compounds: [] }
   }

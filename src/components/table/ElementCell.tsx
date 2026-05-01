@@ -15,14 +15,20 @@ const ElementCell = ({ element, dimmed, highlighted, onClick }: Props) => {
     <div
       onClick={() => onClick?.(element)}
       className={clsx(
-        'element-cell relative rounded flex flex-col items-center justify-center select-none',
+        'element-cell relative flex flex-col items-center justify-center select-none overflow-hidden border border-white/20 shadow-sm',
         dimmed && 'opacity-20',
-        highlighted && 'ring-2 ring-white',
+        highlighted &&
+          'ring-2 ring-[var(--color-accent)] ring-offset-2 ring-offset-[var(--color-bg)]',
       )}
-      style={{ background: bg, width: 68, height: 74, minWidth: 68, borderRadius: 10 }}
+      style={{ background: bg, width: 68, height: 74, minWidth: 68, borderRadius: 8 }}
       title={element.name}
     >
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/18 via-transparent to-black/18"
+        aria-hidden="true"
+      />
       <span
+        className="relative"
         style={{
           fontSize: 10,
           color: 'rgba(255,255,255,.8)',
@@ -33,10 +39,14 @@ const ElementCell = ({ element, dimmed, highlighted, onClick }: Props) => {
       >
         {element.n}
       </span>
-      <span style={{ fontSize: 36, fontWeight: 500, color: '#fff', lineHeight: 1.05 }}>
+      <span
+        className="relative"
+        style={{ fontSize: 36, fontWeight: 650, color: '#fff', lineHeight: 1.05 }}
+      >
         {element.sym}
       </span>
       <span
+        className="relative"
         style={{
           fontSize: 9,
           color: 'rgba(255,255,255,.85)',

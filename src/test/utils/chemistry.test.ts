@@ -39,4 +39,3 @@ describe('integer chemistry helpers', () => {
     expect(lcm(0, 18)).toBe(0)
   })
 })
-

@@ -1,16 +1,19 @@
 import { ElementModal } from '@/components/modal/ElementModal'
+import { DesktopOnlyGate } from '@/components/DesktopOnlyGate'
 import { Nav } from '@/components/Nav'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 
 const RootLayout = () => {
   return (
-    <div className="flex flex-col w-screen h-screen overflow-hidden">
-      <Nav />
-      <div className="flex-1 min-h-0 overflow-auto">
-        <Outlet />
+    <DesktopOnlyGate>
+      <div className="flex h-screen w-screen flex-col overflow-hidden">
+        <Nav />
+        <div className="min-h-0 flex-1 overflow-auto">
+          <Outlet />
+        </div>
+        <ElementModal />
       </div>
-      <ElementModal />
-    </div>
+    </DesktopOnlyGate>
   )
 }
 
