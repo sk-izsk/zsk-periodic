@@ -13,22 +13,31 @@ interface AtomSceneProps {
   speed: number
   topView: boolean
   darkMode: boolean
+  neutronOverride?: number
   onShellHover: (idx: number | null) => void
 }
 
-const AtomScene = ({ element, paused, speed, topView, darkMode, onShellHover }: AtomSceneProps) => {
+const AtomScene = ({
+  element,
+  paused,
+  speed,
+  topView,
+  darkMode,
+  neutronOverride,
+  onShellHover,
+}: AtomSceneProps) => {
   const atomRef = useRef<THREE.Group>(null)
   const popStartRef = useRef<number | null>(null)
   const shells = useAtomShells(element)
   const neutrons = useMemo(
-    () => getNeutronCount(element.mass, element.n),
-    [element.mass, element.n],
+    () => neutronOverride ?? getNeutronCount(element.mass, element.n),
+    [element.mass, element.n, neutronOverride],
   )
 
   useEffect(() => {
     popStartRef.current = null
     atomRef.current?.scale.set(0.1, 0.1, 0.1)
-  }, [element.n])
+  }, [element.n, neutrons])
 
   useFrame((state) => {
     if (!atomRef.current) {

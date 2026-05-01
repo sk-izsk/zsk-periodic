@@ -3,19 +3,42 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #ffffff;
-  --color-bg2: #f5f5f5;
-  --color-text: #1a1a1a;
-  --color-muted: #666666;
-  --color-border: rgba(0, 0, 0, 0.12);
+  --color-bg: #eef3f7;
+  --color-bg2: #f7fafc;
+  --color-surface: rgba(255, 255, 255, 0.78);
+  --color-surface-strong: #ffffff;
+  --color-elevated: rgba(255, 255, 255, 0.92);
+  --color-text: #17212b;
+  --color-muted: #667487;
+  --color-border: rgba(32, 54, 75, 0.14);
+  --color-accent: #0e7490;
+  --color-accent-strong: #0891b2;
+  --color-ring: rgba(8, 145, 178, 0.32);
+  --color-success: #15803d;
+  --color-warning: #b7791f;
+  --color-danger: #dc2626;
+  --shadow-panel: 0 18px 60px rgba(22, 36, 51, 0.13);
+  --font-sans:
+    'Aptos', 'IBM Plex Sans', 'SF Pro Display', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'SF Mono', 'Roboto Mono', ui-monospace, monospace;
 }
 
 .dark {
-  --color-bg: #111111;
-  --color-bg2: #1c1c1c;
-  --color-text: #f0f0f0;
-  --color-muted: #999999;
-  --color-border: rgba(255, 255, 255, 0.12);
+  --color-bg: #071014;
+  --color-bg2: #0d1a20;
+  --color-surface: rgba(11, 24, 30, 0.78);
+  --color-surface-strong: #101f26;
+  --color-elevated: rgba(15, 31, 38, 0.94);
+  --color-text: #eef8fb;
+  --color-muted: #91a7b3;
+  --color-border: rgba(166, 225, 236, 0.14);
+  --color-accent: #22d3ee;
+  --color-accent-strong: #67e8f9;
+  --color-ring: rgba(34, 211, 238, 0.34);
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #fb7185;
+  --shadow-panel: 0 22px 70px rgba(0, 0, 0, 0.34);
 }
 
 * {
@@ -34,10 +57,28 @@ body,
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-sans);
   transition:
     background 0.2s,
     color 0.2s;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(34, 211, 238, 0.14), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(245, 158, 11, 0.1), transparent 24rem),
+    linear-gradient(rgba(8, 145, 178, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 145, 178, 0.06) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    42px 42px,
+    42px 42px;
 }
 
 article h2 {
@@ -58,12 +99,106 @@ article li {
 /* Element cell hover */
 .element-cell {
   transition:
-    transform 0.1s,
-    box-shadow 0.1s;
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    filter 0.14s ease;
   cursor: pointer;
 }
 .element-cell:hover {
-  transform: scale(1.18);
+  transform: translateY(-3px) scale(1.12);
   z-index: 20;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.32) inset;
+  filter: saturate(1.1);
+}
+
+.lab-scan-stage {
+  position: relative;
+  overflow: hidden;
+}
+
+.lab-scan-stage::after {
+  content: '';
+  position: absolute;
+  inset: -40% -10%;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 32%,
+    rgba(34, 211, 238, 0.08) 43%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(245, 158, 11, 0.1) 57%,
+    transparent 68%
+  );
+  transform: translateX(-70%);
+  animation: lab-scan 7s ease-in-out infinite;
+}
+
+.atom-isotope-pulse {
+  animation: isotope-pulse 1.4s ease-in-out infinite;
+}
+
+.card-scroll-region {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.card-scroll-region::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-more-button {
+  animation: scroll-hint-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes lab-scan {
+  0%,
+  48% {
+    transform: translateX(-75%);
+    opacity: 0;
+  }
+  58% {
+    opacity: 1;
+  }
+  76% {
+    transform: translateX(75%);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(75%);
+    opacity: 0;
+  }
+}
+
+@keyframes isotope-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(34, 211, 238, 0.45);
+  }
+}
+
+@keyframes scroll-hint-bounce {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, 6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .element-cell,
+  .lab-scan-stage::after,
+  .atom-isotope-pulse,
+  .scroll-more-button {
+    animation: none;
+    transition: none;
+  }
 }

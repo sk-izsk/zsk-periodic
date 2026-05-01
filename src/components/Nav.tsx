@@ -1,16 +1,30 @@
 import type { AppLanguage } from '@/lib/i18n/types'
 import { useAppTranslation } from '@/lib/i18n/localize'
 import { useAppStore } from '@/lib/store'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Link, useRouterState } from '@tanstack/react-router'
 import clsx from 'clsx'
+import {
+  Beaker,
+  BookOpenCheck,
+  FlaskConical,
+  Languages,
+  Moon,
+  Search,
+  Settings,
+  Sun,
+  Table2,
+  Zap,
+} from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 const LINKS = [
-  { href: '/', key: 'nav.table' },
-  { href: '/ions', key: 'nav.ions' },
-  { href: '/tools', key: 'nav.tools' },
-  { href: '/worksheet', key: 'nav.worksheet' },
-  { href: '/settings', key: 'nav.settings' },
+  { href: '/', key: 'nav.table', icon: Table2 },
+  { href: '/ions', key: 'nav.ions', icon: Beaker },
+  { href: '/tools', key: 'nav.tools', icon: FlaskConical },
+  { href: '/worksheet', key: 'nav.worksheet', icon: BookOpenCheck },
+  { href: '/settings', key: 'nav.settings', icon: Settings },
 ] as const
 
 const LANGUAGES: { value: AppLanguage; label: string }[] = [
@@ -54,42 +68,47 @@ const Nav = () => {
   }, [])
 
   return (
-    <nav
-      className="sticky top-0 z-50 flex items-center gap-1 px-4 py-2 border-b"
-      style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}
-    >
-      <span className="mr-4 text-lg font-bold tracking-tight">Zperiod</span>
+    <nav className="sticky top-0 z-50 flex items-center gap-3 border-b border-line bg-elevated/90 px-4 py-2 shadow-sm backdrop-blur-xl">
+      <Link to="/" search={true} className="mr-2 flex items-center gap-2">
+        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-[var(--color-accent)] text-white shadow-sm dark:text-slate-950">
+          <Zap size={18} fill="currentColor" />
+        </span>
+        <span>
+          <span className="block text-base font-semibold leading-4 tracking-tight">ZTable</span>
+          <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+            chemistry console
+          </span>
+        </span>
+      </Link>
       {LINKS.map((l) => (
-        <Link
-          key={l.href}
-          to={l.href}
-          search={true}
-          className={clsx(
-            'px-3 py-1.5 rounded text-sm transition-colors',
-            pathname === l.href
-              ? 'bg-blue-600 text-white'
-              : 'hover:bg-gray-100 dark:hover:bg-gray-800',
-          )}
-        >
-          {t(l.key)}
-        </Link>
+        <Button key={l.href} asChild variant={pathname === l.href ? 'primary' : 'ghost'} size="sm">
+          <Link
+            to={l.href}
+            search={true}
+            className={clsx(
+              'px-3',
+              pathname === l.href ? 'text-white dark:text-slate-950' : 'text-muted hover:text-ink',
+            )}
+          >
+            <l.icon size={15} />
+            {t(l.key)}
+          </Link>
+        </Button>
       ))}
 
       {pathname === '/' && (
-        <div className="ml-auto mr-2">
-          <input
+        <div className="relative ml-auto mr-1">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            size={15}
+          />
+          <Input
             ref={searchRef}
             type="text"
             placeholder="Search elements... (Cmd+K)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-sm outline-none transition-[border-color,box-shadow] duration-150 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
-            style={{
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-bg2)',
-              color: 'var(--color-text)',
-              width: 240,
-            }}
+            className="w-[260px] pl-9"
           />
         </div>
       )}
@@ -97,20 +116,13 @@ const Nav = () => {
       <div ref={dropdownRef} className={pathname === '/' ? 'relative' : 'ml-auto relative'}>
         <button
           onClick={() => setOpen((s) => !s)}
-          className="text-sm px-3 py-1.5 rounded border"
-          style={{ borderColor: 'var(--color-border)' }}
+          className="inline-flex h-9 items-center gap-2 rounded-md border border-line bg-surface px-3 text-sm text-muted transition-colors hover:text-ink"
         >
+          <Languages size={15} />
           {t('nav.language')}
         </button>
         {open && (
-          <div
-            className="absolute right-0 py-1 mt-1 rounded-md min-w-44"
-            style={{
-              background: 'var(--color-bg)',
-              border: '0.5px solid var(--color-border)',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.16)',
-            }}
-          >
+          <div className="absolute right-0 mt-2 min-w-48 overflow-hidden rounded-md border border-line bg-elevated py-1 shadow-[var(--shadow-panel)] backdrop-blur-xl">
             {LANGUAGES.map((item) => (
               <button
                 key={item.value}
@@ -118,11 +130,10 @@ const Nav = () => {
                   setLanguage(item.value)
                   setOpen(false)
                 }}
-                className="w-full text-left px-3 py-1.5 text-sm"
-                style={{
-                  background: language === item.value ? 'rgba(37,99,235,0.12)' : 'transparent',
-                  color: 'var(--color-text)',
-                }}
+                className={clsx(
+                  'w-full px-3 py-2 text-left text-sm transition-colors hover:bg-surface',
+                  language === item.value ? 'bg-[var(--color-ring)] text-ink' : 'text-muted',
+                )}
               >
                 {item.label}
               </button>
@@ -131,9 +142,8 @@ const Nav = () => {
               to="/settings"
               hash="suggest-language"
               search={true}
-              className="block px-3 py-1.5 text-sm"
+              className="block px-3 py-2 text-sm text-muted transition-colors hover:bg-surface hover:text-ink"
               onClick={() => setOpen(false)}
-              style={{ color: 'var(--color-muted)' }}
             >
               {t('nav.suggestLanguage')}
             </Link>
@@ -141,13 +151,14 @@ const Nav = () => {
         )}
       </div>
 
-      <button
+      <Button
         onClick={toggleDarkMode}
-        className="ml-2 text-sm px-3 py-1.5 rounded border"
-        style={{ borderColor: 'var(--color-border)' }}
+        variant="secondary"
+        size="icon"
+        aria-label={darkMode ? t('common.light') : t('common.dark')}
       >
-        {darkMode ? `☀ ${t('common.light')}` : `☾ ${t('common.dark')}`}
-      </button>
+        {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+      </Button>
     </nav>
   )
 }

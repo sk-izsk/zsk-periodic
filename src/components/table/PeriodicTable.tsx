@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { CATEGORY_COLORS, CATEGORY_LABELS, ElementCategory, elements } from '@/lib/elements'
 import { matchesElementQuery } from '@/lib/features/table/search'
 import { loadElementLocale } from '@/lib/i18n/locale-loaders'
@@ -72,114 +73,116 @@ const PeriodicTable = () => {
   }, [activeCategory, hasFilter, localizedElements, searchQuery])
 
   return (
-    <div className="p-2">
+    <div className="p-4">
       {/* Controls */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
-        <div className="flex flex-wrap justify-center gap-1">
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+        <div className="flex flex-wrap justify-center gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-sm backdrop-blur-xl">
           {CATEGORY_ENTRIES.map(([k, v]) => (
             <button
               key={k}
               onClick={() => setFilterCategory(k)}
               onMouseEnter={() => setHoveredCategory(k)}
               onMouseLeave={() => setHoveredCategory(null)}
-              className="flex items-center gap-1 px-2 py-1 text-xs transition-all border rounded"
-              style={{
-                borderColor: activeCategory === k ? '#2b6ef2' : 'var(--color-border)',
-                background: activeCategory === k ? 'rgba(255,255,255,0.92)' : 'transparent',
-                color: activeCategory === k ? '#2b2f36' : 'var(--color-muted)',
-                boxShadow: activeCategory === k ? 'inset 0 0 0 1px rgba(43,110,242,0.2)' : 'none',
-              }}
+              className="transition-transform hover:-translate-y-0.5"
             >
-              <span
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 2,
-                  background: CATEGORY_COLORS[k],
-                  display: 'inline-block',
-                }}
-              />
-              {v}
+              <Badge variant={activeCategory === k ? 'active' : 'default'}>
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 2,
+                    background: CATEGORY_COLORS[k],
+                    display: 'inline-block',
+                  }}
+                />
+                {v}
+              </Badge>
             </button>
           ))}
         </div>
       </div>
 
       {/* Main table */}
-      <div style={{ overflowX: 'auto' }}>
-        <div style={{ width: 'fit-content', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(18, 68px)',
-              gridTemplateRows: 'repeat(7, 74px)',
-              gap: 6,
-              minWidth: 1334,
-            }}
-          >
-            {Array.from({ length: 7 }, (_, r) =>
-              Array.from({ length: 18 }, (_, c) => {
-                const row = r + 1,
-                  col = c + 1
-                const el = MAIN_BY_POSITION.get(`${row},${col}`)
+      <div className="lab-scan-stage rounded-lg border border-line bg-surface/80 p-4 shadow-[var(--shadow-panel)] backdrop-blur-xl">
+        <div className="flex items-center justify-between mb-3 text-xs text-muted">
+          <span className="font-semibold uppercase tracking-[0.18em]">ZTable matrix</span>
+          <span>{elements.length} elements indexed</span>
+        </div>
+        <div className="px-3 pt-1 pb-6 overflow-x-auto overflow-y-hidden rounded-md">
+          <div style={{ width: 'fit-content', margin: '0 auto', paddingRight: 18 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(18, 68px)',
+                gridTemplateRows: 'repeat(7, 74px)',
+                gap: 6,
+                minWidth: 1334,
+              }}
+            >
+              {Array.from({ length: 7 }, (_, r) =>
+                Array.from({ length: 18 }, (_, c) => {
+                  const row = r + 1,
+                    col = c + 1
+                  const el = MAIN_BY_POSITION.get(`${row},${col}`)
 
-                if (el) {
-                  const isMatch = matchedElementNumbers.has(el.n)
-                  return (
-                    <div key={el.n} style={{ gridRow: row, gridColumn: col }}>
+                  if (el) {
+                    const isMatch = matchedElementNumbers.has(el.n)
+                    return (
+                      <div key={el.n} style={{ gridRow: row, gridColumn: col }}>
+                        <ElementCell
+                          element={el}
+                          dimmed={hasFilter && !isMatch}
+                          highlighted={hasFilter && isMatch}
+                          onClick={setSelectedElement}
+                        />
+                      </div>
+                    )
+                  }
+
+                  // Placeholder for lanthanide/actinide row indicator
+                  if ((row === 6 || row === 7) && col === 3) {
+                    return (
+                      <div
+                        key={`${row}-${col}`}
+                        style={{
+                          gridRow: row,
+                          gridColumn: col,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <span style={{ fontSize: 9, color: 'var(--color-muted)' }}>
+                          {row === 6 ? '57–71' : '89–103'}
+                        </span>
+                      </div>
+                    )
+                  }
+
+                  return <div key={`${row}-${col}`} style={{ gridRow: row, gridColumn: col }} />
+                }),
+              )}
+            </div>
+
+            {/* Lanthanides + Actinides */}
+            <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {[LANTHANIDES, ACTINIDES].map((series, i) => (
+                <div key={i} style={{ display: 'flex', gap: 6, paddingLeft: 148 }}>
+                  {series.map((el) => {
+                    const isMatch = matchedElementNumbers.has(el.n)
+                    return (
                       <ElementCell
+                        key={el.n}
                         element={el}
                         dimmed={hasFilter && !isMatch}
                         highlighted={hasFilter && isMatch}
                         onClick={setSelectedElement}
                       />
-                    </div>
-                  )
-                }
-
-                // Placeholder for lanthanide/actinide row indicator
-                if ((row === 6 || row === 7) && col === 3) {
-                  return (
-                    <div
-                      key={`${row}-${col}`}
-                      style={{
-                        gridRow: row,
-                        gridColumn: col,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <span style={{ fontSize: 9, color: 'var(--color-muted)' }}>
-                        {row === 6 ? '57–71' : '89–103'}
-                      </span>
-                    </div>
-                  )
-                }
-
-                return <div key={`${row}-${col}`} style={{ gridRow: row, gridColumn: col }} />
-              }),
-            )}
-          </div>
-
-          {/* Lanthanides + Actinides */}
-          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {[LANTHANIDES, ACTINIDES].map((series, i) => (
-              <div key={i} style={{ display: 'flex', gap: 6, paddingLeft: 148 }}>
-                {series.map((el) => {
-                  const isMatch = matchedElementNumbers.has(el.n)
-                  return (
-                    <ElementCell
-                      key={el.n}
-                      element={el}
-                      dimmed={hasFilter && !isMatch}
-                      highlighted={hasFilter && isMatch}
-                      onClick={setSelectedElement}
-                    />
-                  )
-                })}
-              </div>
-            ))}
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -187,4 +190,4 @@ const PeriodicTable = () => {
   )
 }
 
-export default PeriodicTable
+export { PeriodicTable }

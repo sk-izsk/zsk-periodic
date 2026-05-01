@@ -185,30 +185,43 @@ export const toElementProfile = (el: Element, locale?: ElementLocaleRecord): Ele
         const hasStableMasses = stableMasses.length > 0
         const masses = hasStableMasses ? stableMasses : (KEY_RADIOACTIVE_MASS_NUMBERS[el.n] ?? [])
         if (masses.length === 0) {
+          const massNumber = Math.round(el.mass)
           return [
             {
-              name: `${el.sym}-${Math.round(el.mass)}`,
-              neutron: `${Math.max(0, Math.round(el.mass) - el.n)}n`,
+              name: `${el.sym}-${massNumber}`,
+              massNumber,
+              neutronCount: Math.max(0, massNumber - el.n),
+              neutron: `${Math.max(0, massNumber - el.n)}n`,
               percent: 'Radioactive',
               note: undefined as string | undefined,
             },
           ]
         }
-        const stableEntries = masses.map((m) => ({
-          name: `${el.sym}-${m}`,
-          neutron: `${m - el.n}n`,
-          percent: hasStableMasses ? 'Stable' : 'Radioactive/Trace',
-          note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
-        }))
+        const stableEntries = masses.map((m) => {
+          const neutronCount = m - el.n
+          return {
+            name: `${el.sym}-${m}`,
+            massNumber: m,
+            neutronCount,
+            neutron: `${neutronCount}n`,
+            percent: hasStableMasses ? 'Stable' : 'Radioactive/Trace',
+            note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
+          }
+        })
         if (!hasStableMasses) {
           return stableEntries
         }
-        const notableRadioactive = (NOTABLE_RADIOACTIVE_MASS_NUMBERS[el.n] ?? []).map((m) => ({
-          name: `${el.sym}-${m}`,
-          neutron: `${m - el.n}n`,
-          percent: 'Radioactive',
-          note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
-        }))
+        const notableRadioactive = (NOTABLE_RADIOACTIVE_MASS_NUMBERS[el.n] ?? []).map((m) => {
+          const neutronCount = m - el.n
+          return {
+            name: `${el.sym}-${m}`,
+            massNumber: m,
+            neutronCount,
+            neutron: `${neutronCount}n`,
+            percent: 'Radioactive',
+            note: ISOTOPE_NOTES[`${el.sym}-${m}`] as string | undefined,
+          }
+        })
         return [...stableEntries, ...notableRadioactive]
       })(),
     },

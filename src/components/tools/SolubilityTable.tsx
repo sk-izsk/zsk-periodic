@@ -158,63 +158,60 @@ const COLORS: Record<string, string> = {
 
 const SolubilityTable = () => {
   return (
-    <div
-      className="rounded-xl p-5"
-      style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
-    >
-      <h2 style={{ fontSize: 18, fontWeight: 500, marginBottom: 4 }}>Solubility Table</h2>
-      <p style={{ fontSize: 12, color: 'var(--color-muted)', marginBottom: 12 }}>
-        S = soluble &nbsp; I = insoluble &nbsp; Sl = slightly soluble &nbsp; D = decomposes
-      </p>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ fontSize: 11, borderCollapse: 'collapse', minWidth: 600 }}>
-          <thead>
-            <tr>
-              <th
-                style={{ padding: '4px 8px', color: 'var(--color-muted)', textAlign: 'left' }}
-              ></th>
-              {ANIONS.map((a) => (
-                <th
-                  key={a}
-                  style={{ padding: '4px 6px', color: 'var(--color-muted)', fontWeight: 500 }}
-                >
-                  {a}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {CATIONS.map((cat) => (
-              <tr key={cat}>
-                <td style={{ padding: '4px 8px', fontWeight: 500 }}>{cat}</td>
-                {ANIONS.map((an) => {
-                  const val = DATA[cat]?.[an] ?? '?'
-                  return (
-                    <td key={an} style={{ padding: '4px 6px', textAlign: 'center' }}>
-                      <span
-                        style={{
-                          display: 'inline-block',
-                          width: 24,
-                          lineHeight: '24px',
-                          borderRadius: 4,
-                          fontSize: 10,
-                          fontWeight: 500,
-                          background: COLORS[val] + '33',
-                          color: COLORS[val],
-                        }}
-                      >
-                        {val}
-                      </span>
-                    </td>
-                  )
-                })}
+    <Card>
+      <CardHeader>
+        <CardTitle>Solubility Table</CardTitle>
+        <CardDescription>
+          S = soluble &nbsp; I = insoluble &nbsp; Sl = slightly soluble &nbsp; D = decomposes
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="min-w-[600px] border-collapse text-xs">
+            <thead>
+              <tr>
+                <th className="px-2 py-1 text-left text-muted"></th>
+                {ANIONS.map((a) => (
+                  <th key={a} className="px-1.5 py-1 font-medium text-muted">
+                    {a}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+            </thead>
+            <tbody>
+              {CATIONS.map((cat) => (
+                <tr key={cat} className="border-t border-line/60">
+                  <td className="px-2 py-1 font-medium">{cat}</td>
+                  {ANIONS.map((an) => {
+                    const val = DATA[cat]?.[an] ?? '?'
+                    return (
+                      <td key={an} className="px-1.5 py-1 text-center">
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: 24,
+                            lineHeight: '24px',
+                            borderRadius: 4,
+                            fontSize: 10,
+                            fontWeight: 500,
+                            background: COLORS[val] + '33',
+                            color: COLORS[val],
+                          }}
+                        >
+                          {val}
+                        </span>
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
 export { SolubilityTable }
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'

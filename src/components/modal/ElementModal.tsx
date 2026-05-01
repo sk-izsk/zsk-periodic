@@ -1,21 +1,22 @@
-import { CATEGORY_COLORS, CATEGORY_LABELS, elements } from '@/lib/elements'
+import { CATEGORY_LABELS, elements } from '@/lib/elements'
 import { toElementProfile } from '@/lib/features/table/adapters'
-import type { ElementProfile } from '@/lib/features/table/types'
+import type { ElementIsotope, ElementProfile } from '@/lib/features/table/types'
 import { loadElementLocale } from '@/lib/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/lib/i18n/types'
 import { useAppStore } from '@/lib/store'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const AtomModel = lazy(() => import('@/components/atoms/AtomModel'))
 
 // ─── Card colors matching original (L1 steel-blue, L2 blue, L3 amber, L4 red) ───
 const CARD_BG: Record<string, string> = {
-  l1: '#7a8fa8',
-  l2: '#5a7cbf',
-  l3: '#c4a34e',
-  l4: '#c45858',
+  l1: '#b5c6d8',
+  l2: '#6283c4',
+  l3: '#c8ac5c',
+  l4: '#c86a65',
 }
 
 const AtomModelFallback = () => (
@@ -125,8 +126,8 @@ const CardRow = ({
     <div
       className="flex items-center justify-between"
       style={{
-        padding: '9px 16px',
-        borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.1)',
+        padding: '11px 20px',
+        borderBottom: last ? 'none' : '1px solid rgba(88,103,122,0.14)',
       }}
     >
       <span
@@ -134,13 +135,89 @@ const CardRow = ({
           fontSize: 10,
           letterSpacing: '0.07em',
           textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.6)',
-          fontWeight: 500,
+          color: 'rgba(40, 51, 66, 0.52)',
+          fontWeight: 700,
         }}
       >
         {label}
       </span>
-      <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{value}</span>
+      <span style={{ fontSize: 20, fontWeight: 800, color: '#10151d' }}>{value}</span>
+    </div>
+  )
+}
+
+const ScrollHintArea = ({
+  children,
+  style,
+}: {
+  children: React.ReactNode
+  style?: React.CSSProperties
+}) => {
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const [showHint, setShowHint] = useState(false)
+
+  const updateHint = useCallback(() => {
+    const node = scrollRef.current
+    if (!node) {
+      return
+    }
+
+    const canScroll = node.scrollHeight > node.clientHeight + 4
+    const atBottom = node.scrollTop + node.clientHeight >= node.scrollHeight - 8
+    setShowHint(canScroll && !atBottom)
+  }, [])
+
+  useEffect(() => {
+    updateHint()
+    const node = scrollRef.current
+    if (!node) {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(updateHint)
+    resizeObserver.observe(node)
+    return () => resizeObserver.disconnect()
+  }, [updateHint])
+
+  return (
+    <div style={{ position: 'relative', minHeight: 0, ...style }}>
+      <div ref={scrollRef} className="card-scroll-region" onScroll={updateHint}>
+        {children}
+      </div>
+      {showHint && (
+        <button
+          type="button"
+          aria-label="Scroll for more"
+          className="scroll-more-button"
+          onClick={() =>
+            scrollRef.current?.scrollBy({
+              top: scrollRef.current.clientHeight * 0.72,
+              behavior: 'smooth',
+            })
+          }
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: 12,
+            width: 34,
+            height: 34,
+            borderRadius: '50%',
+            border: '1px solid rgba(255,255,255,0.55)',
+            background: 'rgba(248,250,252,0.72)',
+            color: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            cursor: 'pointer',
+            zIndex: 5,
+          }}
+        >
+          <ChevronDown size={18} strokeWidth={2.4} />
+        </button>
+      )}
     </div>
   )
 }
@@ -154,7 +231,7 @@ const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
       className="flex flex-col h-full"
       style={{
         background: CARD_BG.l1,
-        borderRadius: 16,
+        borderRadius: 22,
         overflow: 'hidden',
       }}
     >
@@ -168,10 +245,10 @@ const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
         <div
           style={{
             height: '100%',
-            background: 'rgba(28, 41, 63, 0.42)',
-            border: '1px solid rgba(255,255,255,0.14)',
-            borderRadius: 14,
-            padding: '10px 10px 12px',
+            background: 'rgba(234, 242, 250, 0.34)',
+            border: '1px solid rgba(255,255,255,0.36)',
+            borderRadius: 18,
+            padding: '13px 12px 14px',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -181,7 +258,7 @@ const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
               fontSize: 10,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
+              color: 'rgba(40, 51, 66, 0.48)',
               textAlign: 'center',
               marginBottom: 8,
               fontWeight: 600,
@@ -193,12 +270,12 @@ const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
             {ions.length === 0 ? (
               <div
                 style={{
-                  background: 'rgba(255,255,255,0.12)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 11,
+                  background: 'rgba(245,248,252,0.58)',
+                  border: '1px solid rgba(255,255,255,0.5)',
+                  borderRadius: 14,
                   padding: '10px 12px',
                   fontSize: 14,
-                  color: 'rgba(255,255,255,0.7)',
+                  color: 'rgba(20,24,32,0.62)',
                   textAlign: 'center',
                 }}
               >
@@ -209,20 +286,20 @@ const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
                 <div
                   key={i}
                   style={{
-                    background: 'rgba(255,255,255,0.14)',
-                    border: '1px solid rgba(255,255,255,0.14)',
-                    borderRadius: 11,
-                    padding: '10px 14px',
+                    background: 'rgba(248,250,252,0.62)',
+                    border: '1px solid rgba(255,255,255,0.7)',
+                    borderRadius: 14,
+                    padding: '13px 16px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                   }}
                 >
-                  <span style={{ fontWeight: 700, fontSize: 18, color: '#f5df9a' }}>
+                  <span style={{ fontWeight: 800, fontSize: 18, color: '#111827' }}>
                     {ion.notation}
                   </span>
                   {ion.label && (
-                    <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.78)' }}>
+                    <span style={{ fontSize: 15, color: 'rgba(31, 41, 55, 0.78)' }}>
                       {ion.label}
                     </span>
                   )}
@@ -236,114 +313,137 @@ const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
   )
 })
 
-const L2Card = memo(({ profile, massUnit }: { profile: ElementProfile; massUnit: string }) => {
-  const mass =
-    massUnit === 'highSchool'
-      ? profile.level2.mass.highSchool
-      : (profile.level2.mass.universityConventional ?? profile.level2.mass.highSchool)
+const L2Card = memo(
+  ({
+    profile,
+    massUnit,
+    selectedIsotope,
+    onSelectIsotope,
+  }: {
+    profile: ElementProfile
+    massUnit: string
+    selectedIsotope: ElementIsotope | null
+    onSelectIsotope: (isotope: ElementIsotope) => void
+  }) => {
+    const mass =
+      massUnit === 'highSchool'
+        ? profile.level2.mass.highSchool
+        : (profile.level2.mass.universityConventional ?? profile.level2.mass.highSchool)
 
-  return (
-    <div
-      className="flex flex-col h-full"
-      style={{ background: CARD_BG.l2, borderRadius: 16, overflow: 'hidden' }}
-    >
-      <CardRow label="Avg Atomic Mass" value={mass} />
-      <CardRow label="Configuration" value={profile.electronConfiguration} />
-      <CardRow label="Valence e⁻" value={profile.level1.valenceElectrons} />
-      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        {[
-          { label: `${profile.level2.protons}`, sub: 'P⁺ Protons' },
-          {
-            label: `${Math.round(parseFloat(profile.level2.mass.highSchool)) - profile.level2.protons}`,
-            sub: 'N° Neutrons',
-          },
-          { label: `${profile.level2.electronsNeutral}`, sub: 'E⁻ Electrons' },
-        ].map(({ label, sub }) => (
-          <div
-            key={sub}
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              padding: '10px 4px',
-              borderRight: '1px solid rgba(255,255,255,0.1)',
-            }}
-          >
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{label}</div>
+    return (
+      <div
+        className="flex h-full flex-col"
+        style={{ background: CARD_BG.l2, borderRadius: 18, overflow: 'hidden' }}
+      >
+        <CardRow label="Avg Atomic Mass" value={mass} />
+        <CardRow label="Configuration" value={profile.electronConfiguration} />
+        <CardRow label="Valence e⁻" value={profile.level1.valenceElectrons} />
+        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          {[
+            { label: `${profile.level2.protons}`, sub: 'P⁺ Protons' },
+            {
+              label: `${Math.round(parseFloat(profile.level2.mass.highSchool)) - profile.level2.protons}`,
+              sub: 'N° Neutrons',
+            },
+            { label: `${profile.level2.electronsNeutral}`, sub: 'E⁻ Electrons' },
+          ].map(({ label, sub }) => (
             <div
+              key={sub}
               style={{
-                fontSize: 9,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.55)',
-                marginTop: 2,
+                flex: 1,
+                textAlign: 'center',
+                padding: '10px 4px',
+                borderRight: '1px solid rgba(255,255,255,0.1)',
               }}
             >
-              {sub}
+              <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{label}</div>
+              <div
+                style={{
+                  fontSize: 9,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.55)',
+                  marginTop: 2,
+                }}
+              >
+                {sub}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Isotope list */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-        <div
-          style={{
-            fontSize: 10,
-            letterSpacing: '0.07em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.5)',
-            padding: '4px 14px 8px',
-            fontWeight: 500,
-          }}
-        >
-          Isotopes
+          ))}
         </div>
-        {profile.level2.isotopes.map((iso, i) => {
-          const massNum = parseInt(iso.name.split('-')[1] ?? '0', 10)
-          const symWithSup = `${toSuperscript(massNum)}${profile.symbol}`
-          const isLast = i === profile.level2.isotopes.length - 1
-          return (
+
+        {/* Isotope list */}
+        <ScrollHintArea style={{ flex: 1 }}>
+          <div style={{ padding: '8px 0 42px' }}>
             <div
-              key={iso.name}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '9px 14px',
-                borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.07)',
-                gap: 4,
+                fontSize: 10,
+                letterSpacing: '0.07em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.64)',
+                padding: '4px 14px 8px',
+                fontWeight: 500,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontWeight: 700, fontSize: 18, color: '#ffd77a', minWidth: 64 }}>
-                  {symWithSup}
-                </span>
-                <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>
-                  {iso.neutron}
-                </span>
-                <span
+              Isotopes
+            </div>
+            {profile.level2.isotopes.map((iso, i) => {
+              const symWithSup = `${toSuperscript(iso.massNumber)}${profile.symbol}`
+              const isLast = i === profile.level2.isotopes.length - 1
+              const isSelected = selectedIsotope?.name === iso.name
+              return (
+                <button
+                  key={iso.name}
+                  type="button"
+                  onClick={() => onSelectIsotope(iso)}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onTouchStart={(event) => event.stopPropagation()}
+                  className="text-left transition-all hover:bg-white/10"
                   style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    letterSpacing: '0.06em',
-                    color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
-                    textTransform: 'uppercase',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '11px 14px',
+                    borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                    borderLeft: isSelected ? '3px solid #67e8f9' : '3px solid transparent',
+                    background: isSelected ? 'rgba(103, 232, 249, 0.18)' : 'transparent',
+                    gap: 4,
+                    width: '100%',
+                    cursor: 'pointer',
                   }}
                 >
-                  {iso.percent}
-                </span>
-              </div>
-              {iso.note && (
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', paddingLeft: 74 }}>
-                  {iso.note}
-                </span>
-              )}
-            </div>
-          )
-        })}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontWeight: 800, fontSize: 20, color: '#ffe16b', minWidth: 64 }}>
+                      {symWithSup}
+                    </span>
+                    <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', flex: 1 }}>
+                      {iso.neutron}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        letterSpacing: '0.06em',
+                        color: iso.percent.startsWith('Radioactive') ? '#ff9a9a' : '#7affb8',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {iso.percent}
+                    </span>
+                  </div>
+                  {iso.note && (
+                    <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', paddingLeft: 74 }}>
+                      {iso.note}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </ScrollHintArea>
       </div>
-    </div>
-  )
-})
+    )
+  },
+)
 
 const L3Card = memo(({ profile }: { profile: ElementProfile }) => {
   const p = profile.level3.physical
@@ -500,59 +600,65 @@ const L4Card = memo(({ profile }: { profile: ElementProfile }) => {
       <CardRow label="Discovered By" value={h.discoveredBy} />
       <CardRow label="Named By" value={h.namedBy} last />
 
-      {uses.length > 0 && (
-        <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <div
-            style={{
-              fontSize: 10,
-              letterSpacing: '0.07em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
-              marginBottom: 6,
-              fontWeight: 500,
-            }}
-          >
-            Common Uses
-          </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{uses.join(' · ')}</div>
-        </div>
-      )}
+      <ScrollHintArea style={{ flex: 1 }}>
+        <div style={{ paddingBottom: 42 }}>
+          {uses.length > 0 && (
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div
+                style={{
+                  fontSize: 10,
+                  letterSpacing: '0.07em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.55)',
+                  marginBottom: 6,
+                  fontWeight: 500,
+                }}
+              >
+                Common Uses
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{uses.join(' · ')}</div>
+            </div>
+          )}
 
-      {hazards.length > 0 && (
-        <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <div
-            style={{
-              fontSize: 10,
-              letterSpacing: '0.07em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
-              marginBottom: 6,
-              fontWeight: 500,
-            }}
-          >
-            Hazards
-          </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{hazards.join(' · ')}</div>
-        </div>
-      )}
+          {hazards.length > 0 && (
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div
+                style={{
+                  fontSize: 10,
+                  letterSpacing: '0.07em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.55)',
+                  marginBottom: 6,
+                  fontWeight: 500,
+                }}
+              >
+                Hazards
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>
+                {hazards.join(' · ')}
+              </div>
+            </div>
+          )}
 
-      {stse.length > 0 && (
-        <div style={{ padding: '10px 14px', flex: 1 }}>
-          <div
-            style={{
-              fontSize: 10,
-              letterSpacing: '0.07em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
-              marginBottom: 6,
-              fontWeight: 500,
-            }}
-          >
-            STSE Context
-          </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{stse.join(' · ')}</div>
+          {stse.length > 0 && (
+            <div style={{ padding: '10px 14px' }}>
+              <div
+                style={{
+                  fontSize: 10,
+                  letterSpacing: '0.07em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.55)',
+                  marginBottom: 6,
+                  fontWeight: 500,
+                }}
+              >
+                STSE Context
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{stse.join(' · ')}</div>
+            </div>
+          )}
         </div>
-      )}
+      </ScrollHintArea>
     </div>
   )
 })
@@ -594,6 +700,20 @@ const ControlBtn = ({
 // ─── Main modal ───────────────────────────────────────────────────────────────
 
 const LEVELS = ['l1', 'l2', 'l3', 'l4'] as const
+const cardSlideVariants = {
+  enter: (direction: number) => ({
+    opacity: 1,
+    x: direction > 0 ? '108%' : '-108%',
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+  },
+  exit: (direction: number) => ({
+    opacity: 1,
+    x: direction > 0 ? '-108%' : '108%',
+  }),
+}
 
 const ElementModal = () => {
   const { element: elementParam } = useSearch({ from: '__root__' })
@@ -612,7 +732,11 @@ const ElementModal = () => {
   const [locale, setLocale] = useState<ElementLocaleRecord | undefined>()
   const [topView, setTopView] = useState(false)
   const [resetViewToken, setResetViewToken] = useState(0)
+  const [selectedIsotope, setSelectedIsotope] = useState<ElementIsotope | null>(null)
+  const [cardDirection, setCardDirection] = useState(1)
   const touchStartX = useRef<number | null>(null)
+  const pointerStartX = useRef<number | null>(null)
+  const pointerDragActive = useRef(false)
   const isClosingRef = useRef(false)
   // Ref so URL→state effect can read selectedElement without it being a dep
   const selectedElementRef = useRef(selectedElement)
@@ -672,6 +796,7 @@ const ElementModal = () => {
     }
     setActiveCard(0)
     setTopView(false)
+    setSelectedIsotope(null)
 
     let mounted = true
     loadElementLocale(language).then((records) => {
@@ -689,6 +814,8 @@ const ElementModal = () => {
     () => (selectedElement ? toElementProfile(selectedElement, locale) : null),
     [selectedElement, locale],
   )
+
+  const activeIsotope = selectedIsotope ?? profile?.level2.isotopes[0] ?? null
 
   const currentIdx = selectedElement ? elements.findIndex((e) => e.n === selectedElement.n) : -1
   const hasPrev = currentIdx > 0
@@ -725,23 +852,70 @@ const ElementModal = () => {
     return () => window.removeEventListener('keydown', onKey)
   }, [close])
 
-  // Touch swipe handlers for card slider
+  const goPrevCard = useCallback(() => {
+    setCardDirection(-1)
+    setActiveCard((c) => Math.max(c - 1, 0))
+  }, [])
+
+  const goNextCard = useCallback(() => {
+    setCardDirection(1)
+    setActiveCard((c) => Math.min(c + 1, LEVELS.length - 1))
+  }, [])
+
+  const goToCard = useCallback(
+    (index: number) => {
+      setCardDirection(index > activeCard ? 1 : -1)
+      setActiveCard(index)
+    },
+    [activeCard],
+  )
+
+  const completeCardDrag = useCallback(
+    (endX: number) => {
+      const startX = pointerStartX.current ?? touchStartX.current
+      if (startX === null) {
+        return
+      }
+
+      const dx = endX - startX
+      if (Math.abs(dx) > 48) {
+        if (dx < 0) {
+          goNextCard()
+        } else {
+          goPrevCard()
+        }
+      }
+
+      touchStartX.current = null
+      pointerStartX.current = null
+      pointerDragActive.current = false
+    },
+    [goNextCard, goPrevCard],
+  )
+
+  // Touch and pointer swipe handlers for card slider
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
   }
   const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) {
+    completeCardDrag(e.changedTouches[0].clientX)
+  }
+  const onPointerDown = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('button,a,input,select,textarea')) {
       return
     }
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    if (Math.abs(dx) > 48) {
-      if (dx < 0) {
-        setActiveCard((c) => Math.min(c + 1, LEVELS.length - 1))
-      } else {
-        setActiveCard((c) => Math.max(c - 1, 0))
-      }
+
+    e.preventDefault()
+    pointerStartX.current = e.clientX
+    pointerDragActive.current = true
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!pointerDragActive.current) {
+      return
     }
-    touchStartX.current = null
+    completeCardDrag(e.clientX)
+    e.currentTarget.releasePointerCapture(e.pointerId)
   }
 
   // Keyboard arrow navigation when modal is open
@@ -765,7 +939,7 @@ const ElementModal = () => {
     return () => window.removeEventListener('keydown', onKey)
   }, [selectedElement, navigateNext, navigatePrev])
 
-  const atomBg = darkMode ? '#000000' : '#e8ecf4'
+  const atomBg = darkMode ? '#061015' : '#eaf3f8'
 
   return (
     <AnimatePresence>
@@ -780,7 +954,9 @@ const ElementModal = () => {
               zIndex: 50,
               backdropFilter: 'blur(14px)',
               WebkitBackdropFilter: 'blur(14px)',
-              background: 'rgba(0,0,0,0.48)',
+              background: darkMode
+                ? 'rgba(2,8,12,0.68)'
+                : 'linear-gradient(135deg, rgba(244,236,229,0.72), rgba(218,233,239,0.62), rgba(247,214,208,0.5))',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -808,13 +984,18 @@ const ElementModal = () => {
                 pointerEvents: 'auto',
                 display: 'flex',
                 width: '94vw',
-                maxWidth: 1240,
+                maxWidth: 1300,
                 height: '84vh',
                 maxHeight: 760,
-                borderRadius: 22,
+                borderRadius: 26,
                 overflow: 'hidden',
-                background: 'var(--color-bg)',
-                boxShadow: '0 40px 100px rgba(0,0,0,0.4)',
+                background: darkMode ? 'var(--color-elevated)' : '#fbfaf7',
+                border: darkMode
+                  ? '1px solid var(--color-border)'
+                  : '1px solid rgba(15,23,42,0.08)',
+                boxShadow: darkMode
+                  ? 'var(--shadow-panel)'
+                  : '0 34px 90px rgba(88, 65, 52, 0.22), 0 0 0 1px rgba(255,255,255,0.55) inset',
                 position: 'relative',
               }}
               initial={{ scale: 0.88, opacity: 0, y: 24 }}
@@ -909,38 +1090,48 @@ const ElementModal = () => {
               {/* ── LEFT PANEL ── */}
               <div
                 style={{
-                  width: '38%',
+                  width: '39%',
                   display: 'flex',
                   flexDirection: 'column',
-                  borderRight: '1px solid var(--color-border)',
+                  borderRight: darkMode ? '1px solid var(--color-border)' : '1px solid #e8e4de',
                   flexShrink: 0,
                 }}
               >
                 {/* Header */}
                 <div
                   style={{
-                    background: 'var(--color-bg2)',
-                    padding: '20px 20px 16px',
-                    borderBottom: '1px solid var(--color-border)',
+                    background: darkMode ? 'var(--color-surface)' : '#f8f5ef',
+                    padding: '24px 42px 18px',
+                    borderBottom: darkMode ? '1px solid var(--color-border)' : '1px solid #e8e4de',
                     flexShrink: 0,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'auto auto 1fr',
+                      alignItems: 'center',
+                      gap: 14,
+                    }}
+                  >
                     {/* Stacked atomic notation */}
                     <div
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'flex-end',
-                        paddingTop: 4,
+                        paddingTop: 0,
                         gap: 0,
                         lineHeight: 1.15,
-                        color: 'var(--color-muted)',
-                        fontSize: 15,
-                        fontWeight: 600,
+                        color: darkMode ? 'var(--color-muted)' : '#52627b',
+                        fontSize: 28,
+                        fontWeight: 800,
                       }}
                     >
-                      <span>{Math.round(parseFloat(profile.level2.mass.highSchool))}</span>
+                      <span>
+                        {activeIsotope?.massNumber ??
+                          Math.round(parseFloat(profile.level2.mass.highSchool))}
+                      </span>
                       <span>{profile.level2.protons}</span>
                     </div>
 
@@ -948,66 +1139,77 @@ const ElementModal = () => {
                     <div>
                       <div
                         style={{
-                          fontSize: 60,
-                          fontWeight: 700,
+                          fontSize: 72,
+                          fontWeight: 800,
                           lineHeight: 0.88,
-                          letterSpacing: -2,
+                          letterSpacing: -2.5,
                           color: 'var(--color-text)',
                         }}
                       >
                         {profile.symbol}
                       </div>
-                      <div
-                        style={{
-                          fontSize: 20,
-                          fontWeight: 400,
-                          marginTop: 8,
-                          color: 'var(--color-text)',
-                        }}
-                      >
-                        {profile.name}
-                      </div>
+                    </div>
+                    <div
+                      style={{
+                        justifySelf: 'end',
+                        fontSize: 38,
+                        fontWeight: 800,
+                        color: 'var(--color-text)',
+                        letterSpacing: -1.5,
+                      }}
+                    >
+                      {profile.name}
                     </div>
                   </div>
-
-                  {/* Category badge */}
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      marginTop: 10,
-                      borderRadius: 999,
-                      padding: '3px 12px',
-                      fontSize: 11,
-                      color: '#fff',
-                      fontWeight: 500,
-                      background: CATEGORY_COLORS[profile.category],
-                    }}
-                  >
-                    {CATEGORY_LABELS[profile.category]}
-                  </span>
                 </div>
 
                 {/* Card Slider */}
                 <div
-                  style={{ flex: 1, overflow: 'hidden', padding: 14, position: 'relative' }}
+                  style={{
+                    flex: 1,
+                    overflow: 'hidden',
+                    padding: '16px 42px 20px',
+                    position: 'relative',
+                  }}
                   onTouchStart={onTouchStart}
                   onTouchEnd={onTouchEnd}
+                  onPointerDown={onPointerDown}
+                  onPointerUp={onPointerUp}
+                  onPointerCancel={() => {
+                    pointerStartX.current = null
+                    pointerDragActive.current = false
+                  }}
+                  className="cursor-grab select-none active:cursor-grabbing"
                 >
-                  <motion.div
-                    key={LEVELS[activeCard]}
-                    initial={{ opacity: 0, x: 12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -12 }}
-                    transition={{ duration: 0.2 }}
-                    style={{ height: '100%' }}
-                  >
-                    {LEVELS[activeCard] === 'l1' && <L1Card profile={profile} />}
-                    {LEVELS[activeCard] === 'l2' && (
-                      <L2Card profile={profile} massUnit={massUnit} />
-                    )}
-                    {LEVELS[activeCard] === 'l3' && <L3Card profile={profile} />}
-                    {LEVELS[activeCard] === 'l4' && <L4Card profile={profile} />}
-                  </motion.div>
+                  <div style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
+                    <AnimatePresence initial={false} custom={cardDirection} mode="popLayout">
+                      <motion.div
+                        key={LEVELS[activeCard]}
+                        custom={cardDirection}
+                        variants={cardSlideVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{
+                          x: { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+                          opacity: { duration: 0.18 },
+                        }}
+                        style={{ height: '100%', position: 'absolute', inset: 0 }}
+                      >
+                        {LEVELS[activeCard] === 'l1' && <L1Card profile={profile} />}
+                        {LEVELS[activeCard] === 'l2' && (
+                          <L2Card
+                            profile={profile}
+                            massUnit={massUnit}
+                            selectedIsotope={activeIsotope}
+                            onSelectIsotope={setSelectedIsotope}
+                          />
+                        )}
+                        {LEVELS[activeCard] === 'l3' && <L3Card profile={profile} />}
+                        {LEVELS[activeCard] === 'l4' && <L4Card profile={profile} />}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
 
                 {/* Dot navigation */}
@@ -1018,13 +1220,13 @@ const ElementModal = () => {
                     justifyContent: 'center',
                     gap: 7,
                     padding: '10px 0',
-                    borderTop: '1px solid var(--color-border)',
+                    borderTop: darkMode ? '1px solid var(--color-border)' : '1px solid #e8e4de',
                     flexShrink: 0,
                   }}
                 >
                   <button
                     aria-label="Previous card"
-                    onClick={() => setActiveCard((c) => Math.max(c - 1, 0))}
+                    onClick={goPrevCard}
                     disabled={activeCard === 0}
                     style={{
                       width: 24,
@@ -1047,7 +1249,7 @@ const ElementModal = () => {
                   {LEVELS.map((lvl, i) => (
                     <button
                       key={lvl}
-                      onClick={() => setActiveCard(i)}
+                      onClick={() => goToCard(i)}
                       style={{
                         width: 8,
                         height: 8,
@@ -1093,7 +1295,7 @@ const ElementModal = () => {
 
                   <button
                     aria-label="Next card"
-                    onClick={() => setActiveCard((c) => Math.min(c + 1, LEVELS.length - 1))}
+                    onClick={goNextCard}
                     disabled={activeCard === LEVELS.length - 1}
                     style={{
                       width: 24,
@@ -1117,7 +1319,13 @@ const ElementModal = () => {
 
               {/* ── RIGHT PANEL (3D Atom) ── */}
               <div
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  background: atomBg,
+                }}
               >
                 {/* Close button */}
                 <button
@@ -1134,8 +1342,10 @@ const ElementModal = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: '50%',
-                    background: 'rgba(128,128,128,0.18)',
-                    border: 'none',
+                    background: darkMode ? 'var(--color-surface)' : 'rgba(255,255,255,0.72)',
+                    border: darkMode
+                      ? '1px solid var(--color-border)'
+                      : '1px solid rgba(15,23,42,0.08)',
                     cursor: 'pointer',
                     fontSize: 20,
                     color: 'var(--color-text)',
@@ -1157,6 +1367,8 @@ const ElementModal = () => {
                         speed={animationSpeed}
                         topView={topView}
                         resetToken={resetViewToken}
+                        neutronOverride={activeIsotope?.neutronCount}
+                        isotopeLabel={activeIsotope?.name}
                       />
                     </Suspense>
                   </div>
@@ -1169,7 +1381,8 @@ const ElementModal = () => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 14px',
-                    borderTop: '1px solid var(--color-border)',
+                    borderTop: darkMode ? '1px solid var(--color-border)' : '1px solid #e8e4de',
+                    background: darkMode ? 'var(--color-elevated)' : '#fbfaf7',
                     flexShrink: 0,
                   }}
                 >

@@ -5,7 +5,7 @@ const HomePending = () => <RoutePending label="Loading Periodic Table..." />
 
 const Route = createFileRoute('/')({
   pendingComponent: HomePending,
-  component: lazyRouteComponent(() => import('@/components/table/PeriodicTable'), 'default'),
+  component: lazyRouteComponent(() => import('@/screens/HomeScreen'), 'default'),
 })
 
 export { Route }

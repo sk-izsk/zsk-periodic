@@ -1,4 +1,4 @@
-# Zperiod
+# ZTable
 
 Interactive periodic table and chemistry toolkit built with Vite, React, TypeScript, TanStack Router, Tailwind, Zustand, and Three.js.
 

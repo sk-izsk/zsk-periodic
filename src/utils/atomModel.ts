@@ -1,31 +1,31 @@
 import * as THREE from 'three'
 
 export const SHELL_COLORS = [
-  '#ff6b6b',
-  '#ff9f43',
-  '#ffe66d',
-  '#7bed9f',
-  '#70a1ff',
-  '#a29bfe',
-  '#f78fb3',
+  '#f5a3b7',
+  '#f0bd5d',
+  '#e8d16a',
+  '#84d9ad',
+  '#8ab8f4',
+  '#b9b1f4',
+  '#f3a3c8',
 ]
 export const SHELL_COLORS_DARK = [
-  '#ff7f7f',
-  '#ffb36b',
-  '#ffe98f',
-  '#94f5ba',
-  '#8cb6ff',
-  '#b7abff',
-  '#ff9ac0',
+  '#ff98aa',
+  '#ffc46d',
+  '#ffe78b',
+  '#9bf1c4',
+  '#9bc7ff',
+  '#c5bcff',
+  '#ffacd0',
 ]
 export const ELECTRON_COLORS = [
-  '#ff4d4d',
-  '#ff8a1f',
-  '#ffd400',
-  '#29d87d',
-  '#2f7dff',
-  '#7a5cff',
-  '#ff5ca8',
+  '#ca2f6d',
+  '#d26d1e',
+  '#c69d10',
+  '#0c9f66',
+  '#1467c9',
+  '#5b41b8',
+  '#bf287a',
 ]
 export const ELECTRON_COLORS_DARK = [
   '#ff7272',

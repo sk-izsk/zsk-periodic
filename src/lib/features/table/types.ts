@@ -7,6 +7,15 @@ export type ElementMass = {
   universityConventional: string | null
 }
 
+export type ElementIsotope = {
+  name: string
+  massNumber: number
+  neutronCount: number
+  neutron: string
+  percent: string
+  note?: string
+}
+
 export type ElementProfile = {
   id: number
   symbol: string
@@ -29,7 +38,7 @@ export type ElementProfile = {
     mass: ElementMass
     protons: number
     electronsNeutral: number
-    isotopes: Array<{ name: string; neutron: string; percent: string; note?: string }>
+    isotopes: ElementIsotope[]
   }
   level3: {
     electronic: {
