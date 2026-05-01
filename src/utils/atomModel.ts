@@ -66,6 +66,8 @@ export type Particle = {
   kind: 'proton' | 'neutron'
 }
 
+// Cache key space is bounded by shell count, palette, and fixed segment sizes.
+// Shared GPU objects avoid per-atom allocation churn while the app is open.
 const geometryCache = new Map<string, THREE.BufferGeometry>()
 const materialCache = new Map<string, THREE.Material>()
 

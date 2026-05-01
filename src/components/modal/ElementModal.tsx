@@ -18,6 +18,24 @@ const CARD_BG: Record<string, string> = {
   l4: '#c45858',
 }
 
+const AtomModelFallback = () => (
+  <div
+    style={{
+      position: 'absolute',
+      inset: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'var(--color-bg2)',
+      color: 'var(--color-muted)',
+      fontSize: 12,
+      fontFamily: 'monospace',
+    }}
+  >
+    Loading atom model...
+  </div>
+)
+
 // ─── Superscript helper ───────────────────────────────────────────────────────
 const SUP_DIGITS: Record<string, string> = {
   '0': '⁰',
@@ -1130,7 +1148,7 @@ const ElementModal = () => {
                 {/* 3D Atom canvas */}
                 <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0 }}>
-                    <Suspense fallback={null}>
+                    <Suspense fallback={<AtomModelFallback />}>
                       <AtomModel
                         element={selectedElement}
                         bg={atomBg}

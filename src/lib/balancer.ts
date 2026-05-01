@@ -6,6 +6,13 @@ type Fraction = {
 }
 
 type Matrix = Fraction[][]
+type RrefResult = {
+  matrix: Matrix
+  pivotColumns: number[]
+  freeColumns: number[]
+}
+
+const MAX_FREE_VARIABLE_WEIGHT = 12
 
 export interface BalanceResult {
   balanced?: string
@@ -54,6 +61,9 @@ const fraction = (numerator: number | bigint, denominator: number | bigint = 1n)
 
 const isZero = (value: Fraction): boolean => value.numerator === 0n
 
+const add = (a: Fraction, b: Fraction): Fraction =>
+  fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator)
+
 const subtract = (a: Fraction, b: Fraction): Fraction =>
   fraction(a.numerator * b.denominator - b.numerator * a.denominator, a.denominator * b.denominator)
 
@@ -85,12 +95,13 @@ const toFormulaCounts = (compounds: string[]) => {
   return { ok: true as const, counts }
 }
 
-const toRref = (matrix: Matrix): { matrix: Matrix; pivotColumns: number[] } => {
+const toRref = (matrix: Matrix): RrefResult => {
   const rows = matrix.map((row) => row.map((value) => fraction(value.numerator, value.denominator)))
   const pivotColumns: number[] = []
   let pivotRow = 0
+  const columnCount = rows[0]?.length ?? 0
 
-  for (let col = 0; col < (rows[0]?.length ?? 0) && pivotRow < rows.length; col++) {
+  for (let col = 0; col < columnCount && pivotRow < rows.length; col++) {
     let rowWithPivot = -1
     for (let row = pivotRow; row < rows.length; row++) {
       if (!isZero(rows[row][col])) {
@@ -125,7 +136,12 @@ const toRref = (matrix: Matrix): { matrix: Matrix; pivotColumns: number[] } => {
     pivotRow++
   }
 
-  return { matrix: rows, pivotColumns }
+  const pivotSet = new Set(pivotColumns)
+  const freeColumns = Array.from({ length: columnCount }, (_, index) => index).filter(
+    (index) => !pivotSet.has(index),
+  )
+
+  return { matrix: rows, pivotColumns, freeColumns }
 }
 
 const fractionsToIntegerCoefficients = (values: Fraction[]): number[] | undefined => {
@@ -148,15 +164,10 @@ const fractionsToIntegerCoefficients = (values: Fraction[]): number[] | undefine
   return reduced.map(Number)
 }
 
-const solveNullspace = (matrix: Matrix): number[] | undefined => {
-  const { matrix: rref, pivotColumns } = toRref(matrix)
-  const columnCount = matrix[0]?.length ?? 0
-  const pivotSet = new Set(pivotColumns)
-  const freeColumns = Array.from({ length: columnCount }, (_, index) => index).filter(
-    (index) => !pivotSet.has(index),
-  )
+const buildNullspaceBasis = ({ matrix: rref, pivotColumns, freeColumns }: RrefResult): Matrix => {
+  const columnCount = rref[0]?.length ?? 0
 
-  for (const freeColumn of freeColumns.reverse()) {
+  return freeColumns.map((freeColumn) => {
     const solution = Array.from({ length: columnCount }, zero)
     solution[freeColumn] = one()
 
@@ -171,18 +182,78 @@ const solveNullspace = (matrix: Matrix): number[] | undefined => {
       solution[pivotColumn] = value
     }
 
-    const coefficients = fractionsToIntegerCoefficients(solution)
+    return solution
+  })
+}
+
+const combineBasis = (basis: Matrix, weights: number[]): Fraction[] =>
+  basis[0].map((_, coefficientIndex) =>
+    weights.reduce(
+      (sum, weight, basisIndex) =>
+        add(sum, multiply(fraction(weight), basis[basisIndex][coefficientIndex])),
+      zero(),
+    ),
+  )
+
+const tryIntegerCoefficients = (solution: Fraction[]): number[] | undefined => {
+  const coefficients = fractionsToIntegerCoefficients(solution)
+  if (coefficients) {
+    return coefficients
+  }
+
+  const flipped = fractionsToIntegerCoefficients(solution.map(negate))
+  if (flipped) {
+    return flipped
+  }
+
+  return undefined
+}
+
+const freeVariableWeights = Array.from(
+  { length: MAX_FREE_VARIABLE_WEIGHT },
+  (_, index) => index + 1,
+).flatMap((weight) => [weight, -weight])
+
+const searchBasisCombinations = (
+  basis: Matrix,
+  index: number,
+  weights: number[],
+): number[] | undefined => {
+  if (index === basis.length) {
+    return tryIntegerCoefficients(combineBasis(basis, weights))
+  }
+
+  for (const weight of freeVariableWeights) {
+    weights[index] = weight
+    const coefficients = searchBasisCombinations(basis, index + 1, weights)
     if (coefficients) {
       return coefficients
-    }
-
-    const flipped = fractionsToIntegerCoefficients(solution.map(negate))
-    if (flipped) {
-      return flipped
     }
   }
 
   return undefined
+}
+
+const solveNullspace = (matrix: Matrix): number[] | undefined => {
+  const rref = toRref(matrix)
+  const basis = buildNullspaceBasis(rref)
+
+  if (basis.length === 0) {
+    return undefined
+  }
+
+  for (const solution of basis) {
+    const coefficients = tryIntegerCoefficients(solution)
+    if (coefficients) {
+      return coefficients
+    }
+  }
+
+  return searchBasisCombinations(
+    basis,
+    0,
+    Array.from({ length: basis.length }, () => 1),
+  )
 }
 
 const formatBalancedSide = (compounds: string[], coefficients: number[]): string =>
