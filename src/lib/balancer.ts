@@ -75,11 +75,18 @@ const divide = (a: Fraction, b: Fraction): Fraction =>
 
 const negate = (value: Fraction): Fraction => fraction(-value.numerator, value.denominator)
 
-const parseSide = (side: string): string[] =>
-  side
-    .split('+')
-    .map((compound) => compound.trim())
-    .filter(Boolean)
+const parseSide = (side: string): { ok: true; compounds: string[] } | { ok: false; error: string } => {
+  if (!side.trim()) {
+    return { ok: true, compounds: [] }
+  }
+
+  const compounds = side.split('+').map((compound) => compound.trim())
+  if (compounds.some((compound) => compound.length === 0)) {
+    return { ok: false, error: 'Remove empty compounds around plus signs.' }
+  }
+
+  return { ok: true, compounds }
+}
 
 const toFormulaCounts = (compounds: string[]) => {
   const counts = new Map<string, Record<string, number>>()
@@ -267,8 +274,17 @@ export const balanceEquation = (input: string): BalanceResult => {
     return { error: 'Use -> to separate reactants and products.' }
   }
 
-  const reactants = parseSide(sides[0])
-  const products = parseSide(sides[1])
+  const reactantSide = parseSide(sides[0])
+  const productSide = parseSide(sides[1])
+  if (!reactantSide.ok) {
+    return { error: reactantSide.error }
+  }
+  if (!productSide.ok) {
+    return { error: productSide.error }
+  }
+
+  const reactants = reactantSide.compounds
+  const products = productSide.compounds
   if (reactants.length === 0 || products.length === 0) {
     return { error: 'Both sides of the equation need at least one compound.' }
   }
