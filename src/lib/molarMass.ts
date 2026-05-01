@@ -1,3 +1,4 @@
+import { parseChemicalFormula } from '@/utils/chemistry'
 import { elementsBySymbol } from './elements'
 
 export interface MolarMassResult {
@@ -6,51 +7,59 @@ export interface MolarMassResult {
   error?: string
 }
 
-export function calcMolarMass(formula: string): MolarMassResult {
+const MAX_RESULT_CACHE_SIZE = 200
+const resultCache = new Map<string, MolarMassResult>()
+
+const rememberResult = (key: string, result: MolarMassResult): void => {
+  if (resultCache.has(key)) {
+    resultCache.delete(key)
+  } else if (resultCache.size >= MAX_RESULT_CACHE_SIZE) {
+    const oldestKey = resultCache.keys().next().value
+    if (oldestKey) {
+      resultCache.delete(oldestKey)
+    }
+  }
+
+  resultCache.set(key, result)
+}
+
+export const calcMolarMass = (formula: string): MolarMassResult => {
+  const key = formula.trim()
+  const cached = resultCache.get(key)
+  if (cached) {
+    rememberResult(key, cached)
+    return cached
+  }
+
+  const parsed = parseChemicalFormula(key)
+  if (!parsed.ok) {
+    return { total: 0, breakdown: [], error: parsed.error }
+  }
+
   const breakdown: MolarMassResult['breakdown'] = []
   let total = 0
 
-  // Handles nested parens e.g. Ca(OH)2
-  function parse(f: string, multiplier = 1): boolean {
-    const re = /([A-Z][a-z]?)(\d*)|(\()|(\))(\d*)/g
-    let m: RegExpExecArray | null
-    const stack: number[] = [multiplier]
-
-    while ((m = re.exec(f)) !== null) {
-      if (m[1]) {
-        const el = elementsBySymbol[m[1]]
-        if (!el) {
-          return false
-        }
-        const count = (m[2] ? parseInt(m[2]) : 1) * stack[stack.length - 1]
-        const contrib = el.mass * count
-        total += contrib
-        const existing = breakdown.find((b) => b.element === m![1])
-        if (existing) {
-          existing.count += count
-          existing.contribution += contrib
-        } else {
-          breakdown.push({ element: m[1], count, mass: el.mass, contribution: contrib })
-        }
-      } else if (m[3]) {
-        stack.push(stack[stack.length - 1])
-      } else if (m[4]) {
-        stack.pop()
-        const n = m[5] ? parseInt(m[5]) : 1
-        if (n > 1) {
-          // scale last group
-          const top = stack[stack.length - 1]
-          stack.push(top * n)
-          // re-traverse would be cleaner, but for MVP inline multiply:
-        }
-      }
+  for (const [symbol, count] of Object.entries(parsed.counts)) {
+    const element = elementsBySymbol[symbol]
+    if (!element) {
+      return { total: 0, breakdown: [], error: `Unknown element "${symbol}".` }
     }
-    return true
+
+    const contribution = element.mass * count
+    total += contribution
+    breakdown.push({
+      element: symbol,
+      count,
+      mass: element.mass,
+      contribution,
+    })
   }
 
-  const ok = parse(formula)
-  if (!ok || total === 0) {
-    return { total: 0, breakdown: [], error: 'Invalid formula.' }
+  const result = {
+    total: Number(total.toFixed(4)),
+    breakdown,
   }
-  return { total: parseFloat(total.toFixed(4)), breakdown }
+
+  rememberResult(key, result)
+  return result
 }

@@ -62,18 +62,18 @@ const LEVEL1_OVERRIDES: Record<number, Level1Overrides> = {
   111: { type: 'Unknown', phaseAtSTP: 'Unknown' },
 }
 
-function formatMass(mass: number) {
+const formatMass = (mass: number) => {
   return mass.toFixed(3).replace(/\.000$/, '')
 }
 
-function formatNullable(value: number | null, unit: string) {
+const formatNullable = (value: number | null, unit: string) => {
   if (value == null) {
     return 'N/A'
   }
   return `${value}${unit}`
 }
 
-function inferBlock(config: string): string {
+const inferBlock = (config: string): string => {
   // Scan all orbitals present in the config (after noble gas core) for highest angular momentum
   const norm = config.replace(
     /[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,
@@ -103,7 +103,7 @@ function inferBlock(config: string): string {
   return 's'
 }
 
-function inferIons(el: Element): string {
+const inferIons = (el: Element): string => {
   const common = COMMON_OXIDATION_BY_CATEGORY[el.cat] ?? []
   if (common.length === 0) {
     return 'No common ions'
@@ -111,7 +111,7 @@ function inferIons(el: Element): string {
   return common.map((state) => `${el.sym}${state}`).join(', ')
 }
 
-function displayGroup(el: Element): number | null {
+const displayGroup = (el: Element): number | null => {
   if (el.group != null) {
     return el.group
   }
@@ -121,7 +121,7 @@ function displayGroup(el: Element): number | null {
   return null
 }
 
-function pickCommonIons(el: Element, locale?: ElementLocaleRecord): string {
+const pickCommonIons = (el: Element, locale?: ElementLocaleRecord): string => {
   const localeIons = locale?.ions?.trim()
   const hasLocaleIons = Boolean(localeIons)
   const localeSuppressesIons = localeIons === 'No common ions'
@@ -133,14 +133,29 @@ function pickCommonIons(el: Element, locale?: ElementLocaleRecord): string {
   return localeIons as string
 }
 
-export function toElementProfile(el: Element, locale?: ElementLocaleRecord): ElementProfile {
+export const toElementLevel4 = (
+  el: Element,
+  locale?: ElementLocaleRecord,
+): ElementProfile['level4'] => ({
+  history: {
+    discoveryYear:
+      locale?.history?.discoveryYear ?? (el.discovered ? String(el.discovered) : 'Unknown'),
+    discoveredBy: locale?.history?.discoveredBy ?? el.discoveredBy ?? 'Unknown',
+    namedBy: locale?.history?.namedBy ?? 'Unknown',
+  },
+  stseContext: locale?.stse ?? ['Chemistry education context'],
+  uses: locale?.uses ?? ['Educational reference'],
+  hazards: locale?.hazards ?? ['Refer to standard material safety data'],
+})
+
+export const toElementProfile = (el: Element, locale?: ElementLocaleRecord): ElementProfile => {
   const group = displayGroup(el)
   const l3 = ELEMENT_L3_DATA[el.n]
   const level1Override = LEVEL1_OVERRIDES[el.n]
   const phaseAtSTP = level1Override?.phaseAtSTP ?? el.phase
   const type = level1Override?.type ?? TYPE_BY_CATEGORY[el.cat]
 
-  return {
+  const profile = {
     id: el.n,
     symbol: el.sym,
     name: locale?.name ?? el.name,
@@ -217,17 +232,13 @@ export function toElementProfile(el: Element, locale?: ElementLocaleRecord): Ele
         specificHeat: l3?.physical.specificHeat ?? 'N/A',
       },
     },
-    level4: {
-      history: {
-        discoveryYear: el.discovered
-          ? String(el.discovered)
-          : (locale?.history?.discoveryYear ?? 'Unknown'),
-        discoveredBy: el.discoveredBy ?? locale?.history?.discoveredBy ?? 'Unknown',
-        namedBy: locale?.history?.namedBy ?? 'Unknown',
-      },
-      stseContext: locale?.stse ?? ['Chemistry education context'],
-      uses: locale?.uses ?? ['Educational reference'],
-      hazards: locale?.hazards ?? ['Refer to standard material safety data'],
-    },
-  }
+  } as Omit<ElementProfile, 'level4'> as ElementProfile
+
+  Object.defineProperty(profile, 'level4', {
+    configurable: true,
+    enumerable: true,
+    get: () => toElementLevel4(el, locale),
+  })
+
+  return profile
 }

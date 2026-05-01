@@ -1,5 +1,5 @@
 import type { AppLanguage } from '@/lib/i18n/types'
-import { t } from '@/lib/i18n/ui'
+import { useAppTranslation } from '@/lib/i18n/localize'
 import { useAppStore } from '@/lib/store'
 import { Link, useRouterState } from '@tanstack/react-router'
 import clsx from 'clsx'
@@ -11,23 +11,22 @@ const LINKS = [
   { href: '/tools', key: 'nav.tools' },
   { href: '/worksheet', key: 'nav.worksheet' },
   { href: '/settings', key: 'nav.settings' },
-]
+] as const
 
 const LANGUAGES: { value: AppLanguage; label: string }[] = [
   { value: 'en', label: 'English' },
-  { value: 'zh', label: '简体中文' },
-  { value: 'zh-Hant', label: '繁體中文' },
   { value: 'fr', label: 'Français' },
-  { value: 'ru', label: 'Русский' },
-  { value: 'fa', label: 'فارسی' },
-  { value: 'ur', label: 'اردو' },
-  { value: 'tl', label: 'Tagalog' },
 ]
 
-export default function Nav() {
+const Nav = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const { darkMode, toggleDarkMode, language, setLanguage, searchQuery, setSearchQuery } =
-    useAppStore()
+  const { t } = useAppTranslation()
+  const darkMode = useAppStore((s) => s.darkMode)
+  const toggleDarkMode = useAppStore((s) => s.toggleDarkMode)
+  const language = useAppStore((s) => s.language)
+  const setLanguage = useAppStore((s) => s.setLanguage)
+  const searchQuery = useAppStore((s) => s.searchQuery)
+  const setSearchQuery = useAppStore((s) => s.setSearchQuery)
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<HTMLInputElement | null>(null)
@@ -72,7 +71,7 @@ export default function Nav() {
               : 'hover:bg-gray-100 dark:hover:bg-gray-800',
           )}
         >
-          {t(language, l.key, l.key)}
+          {t(l.key)}
         </Link>
       ))}
 
@@ -101,7 +100,7 @@ export default function Nav() {
           className="text-sm px-3 py-1.5 rounded border"
           style={{ borderColor: 'var(--color-border)' }}
         >
-          {t(language, 'nav.language', 'Language')}
+          {t('nav.language')}
         </button>
         {open && (
           <div
@@ -136,7 +135,7 @@ export default function Nav() {
               onClick={() => setOpen(false)}
               style={{ color: 'var(--color-muted)' }}
             >
-              {t(language, 'nav.suggestLanguage', 'Suggest a language')}
+              {t('nav.suggestLanguage')}
             </Link>
           </div>
         )}
@@ -147,10 +146,10 @@ export default function Nav() {
         className="ml-2 text-sm px-3 py-1.5 rounded border"
         style={{ borderColor: 'var(--color-border)' }}
       >
-        {darkMode
-          ? `☀ ${t(language, 'common.light', 'Light')}`
-          : `☾ ${t(language, 'common.dark', 'Dark')}`}
+        {darkMode ? `☀ ${t('common.light')}` : `☾ ${t('common.dark')}`}
       </button>
     </nav>
   )
 }
+
+export { Nav }

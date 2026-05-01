@@ -83,6 +83,17 @@ export const useAppStore = create<AppStore>()(
         massUnit: state.massUnit,
         onboardingSeen: state.onboardingSeen,
       }),
+      merge: (persisted, current) => {
+        const state = {
+          ...current,
+          ...(persisted as Partial<AppStore>),
+        }
+
+        return {
+          ...state,
+          language: isSupportedLanguage(state.language ?? '') ? state.language : DEFAULT_LANGUAGE,
+        }
+      },
     },
   ),
 )

@@ -2,7 +2,7 @@ type RoutePendingProps = {
   label?: string
 }
 
-export default function RoutePending({ label = 'Loading...' }: RoutePendingProps) {
+const RoutePending = ({ label = 'Loading...' }: RoutePendingProps) => {
   return (
     <div
       className="w-full h-full min-h-[240px] flex items-center justify-center"
@@ -20,3 +20,5 @@ export default function RoutePending({ label = 'Loading...' }: RoutePendingProps
     </div>
   )
 }
+
+export { RoutePending }

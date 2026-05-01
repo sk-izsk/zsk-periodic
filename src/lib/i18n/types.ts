@@ -1,4 +1,4 @@
-export const SUPPORTED_LANGUAGES = ['en', 'zh', 'zh-Hant', 'fr', 'ru', 'fa', 'ur', 'tl'] as const
+export const SUPPORTED_LANGUAGES = ['en', 'fr'] as const
 
 export type AppLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 

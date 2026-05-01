@@ -34,16 +34,16 @@ const REACTIONS: Record<ReactionType, { eq: string; balanced: string }[]> = {
   ],
 }
 
-function pickRandom<T>(arr: T[]): T {
+const pickRandom = <T>(arr: T[]): T => {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-export function generateWorksheet(opts: {
+export const generateWorksheet = (opts: {
   count: number
   types: ReactionType[]
   difficulty: Difficulty
   includeAnswers: boolean
-}): void {
+}): void => {
   const { count, types, difficulty, includeAnswers } = opts
 
   const pool = types.flatMap((t) => REACTIONS[t])

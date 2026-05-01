@@ -5,43 +5,71 @@ const ionLocaleCache: Partial<Record<AppLanguage, Record<string, IonLocaleRecord
 
 const elementLoaders: Record<AppLanguage, () => Promise<Record<string, ElementLocaleRecord>>> = {
   en: async () => (await import('./locales/elements/en')).default,
-  zh: async () => (await import('./locales/elements/zh')).default,
-  'zh-Hant': async () => (await import('./locales/elements/zh-Hant')).default,
   fr: async () => (await import('./locales/elements/fr')).default,
-  ru: async () => (await import('./locales/elements/ru')).default,
-  fa: async () => (await import('./locales/elements/fa')).default,
-  ur: async () => (await import('./locales/elements/ur')).default,
-  tl: async () => (await import('./locales/elements/tl')).default,
 }
 
 const ionLoaders: Record<AppLanguage, () => Promise<Record<string, IonLocaleRecord>>> = {
   en: async () => ({}),
-  zh: async () => (await import('./locales/ions/zh')).default,
-  'zh-Hant': async () => (await import('./locales/ions/zh-Hant')).default,
   fr: async () => (await import('./locales/ions/fr')).default,
-  ru: async () => (await import('./locales/ions/ru')).default,
-  fa: async () => (await import('./locales/ions/fa')).default,
-  ur: async () => (await import('./locales/ions/ur')).default,
-  tl: async () => (await import('./locales/ions/tl')).default,
 }
 
-export async function loadElementLocale(
+const mergeElementRecord = (
+  base: ElementLocaleRecord | undefined,
+  override: ElementLocaleRecord,
+): ElementLocaleRecord => ({
+  ...base,
+  ...override,
+  history:
+    base?.history || override.history
+      ? {
+          ...base?.history,
+          ...override.history,
+        }
+      : undefined,
+  stse: override.stse ?? base?.stse,
+  uses: override.uses ?? base?.uses,
+  hazards: override.hazards ?? base?.hazards,
+})
+
+const mergeElementLocales = (
+  base: Record<string, ElementLocaleRecord>,
+  override: Record<string, ElementLocaleRecord>,
+): Record<string, ElementLocaleRecord> => {
+  const merged: Record<string, ElementLocaleRecord> = { ...base }
+
+  for (const [key, record] of Object.entries(override)) {
+    merged[key] = mergeElementRecord(base[key], record)
+  }
+
+  return merged
+}
+
+export const loadElementLocale = async (
   lang: AppLanguage,
-): Promise<Record<string, ElementLocaleRecord>> {
+): Promise<Record<string, ElementLocaleRecord>> => {
   if (!elementLocaleCache[lang]) {
-    elementLocaleCache[lang] = await elementLoaders[lang]()
+    const locale = await elementLoaders[lang]()
+    if (lang === 'en') {
+      elementLocaleCache.en = locale
+    } else {
+      const englishLocale = elementLocaleCache.en ?? (await elementLoaders.en())
+      elementLocaleCache.en = englishLocale
+      elementLocaleCache[lang] = mergeElementLocales(englishLocale, locale)
+    }
   }
   return elementLocaleCache[lang] ?? {}
 }
 
-export async function loadIonLocale(lang: AppLanguage): Promise<Record<string, IonLocaleRecord>> {
+export const loadIonLocale = async (
+  lang: AppLanguage,
+): Promise<Record<string, IonLocaleRecord>> => {
   if (!ionLocaleCache[lang]) {
     ionLocaleCache[lang] = await ionLoaders[lang]()
   }
   return ionLocaleCache[lang] ?? {}
 }
 
-export function clearLocaleCaches() {
+export const clearLocaleCaches = () => {
   for (const key of Object.keys(elementLocaleCache) as AppLanguage[]) {
     delete elementLocaleCache[key]
   }

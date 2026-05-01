@@ -1,16 +1,10 @@
-import {
-  CATEGORY_COLORS,
-  CATEGORY_LABELS,
-  Element,
-  ElementCategory,
-  elements,
-} from '@/lib/elements'
+import { CATEGORY_COLORS, CATEGORY_LABELS, ElementCategory, elements } from '@/lib/elements'
 import { matchesElementQuery } from '@/lib/features/table/search'
 import { loadElementLocale } from '@/lib/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/lib/i18n/types'
 import { useAppStore } from '@/lib/store'
-import { useEffect, useState } from 'react'
-import ElementCell from './ElementCell'
+import { useEffect, useMemo, useState } from 'react'
+import { ElementCell } from './ElementCell'
 
 // Grid positions: [atomicNumber] -> { row, col } in 18-col layout
 const GRID: Record<number, { row: number; col: number }> = {}
@@ -31,16 +25,15 @@ elements.forEach((e) => {
 const MAIN = elements.filter((e) => GRID[e.n])
 const LANTHANIDES = elements.filter((e) => e.n >= 57 && e.n <= 71)
 const ACTINIDES = elements.filter((e) => e.n >= 89 && e.n <= 103)
+const MAIN_BY_POSITION = new Map(MAIN.map((el) => [`${GRID[el.n].row},${GRID[el.n].col}`, el]))
+const CATEGORY_ENTRIES = Object.entries(CATEGORY_LABELS) as [ElementCategory, string][]
 
-export default function PeriodicTable() {
-  const {
-    selectedElement,
-    setSelectedElement,
-    filterCategory,
-    setFilterCategory,
-    searchQuery,
-    language,
-  } = useAppStore()
+const PeriodicTable = () => {
+  const setSelectedElement = useAppStore((s) => s.setSelectedElement)
+  const filterCategory = useAppStore((s) => s.filterCategory)
+  const setFilterCategory = useAppStore((s) => s.setFilterCategory)
+  const searchQuery = useAppStore((s) => s.searchQuery)
+  const language = useAppStore((s) => s.language)
   const [localizedElements, setLocalizedElements] = useState<Record<string, ElementLocaleRecord>>(
     {},
   )
@@ -60,21 +53,30 @@ export default function PeriodicTable() {
     }
   }, [language])
 
-  const matches = (el: Element) => {
-    const locale = localizedElements[String(el.n)]
-    const qMatch = matchesElementQuery(el, searchQuery, locale)
-    const catMatch = !activeCategory || el.cat === activeCategory
-    return qMatch && catMatch
-  }
-
   const hasFilter = !!activeCategory || searchQuery.length > 0
+  const matchedElementNumbers = useMemo(() => {
+    if (!hasFilter) {
+      return new Set<number>()
+    }
+
+    return new Set(
+      elements
+        .filter((el) => {
+          const locale = localizedElements[String(el.n)]
+          const qMatch = matchesElementQuery(el, searchQuery, locale)
+          const catMatch = !activeCategory || el.cat === activeCategory
+          return qMatch && catMatch
+        })
+        .map((el) => el.n),
+    )
+  }, [activeCategory, hasFilter, localizedElements, searchQuery])
 
   return (
     <div className="p-2">
       {/* Controls */}
       <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
         <div className="flex flex-wrap justify-center gap-1">
-          {(Object.entries(CATEGORY_LABELS) as [ElementCategory, string][]).map(([k, v]) => (
+          {CATEGORY_ENTRIES.map(([k, v]) => (
             <button
               key={k}
               onClick={() => setFilterCategory(k)}
@@ -119,15 +121,16 @@ export default function PeriodicTable() {
               Array.from({ length: 18 }, (_, c) => {
                 const row = r + 1,
                   col = c + 1
-                const el = MAIN.find((e) => GRID[e.n].row === row && GRID[e.n].col === col)
+                const el = MAIN_BY_POSITION.get(`${row},${col}`)
 
                 if (el) {
+                  const isMatch = matchedElementNumbers.has(el.n)
                   return (
                     <div key={el.n} style={{ gridRow: row, gridColumn: col }}>
                       <ElementCell
                         element={el}
-                        dimmed={hasFilter && !matches(el)}
-                        highlighted={hasFilter && matches(el)}
+                        dimmed={hasFilter && !isMatch}
+                        highlighted={hasFilter && isMatch}
                         onClick={setSelectedElement}
                       />
                     </div>
@@ -163,15 +166,18 @@ export default function PeriodicTable() {
           <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {[LANTHANIDES, ACTINIDES].map((series, i) => (
               <div key={i} style={{ display: 'flex', gap: 6, paddingLeft: 148 }}>
-                {series.map((el) => (
-                  <ElementCell
-                    key={el.n}
-                    element={el}
-                    dimmed={hasFilter && !matches(el)}
-                    highlighted={hasFilter && matches(el)}
-                    onClick={setSelectedElement}
-                  />
-                ))}
+                {series.map((el) => {
+                  const isMatch = matchedElementNumbers.has(el.n)
+                  return (
+                    <ElementCell
+                      key={el.n}
+                      element={el}
+                      dimmed={hasFilter && !isMatch}
+                      highlighted={hasFilter && isMatch}
+                      onClick={setSelectedElement}
+                    />
+                  )
+                })}
               </div>
             ))}
           </div>
@@ -180,3 +186,5 @@ export default function PeriodicTable() {
     </div>
   )
 }
+
+export default PeriodicTable

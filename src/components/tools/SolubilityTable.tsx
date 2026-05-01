@@ -156,7 +156,7 @@ const COLORS: Record<string, string> = {
   D: '#8b5cf6',
 }
 
-export default function SolubilityTable() {
+const SolubilityTable = () => {
   return (
     <div
       className="rounded-xl p-5"
@@ -216,3 +216,5 @@ export default function SolubilityTable() {
     </div>
   )
 }
+
+export { SolubilityTable }

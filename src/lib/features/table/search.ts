@@ -1,11 +1,11 @@
 import type { Element } from '@/lib/elements'
 import type { ElementLocaleRecord } from '@/lib/i18n/types'
 
-export function matchesElementQuery(
+export const matchesElementQuery = (
   element: Element,
   query: string,
   localized?: ElementLocaleRecord,
-): boolean {
+): boolean => {
   if (!query) {
     return true
   }

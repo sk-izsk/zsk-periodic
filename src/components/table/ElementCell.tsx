@@ -1,5 +1,6 @@
 import { CATEGORY_COLORS, Element } from '@/lib/elements'
 import clsx from 'clsx'
+import { memo } from 'react'
 
 interface Props {
   element: Element
@@ -8,7 +9,7 @@ interface Props {
   onClick?: (el: Element) => void
 }
 
-export default function ElementCell({ element, dimmed, highlighted, onClick }: Props) {
+const ElementCell = ({ element, dimmed, highlighted, onClick }: Props) => {
   const bg = CATEGORY_COLORS[element.cat]
   return (
     <div
@@ -52,3 +53,14 @@ export default function ElementCell({ element, dimmed, highlighted, onClick }: P
     </div>
   )
 }
+
+const MemoizedElementCell = memo(
+  ElementCell,
+  (prev, next) =>
+    prev.element === next.element &&
+    prev.dimmed === next.dimmed &&
+    prev.highlighted === next.highlighted &&
+    prev.onClick === next.onClick,
+)
+
+export { MemoizedElementCell as ElementCell }
