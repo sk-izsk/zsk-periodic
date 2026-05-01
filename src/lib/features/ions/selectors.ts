@@ -1,10 +1,10 @@
 import type { IonRecord, IonSection } from './types'
 
-export function sectionOrder(): IonSection[] {
+export const sectionOrder = (): IonSection[] => {
   return ['basic', 'core', 'trans', 'special']
 }
 
-export function groupIonsBySection(data: IonRecord[]): Record<IonSection, IonRecord[]> {
+export const groupIonsBySection = (data: IonRecord[]): Record<IonSection, IonRecord[]> => {
   return data.reduce(
     (acc, ion) => {
       acc[ion.section].push(ion)

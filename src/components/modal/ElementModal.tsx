@@ -1,4 +1,3 @@
-import AtomModel from '@/components/atoms/AtomModel'
 import { CATEGORY_COLORS, CATEGORY_LABELS, elements } from '@/lib/elements'
 import { toElementProfile } from '@/lib/features/table/adapters'
 import type { ElementProfile } from '@/lib/features/table/types'
@@ -7,7 +6,9 @@ import type { ElementLocaleRecord } from '@/lib/i18n/types'
 import { useAppStore } from '@/lib/store'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+const AtomModel = lazy(() => import('@/components/atoms/AtomModel'))
 
 // ─── Card colors matching original (L1 steel-blue, L2 blue, L3 amber, L4 red) ───
 const CARD_BG: Record<string, string> = {
@@ -30,7 +31,7 @@ const SUP_DIGITS: Record<string, string> = {
   '8': '⁸',
   '9': '⁹',
 }
-function toSuperscript(n: number): string {
+const toSuperscript = (n: number): string => {
   return String(n)
     .split('')
     .map((c) => SUP_DIGITS[c] ?? c)
@@ -56,7 +57,7 @@ const ROMAN: Record<string, string> = {
   '+7': 'VII',
 }
 
-function formatIonSymbol(ionStr: string): string {
+const formatIonSymbol = (ionStr: string): string => {
   const m = ionStr.match(/^([A-Za-z]+)([+-])(\d+)?$/)
   if (!m) {
     return ionStr
@@ -68,10 +69,10 @@ function formatIonSymbol(ionStr: string): string {
   return `${sym}${SUPS[num] ?? num}${sign === '+' ? '⁺' : '⁻'}`
 }
 
-function parseCommonIons(
+const parseCommonIons = (
   ionStr: string,
   elementName: string,
-): { notation: string; label: string }[] {
+): { notation: string; label: string }[] => {
   if (!ionStr || ionStr === 'No common ions') {
     return []
   }
@@ -93,7 +94,15 @@ function parseCommonIons(
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function CardRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
+const CardRow = ({
+  label,
+  value,
+  last = false,
+}: {
+  label: string
+  value: string
+  last?: boolean
+}) => {
   return (
     <div
       className="flex items-center justify-between"
@@ -118,7 +127,7 @@ function CardRow({ label, value, last = false }: { label: string; value: string;
   )
 }
 
-function L1Card({ profile }: { profile: ElementProfile }) {
+const L1Card = memo(({ profile }: { profile: ElementProfile }) => {
   const ions = parseCommonIons(profile.level1.commonIons, profile.name)
   const typeLabel = profile.level1.type || CATEGORY_LABELS[profile.category] || 'Unknown'
 
@@ -207,9 +216,9 @@ function L1Card({ profile }: { profile: ElementProfile }) {
       </div>
     </div>
   )
-}
+})
 
-function L2Card({ profile, massUnit }: { profile: ElementProfile; massUnit: string }) {
+const L2Card = memo(({ profile, massUnit }: { profile: ElementProfile; massUnit: string }) => {
   const mass =
     massUnit === 'highSchool'
       ? profile.level2.mass.highSchool
@@ -316,9 +325,9 @@ function L2Card({ profile, massUnit }: { profile: ElementProfile; massUnit: stri
       </div>
     </div>
   )
-}
+})
 
-function L3Card({ profile }: { profile: ElementProfile }) {
+const L3Card = memo(({ profile }: { profile: ElementProfile }) => {
   const p = profile.level3.physical
   const e = profile.level3.electronic
   const chips = [
@@ -456,9 +465,9 @@ function L3Card({ profile }: { profile: ElementProfile }) {
       </div>
     </div>
   )
-}
+})
 
-function L4Card({ profile }: { profile: ElementProfile }) {
+const L4Card = memo(({ profile }: { profile: ElementProfile }) => {
   const h = profile.level4.history
   const uses = profile.level4.uses
   const hazards = profile.level4.hazards
@@ -528,9 +537,9 @@ function L4Card({ profile }: { profile: ElementProfile }) {
       )}
     </div>
   )
-}
+})
 
-function ControlBtn({
+const ControlBtn = ({
   children,
   title,
   onClick,
@@ -540,7 +549,7 @@ function ControlBtn({
   title?: string
   onClick?: () => void
   active?: boolean
-}) {
+}) => {
   return (
     <button
       onClick={onClick}
@@ -568,7 +577,7 @@ function ControlBtn({
 
 const LEVELS = ['l1', 'l2', 'l3', 'l4'] as const
 
-export default function ElementModal() {
+const ElementModal = () => {
   const { element: elementParam } = useSearch({ from: '__root__' })
   const router = useRouter()
 
@@ -1121,16 +1130,17 @@ export default function ElementModal() {
                 {/* 3D Atom canvas */}
                 <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0 }}>
-                    <AtomModel
-                      key={`${selectedElement.n}-${resetViewToken}`}
-                      element={selectedElement}
-                      bg={atomBg}
-                      fill
-                      paused={animationsPaused}
-                      speed={animationSpeed}
-                      topView={topView}
-                      resetToken={resetViewToken}
-                    />
+                    <Suspense fallback={null}>
+                      <AtomModel
+                        element={selectedElement}
+                        bg={atomBg}
+                        fill
+                        paused={animationsPaused}
+                        speed={animationSpeed}
+                        topView={topView}
+                        resetToken={resetViewToken}
+                      />
+                    </Suspense>
                   </div>
                 </div>
 
@@ -1218,3 +1228,5 @@ export default function ElementModal() {
     </AnimatePresence>
   )
 }
+
+export default ElementModal

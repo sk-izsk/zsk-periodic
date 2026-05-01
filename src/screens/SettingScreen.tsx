@@ -1,20 +1,9 @@
 import { changelogData } from '@/lib/changelog'
-import { t } from '@/lib/i18n/ui'
+import { useAppTranslation } from '@/lib/i18n/localize'
 import { useAppStore } from '@/lib/store'
-import { marked } from 'marked'
-
-function changelogMarkdown() {
-  return changelogData
-    .map((entry) => {
-      const header = `## ${entry.version} (${entry.date})`
-      const items = entry.changes.map((change) => `- ${change}`).join('\n')
-      return `${header}\n${items}`
-    })
-    .join('\n\n')
-}
 
 const SettingsScreen = () => {
-  const language = useAppStore((s) => s.language)
+  const { t } = useAppTranslation()
   const animationSpeed = useAppStore((s) => s.animationSpeed)
   const animationsPaused = useAppStore((s) => s.animationsPaused)
   const massUnit = useAppStore((s) => s.massUnit)
@@ -23,17 +12,11 @@ const SettingsScreen = () => {
   const setMassUnit = useAppStore((s) => s.setMassUnit)
   const resetOnboarding = useAppStore((s) => s.resetOnboarding)
 
-  const html = marked.parse(changelogMarkdown())
-
   return (
     <main className="w-full max-w-4xl p-6 mx-auto">
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>{t(language, 'settings.title', 'Settings')}</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 600 }}>{t('settings.title')}</h1>
       <p style={{ fontSize: 14, color: 'var(--color-muted)', marginTop: 4 }}>
-        {t(
-          language,
-          'settings.subtitle',
-          'Control language, animation speed, and global preferences.',
-        )}
+        {t('settings.subtitle')}
       </p>
 
       <section
@@ -41,7 +24,7 @@ const SettingsScreen = () => {
         style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
       >
         <label style={{ fontSize: 14, fontWeight: 500, display: 'block' }}>
-          {t(language, 'settings.animationSpeed', 'Animation speed')}: {animationSpeed.toFixed(2)}x
+          {t('settings.animationSpeed')}: {animationSpeed.toFixed(2)}x
         </label>
         <input
           type="range"
@@ -58,7 +41,7 @@ const SettingsScreen = () => {
             checked={animationsPaused}
             onChange={(e) => setAnimationsPaused(e.target.checked)}
           />
-          {t(language, 'settings.pauseAnimations', 'Pause animations')}
+          {t('settings.pauseAnimations')}
         </label>
       </section>
 
@@ -67,7 +50,7 @@ const SettingsScreen = () => {
         style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
       >
         <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-          {t(language, 'settings.globalUnit', 'Global unit preference')}
+          {t('settings.globalUnit')}
         </div>
         <div className="flex gap-2">
           {(['highSchool', 'universityConventional'] as const).map((option) => (
@@ -90,7 +73,7 @@ const SettingsScreen = () => {
           className="mt-3 px-3 py-1.5 rounded text-sm"
           style={{ border: '0.5px solid var(--color-border)' }}
         >
-          {t(language, 'settings.replayWelcome', 'Open welcome')}
+          {t('settings.replayWelcome')}
         </button>
       </section>
 
@@ -99,9 +82,22 @@ const SettingsScreen = () => {
         style={{ background: 'var(--color-bg2)', border: '0.5px solid var(--color-border)' }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
-          {t(language, 'settings.changelog', 'Changelog')}
+          {t('settings.changelog')}
         </h2>
-        <article dangerouslySetInnerHTML={{ __html: html }} />
+        <article>
+          {changelogData.map((entry) => (
+            <section key={entry.version}>
+              <h2>
+                {entry.version} ({entry.date})
+              </h2>
+              <ul>
+                {entry.changes.map((change) => (
+                  <li key={change}>{change}</li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </article>
       </section>
     </main>
   )

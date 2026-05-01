@@ -11,7 +11,7 @@ interface Props {
   onClose: () => void
 }
 
-function Prop({ label, value }: { label: string; value: string }) {
+const Prop = ({ label, value }: { label: string; value: string }) => {
   return (
     <div
       className="rounded-lg p-3"
@@ -31,7 +31,7 @@ const LEVEL_LABELS: Record<DetailLevel, string> = {
   l4: 'Level 4',
 }
 
-export default function ElementDetail({ element, onClose }: Props) {
+const ElementDetail = ({ element, onClose }: Props) => {
   const language = useAppStore((s) => s.language)
   const massUnit = useAppStore((s) => s.massUnit)
   const [level, setLevel] = useState<DetailLevel>('l1')
@@ -182,3 +182,5 @@ export default function ElementDetail({ element, onClose }: Props) {
     </div>
   )
 }
+
+export default ElementDetail

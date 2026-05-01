@@ -1,31 +1,11 @@
-/**
- * Chemical equation balancer using Gaussian elimination.
- * Input:  "H2 + O2 -> H2O"
- * Output: { balanced: "2H₂ + O₂ → 2H₂O", coefficients: [2,1,2] } | { error: string }
- */
+import { parseChemicalFormula } from '@/utils/chemistry'
 
-type Matrix = number[][]
-
-function parseFormula(formula: string): Record<string, number> {
-  const counts: Record<string, number> = {}
-  const re = /([A-Z][a-z]?)(\d*)/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(formula)) !== null) {
-    if (!m[1]) {
-      continue
-    }
-    counts[m[1]] = (counts[m[1]] || 0) + (m[2] ? parseInt(m[2]) : 1)
-  }
-  return counts
+type Fraction = {
+  numerator: bigint
+  denominator: bigint
 }
 
-function gcd(a: number, b: number): number {
-  return b === 0 ? Math.abs(a) : gcd(b, a % b)
-}
-
-function lcm(a: number, b: number): number {
-  return Math.abs(a * b) / gcd(a, b)
-}
+type Matrix = Fraction[][]
 
 export interface BalanceResult {
   balanced?: string
@@ -33,106 +13,224 @@ export interface BalanceResult {
   error?: string
 }
 
-export function balanceEquation(input: string): BalanceResult {
-  try {
-    const sides = input.split(/->|→|=/).map((s) => s.trim())
-    if (sides.length !== 2) {
-      return { error: 'Use -> to separate reactants and products.' }
-    }
+const zero = (): Fraction => ({ numerator: 0n, denominator: 1n })
 
-    const reactants = sides[0].split('+').map((s) => s.trim())
-    const products = sides[1].split('+').map((s) => s.trim())
-    const compounds = [...reactants, ...products]
+const one = (): Fraction => ({ numerator: 1n, denominator: 1n })
 
-    const allElements = Array.from(new Set(compounds.flatMap((c) => Object.keys(parseFormula(c)))))
+const gcdBigInt = (a: bigint, b: bigint): bigint => {
+  const x = a < 0n ? -a : a
+  const y = b < 0n ? -b : b
 
-    if (allElements.length === 0) {
-      return { error: 'No elements found.' }
-    }
+  return y === 0n ? x : gcdBigInt(y, x % y)
+}
 
-    const matrix: Matrix = allElements.map((el) => {
-      const row: number[] = []
-      reactants.forEach((c) => row.push(parseFormula(c)[el] || 0))
-      products.forEach((c) => row.push(-(parseFormula(c)[el] || 0)))
-      return row
-    })
-
-    // Append identity for augmented solve
-    const n = compounds.length
-    const aug: Matrix = matrix.map((row) => [...row, 0])
-
-    // Gaussian elimination
-    let pivot = 0
-    for (let col = 0; col < n && pivot < aug.length; col++) {
-      let maxRow = pivot
-      for (let r = pivot + 1; r < aug.length; r++) {
-        if (Math.abs(aug[r][col]) > Math.abs(aug[maxRow][col])) {
-          maxRow = r
-        }
-      }
-      ;[aug[pivot], aug[maxRow]] = [aug[maxRow], aug[pivot]]
-      if (aug[pivot][col] === 0) {
-        continue
-      }
-      const div = aug[pivot][col]
-      for (let c = col; c <= n; c++) {
-        aug[pivot][c] /= div
-      }
-      for (let r = 0; r < aug.length; r++) {
-        if (r !== pivot && aug[r][col] !== 0) {
-          const factor = aug[r][col]
-          for (let c = col; c <= n; c++) {
-            aug[r][c] -= factor * aug[pivot][c]
-          }
-        }
-      }
-      pivot++
-    }
-
-    // Free variable = 1, solve back
-    const coefs: number[] = new Array(n).fill(0)
-    coefs[n - 1] = 1
-    for (let r = pivot - 1; r >= 0; r--) {
-      let nonzero = -1
-      for (let c = 0; c < n; c++) {
-        if (Math.abs(aug[r][c]) > 1e-9) {
-          nonzero = c
-          break
-        }
-      }
-      if (nonzero === -1) {
-        continue
-      }
-      let val = 0
-      for (let c = nonzero + 1; c < n; c++) {
-        val -= aug[r][c] * coefs[c]
-      }
-      coefs[nonzero] = val / aug[r][nonzero]
-    }
-
-    // Convert to integers
-    const scale = coefs.reduce(
-      (acc, v) => (v !== 0 ? lcm(acc, Math.round((1 / Math.abs(v)) * 100)) : acc),
-      1,
-    )
-    const intCoefs = coefs.map((v) => Math.round((v * scale) / 100))
-    const gcdAll = intCoefs.reduce(gcd)
-    const final = intCoefs.map((v) => v / gcdAll)
-
-    if (final.some((v) => v <= 0)) {
-      return { error: 'Could not balance equation.' }
-    }
-
-    const fmt = (c: string[], coef: number[]) =>
-      c.map((f, i) => (coef[i] === 1 ? '' : coef[i]) + f).join(' + ')
-
-    const balanced =
-      fmt(reactants, final.slice(0, reactants.length)) +
-      ' → ' +
-      fmt(products, final.slice(reactants.length))
-
-    return { balanced, coefficients: final }
-  } catch {
-    return { error: 'Invalid equation format.' }
+const lcmBigInt = (a: bigint, b: bigint): bigint => {
+  if (a === 0n || b === 0n) {
+    return 0n
   }
+
+  return (a / gcdBigInt(a, b)) * b
+}
+
+const fraction = (numerator: number | bigint, denominator: number | bigint = 1n): Fraction => {
+  let nextNumerator = BigInt(numerator)
+  let nextDenominator = BigInt(denominator)
+
+  if (nextDenominator === 0n) {
+    throw new Error('Fraction denominator cannot be zero.')
+  }
+
+  if (nextDenominator < 0n) {
+    nextNumerator = -nextNumerator
+    nextDenominator = -nextDenominator
+  }
+
+  const divisor = gcdBigInt(nextNumerator, nextDenominator)
+  return {
+    numerator: nextNumerator / divisor,
+    denominator: nextDenominator / divisor,
+  }
+}
+
+const isZero = (value: Fraction): boolean => value.numerator === 0n
+
+const subtract = (a: Fraction, b: Fraction): Fraction =>
+  fraction(a.numerator * b.denominator - b.numerator * a.denominator, a.denominator * b.denominator)
+
+const multiply = (a: Fraction, b: Fraction): Fraction =>
+  fraction(a.numerator * b.numerator, a.denominator * b.denominator)
+
+const divide = (a: Fraction, b: Fraction): Fraction =>
+  fraction(a.numerator * b.denominator, a.denominator * b.numerator)
+
+const negate = (value: Fraction): Fraction => fraction(-value.numerator, value.denominator)
+
+const parseSide = (side: string): string[] =>
+  side
+    .split('+')
+    .map((compound) => compound.trim())
+    .filter(Boolean)
+
+const toFormulaCounts = (compounds: string[]) => {
+  const counts = new Map<string, Record<string, number>>()
+
+  for (const compound of compounds) {
+    const parsed = parseChemicalFormula(compound)
+    if (!parsed.ok) {
+      return { ok: false as const, error: parsed.error }
+    }
+    counts.set(compound, parsed.counts)
+  }
+
+  return { ok: true as const, counts }
+}
+
+const toRref = (matrix: Matrix): { matrix: Matrix; pivotColumns: number[] } => {
+  const rows = matrix.map((row) => row.map((value) => fraction(value.numerator, value.denominator)))
+  const pivotColumns: number[] = []
+  let pivotRow = 0
+
+  for (let col = 0; col < (rows[0]?.length ?? 0) && pivotRow < rows.length; col++) {
+    let rowWithPivot = -1
+    for (let row = pivotRow; row < rows.length; row++) {
+      if (!isZero(rows[row][col])) {
+        rowWithPivot = row
+        break
+      }
+    }
+
+    if (rowWithPivot === -1) {
+      continue
+    }
+
+    ;[rows[pivotRow], rows[rowWithPivot]] = [rows[rowWithPivot], rows[pivotRow]]
+
+    const pivot = rows[pivotRow][col]
+    for (let c = col; c < rows[pivotRow].length; c++) {
+      rows[pivotRow][c] = divide(rows[pivotRow][c], pivot)
+    }
+
+    for (let row = 0; row < rows.length; row++) {
+      if (row === pivotRow || isZero(rows[row][col])) {
+        continue
+      }
+
+      const factor = rows[row][col]
+      for (let c = col; c < rows[row].length; c++) {
+        rows[row][c] = subtract(rows[row][c], multiply(factor, rows[pivotRow][c]))
+      }
+    }
+
+    pivotColumns.push(col)
+    pivotRow++
+  }
+
+  return { matrix: rows, pivotColumns }
+}
+
+const fractionsToIntegerCoefficients = (values: Fraction[]): number[] | undefined => {
+  const denominatorLcm = values.reduce((acc, value) => lcmBigInt(acc, value.denominator), 1n)
+  const scaled = values.map((value) => value.numerator * (denominatorLcm / value.denominator))
+  const sign = scaled.some((value) => value < 0n) && !scaled.some((value) => value > 0n) ? -1n : 1n
+  const normalized = scaled.map((value) => value * sign)
+
+  if (normalized.some((value) => value <= 0n)) {
+    return undefined
+  }
+
+  const divisor = normalized.reduce((acc, value) => gcdBigInt(acc, value), normalized[0] ?? 1n)
+  const reduced = normalized.map((value) => value / divisor)
+
+  if (reduced.some((value) => value > BigInt(Number.MAX_SAFE_INTEGER))) {
+    return undefined
+  }
+
+  return reduced.map(Number)
+}
+
+const solveNullspace = (matrix: Matrix): number[] | undefined => {
+  const { matrix: rref, pivotColumns } = toRref(matrix)
+  const columnCount = matrix[0]?.length ?? 0
+  const pivotSet = new Set(pivotColumns)
+  const freeColumns = Array.from({ length: columnCount }, (_, index) => index).filter(
+    (index) => !pivotSet.has(index),
+  )
+
+  for (const freeColumn of freeColumns.reverse()) {
+    const solution = Array.from({ length: columnCount }, zero)
+    solution[freeColumn] = one()
+
+    for (let row = pivotColumns.length - 1; row >= 0; row--) {
+      const pivotColumn = pivotColumns[row]
+      let value = zero()
+
+      for (const col of freeColumns) {
+        value = subtract(value, multiply(rref[row][col], solution[col]))
+      }
+
+      solution[pivotColumn] = value
+    }
+
+    const coefficients = fractionsToIntegerCoefficients(solution)
+    if (coefficients) {
+      return coefficients
+    }
+
+    const flipped = fractionsToIntegerCoefficients(solution.map(negate))
+    if (flipped) {
+      return flipped
+    }
+  }
+
+  return undefined
+}
+
+const formatBalancedSide = (compounds: string[], coefficients: number[]): string =>
+  compounds
+    .map((compound, index) => `${coefficients[index] === 1 ? '' : coefficients[index]}${compound}`)
+    .join(' + ')
+
+export const balanceEquation = (input: string): BalanceResult => {
+  const sides = input.split(/->|→|=/).map((side) => side.trim())
+  if (sides.length !== 2) {
+    return { error: 'Use -> to separate reactants and products.' }
+  }
+
+  const reactants = parseSide(sides[0])
+  const products = parseSide(sides[1])
+  if (reactants.length === 0 || products.length === 0) {
+    return { error: 'Both sides of the equation need at least one compound.' }
+  }
+
+  const compounds = [...reactants, ...products]
+  const parsed = toFormulaCounts(compounds)
+  if (!parsed.ok) {
+    return { error: parsed.error }
+  }
+
+  const elements = Array.from(
+    new Set(compounds.flatMap((compound) => Object.keys(parsed.counts.get(compound) ?? {}))),
+  )
+  if (elements.length === 0) {
+    return { error: 'No elements found.' }
+  }
+
+  const matrix = elements.map((element) =>
+    compounds.map((compound, index) => {
+      const count = parsed.counts.get(compound)?.[element] ?? 0
+      return fraction(index < reactants.length ? count : -count)
+    }),
+  )
+
+  const coefficients = solveNullspace(matrix)
+  if (!coefficients) {
+    return { error: 'Could not balance equation.' }
+  }
+
+  const balanced = `${formatBalancedSide(
+    reactants,
+    coefficients.slice(0, reactants.length),
+  )} → ${formatBalancedSide(products, coefficients.slice(reactants.length))}`
+
+  return { balanced, coefficients }
 }

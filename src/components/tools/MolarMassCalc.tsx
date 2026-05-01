@@ -1,7 +1,7 @@
 import { calcMolarMass } from '@/lib/molarMass'
 import { useState } from 'react'
 
-export default function MolarMassCalc() {
+const MolarMassCalc = () => {
   const [input, setInput] = useState('')
   const [result, setResult] = useState<ReturnType<typeof calcMolarMass> | null>(null)
 
@@ -74,3 +74,5 @@ export default function MolarMassCalc() {
     </div>
   )
 }
+
+export default MolarMassCalc

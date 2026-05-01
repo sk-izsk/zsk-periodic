@@ -1,11 +1,11 @@
-import { balanceEquation } from '@/lib/balancer'
+import { useEquationBalancer } from '@/hooks/useEquationBalancer'
 import { useState } from 'react'
 
-export default function EquationBalancer() {
+const EquationBalancer = () => {
   const [input, setInput] = useState('')
-  const [result, setResult] = useState<{ balanced?: string; error?: string } | null>(null)
+  const { result, pending, run } = useEquationBalancer()
 
-  const run = () => setResult(balanceEquation(input))
+  const balance = () => run(input)
 
   return (
     <div
@@ -20,7 +20,7 @@ export default function EquationBalancer() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && run()}
+          onKeyDown={(e) => e.key === 'Enter' && balance()}
           placeholder="e.g. Fe + O2 -> Fe2O3"
           className="flex-1 px-3 py-2 rounded-lg text-sm outline-none"
           style={{
@@ -30,10 +30,11 @@ export default function EquationBalancer() {
           }}
         />
         <button
-          onClick={run}
+          onClick={balance}
+          disabled={pending}
           className="px-4 py-2 rounded-lg text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors"
         >
-          Balance
+          {pending ? 'Balancing...' : 'Balance'}
         </button>
       </div>
 
@@ -55,3 +56,5 @@ export default function EquationBalancer() {
     </div>
   )
 }
+
+export default EquationBalancer

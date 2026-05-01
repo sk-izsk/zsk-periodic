@@ -1,8 +1,10 @@
 import { ION_SECTION_LABELS, ionsData } from '@/lib/features/ions/data'
 import { groupIonsBySection, sectionOrder } from '@/lib/features/ions/selectors'
+import { useMemo } from 'react'
 
 const IonScreen = () => {
-  const grouped = groupIonsBySection(ionsData)
+  const grouped = useMemo(() => groupIonsBySection(ionsData), [])
+  const sections = useMemo(() => sectionOrder(), [])
 
   return (
     <main className="max-w-4xl p-6 mx-auto">
@@ -11,7 +13,7 @@ const IonScreen = () => {
         Section-grouped reference for common ions, aligned to the phase-2 data model.
       </p>
 
-      {sectionOrder().map((section) => (
+      {sections.map((section) => (
         <section key={section} className="mb-8">
           <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
             {ION_SECTION_LABELS[section]}

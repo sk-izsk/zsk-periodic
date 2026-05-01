@@ -21,6 +21,35 @@ export default defineConfig({
     // Keep Vite pre-bundling focused on the actual app entry.
     entries: ['index.html'],
   },
+  build: {
+    chunkSizeWarningLimit: 750,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules/three')) {
+            return 'vendor-three'
+          }
+          if (id.includes('node_modules/@react-three')) {
+            return 'vendor-react-three'
+          }
+          if (
+            id.includes('node_modules/jspdf') ||
+            id.includes('node_modules/html2canvas') ||
+            id.includes('node_modules/dompurify')
+          ) {
+            return 'vendor-pdf'
+          }
+          if (
+            id.includes('node_modules/i18next') ||
+            id.includes('node_modules/react-i18next') ||
+            id.includes('node_modules/zsk-react-i18n')
+          ) {
+            return 'vendor-i18n'
+          }
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
