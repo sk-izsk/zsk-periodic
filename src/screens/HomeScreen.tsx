@@ -1,7 +1,7 @@
-import PeriodicTable from '@/components/table/PeriodicTable'
+import { PeriodicTable } from '@/components/table/PeriodicTable'
 
 const HomeScreen = () => {
   return <PeriodicTable />
 }
 
-export { HomeScreen }
+export default HomeScreen

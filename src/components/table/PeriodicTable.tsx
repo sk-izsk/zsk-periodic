@@ -1,5 +1,5 @@
-import { CATEGORY_COLORS, CATEGORY_LABELS, ElementCategory, elements } from '@/lib/elements'
 import { Badge } from '@/components/ui/badge'
+import { CATEGORY_COLORS, CATEGORY_LABELS, ElementCategory, elements } from '@/lib/elements'
 import { matchesElementQuery } from '@/lib/features/table/search'
 import { loadElementLocale } from '@/lib/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/lib/i18n/types'
@@ -75,7 +75,7 @@ const PeriodicTable = () => {
   return (
     <div className="p-4">
       {/* Controls */}
-      <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
         <div className="flex flex-wrap justify-center gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-sm backdrop-blur-xl">
           {CATEGORY_ENTRIES.map(([k, v]) => (
             <button
@@ -104,11 +104,11 @@ const PeriodicTable = () => {
 
       {/* Main table */}
       <div className="lab-scan-stage rounded-lg border border-line bg-surface/80 p-4 shadow-[var(--shadow-panel)] backdrop-blur-xl">
-        <div className="mb-3 flex items-center justify-between text-xs text-muted">
+        <div className="flex items-center justify-between mb-3 text-xs text-muted">
           <span className="font-semibold uppercase tracking-[0.18em]">ZTable matrix</span>
           <span>{elements.length} elements indexed</span>
         </div>
-        <div className="overflow-x-auto overflow-y-hidden rounded-md px-3 pb-6 pt-1">
+        <div className="px-3 pt-1 pb-6 overflow-x-auto overflow-y-hidden rounded-md">
           <div style={{ width: 'fit-content', margin: '0 auto', paddingRight: 18 }}>
             <div
               style={{
@@ -190,4 +190,4 @@ const PeriodicTable = () => {
   )
 }
 
-export default PeriodicTable
+export { PeriodicTable }
