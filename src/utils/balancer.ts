@@ -23,17 +23,6 @@ interface SearchBasisCombinationsOptions {
   weights: number[]
 }
 
-interface CombineBasisOptions {
-  basis: Matrix
-  weights: number[]
-}
-
-interface SearchBasisCombinationsOptions {
-  basis: Matrix
-  index: number
-  weights: number[]
-}
-
 const MAX_FREE_VARIABLE_WEIGHT = 12
 
 export interface BalanceResult {
