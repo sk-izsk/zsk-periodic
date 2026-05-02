@@ -19,12 +19,13 @@ It includes a searchable 118-element periodic table, detailed element views, a 3
 
 ## Tech stack
 
-- Runtime and tooling: Bun, Vite, TypeScript
-- UI: React 19, Tailwind CSS, vanilla-extract
+- Runtime and tooling: Bun, Vite, TypeScript, React Compiler
+- UI: React 19, Tailwind CSS, vanilla-extract, Framer Motion
 - Routing: TanStack Router (lazy route loading and code splitting)
 - State: Zustand + selector hooks + persisted preferences
 - 3D and graphics: Three.js, React Three Fiber, Drei
 - Internationalization: zsk-react-i18n
+- PDF generation: jspdf (worksheet export)
 - Quality: Vitest, Testing Library, oxlint, oxfmt
 
 ## Technical deep dive&#x20;
@@ -55,11 +56,13 @@ src/
   components/            # reusable and feature-scoped UI pieces
   data/                  # element, ion, isotope, and chemistry datasets
   hooks/                 # behavior hooks, including graphics and worker orchestration
+  hooks/atomModel/       # per-frame animation hooks for atom scene geometry
   hooks/store/           # narrow Zustand selector hooks for render efficiency
   i18n/                  # localization config, loaders, and locale resources
   routes/                # TanStack Router route entries
   screens/               # route-level screens
   stores/                # global store creation and persistence wiring
+  test/                  # Vitest + Testing Library unit and component tests
   types/                 # shared TS contracts
   utils/                 # pure logic: chemistry math, parsing, adapters, helpers
   workers/               # Web Worker entry points for heavy compute

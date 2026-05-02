@@ -2,11 +2,24 @@ import type { Element } from '@/data/elements/elements'
 import type { ElementIsotope } from '@/types/elementProfile'
 import clsx from 'clsx'
 import { lazy, Suspense } from 'react'
+import { ErrorBoundary, type FallbackProps } from 'zsk-react-error'
 import * as styles from './elementModal.css'
 
 const AtomModel = lazy(() => import('@/components/atoms/atomModel'))
 
 const AtomModelFallback = () => <div className={styles.atomFallback}>Loading atom model...</div>
+
+const AtomErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
+  <div className={clsx(styles.atomFallback, 'flex flex-col items-center gap-3')}>
+    <p className="text-xs opacity-60">{String(error)}</p>
+    <button
+      onClick={resetErrorBoundary}
+      className="rounded px-3 py-1 text-xs opacity-70 ring-1 ring-current hover:opacity-100"
+    >
+      Retry
+    </button>
+  </div>
+)
 
 interface AtomPanelProps {
   element: Element
@@ -46,19 +59,21 @@ const AtomPanel = ({
 
       <div className={styles.atomCanvasWrap}>
         <div className={styles.atomCanvasInner}>
-          <Suspense fallback={<AtomModelFallback />}>
-            <AtomModel
-              element={element}
-              bg={atomBg}
-              fill
-              paused={paused}
-              speed={speed}
-              topView={topView}
-              resetToken={resetToken}
-              neutronOverride={activeIsotope?.neutronCount}
-              isotopeLabel={activeIsotope?.name}
-            />
-          </Suspense>
+          <ErrorBoundary FallbackComponent={AtomErrorFallback}>
+            <Suspense fallback={<AtomModelFallback />}>
+              <AtomModel
+                element={element}
+                bg={atomBg}
+                fill
+                paused={paused}
+                speed={speed}
+                topView={topView}
+                resetToken={resetToken}
+                neutronOverride={activeIsotope?.neutronCount}
+                isotopeLabel={activeIsotope?.name}
+              />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </div>
 
