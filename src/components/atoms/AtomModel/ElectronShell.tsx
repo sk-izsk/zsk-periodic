@@ -9,9 +9,9 @@ import {
   SHELL_COLORS_DARK,
   TRAIL_COUNT,
 } from '@/utils/atomModel'
-import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { useElectronShellFrame } from '@/hooks/atomModel/useElectronShellFrame'
 
 interface ElectronShellProps {
   shellIndex: number
@@ -37,19 +37,13 @@ const ElectronShell = ({
   const wobbleRef = useRef<THREE.Group>(null)
   const electronRefs = useRef<(THREE.Mesh | null)[]>([])
   const trailRefs = useRef<(THREE.Mesh | null)[][]>([])
-  const angles = useRef<number[]>(
-    Array.from(
-      { length: electrons },
-      (_, electronIndex) => (electronIndex / electrons) * Math.PI * 2,
-    ),
-  )
   const [hovered, setHovered] = useState(false)
 
   const minRadius = shellCount === 1 ? 8.4 : 3.25
   const maxRadius = shellCount === 1 ? 8.4 : 11.8
   const step = shellCount > 1 ? (maxRadius - minRadius) / (shellCount - 1) : 0
   const radius = minRadius + shellIndex * step
-  const shellSpeed = 0.018 / (shellIndex + 1)
+  const shellSpeed = 0.022 / (1 + shellIndex * 0.45)
   const shellPalette = darkMode ? SHELL_COLORS_DARK : SHELL_COLORS
   const electronPalette = darkMode ? ELECTRON_COLORS_DARK : ELECTRON_COLORS
   const color = shellPalette[shellIndex % shellPalette.length]
@@ -103,50 +97,17 @@ const ElectronShell = ({
   const orbitOpacity = darkMode ? 0.72 : 0.78
   const glowOpacity = hovered ? (darkMode ? 0.34 : 0.52) : darkMode ? 0.18 : 0.34
   const hoverOrbitOpacity = darkMode ? 0.98 : 0.92
-
-  useFrame((state, delta) => {
-    if (wobbleRef.current) {
-      if (topView) {
-        wobbleRef.current.rotation.set(0, 0, 0)
-      } else if (!paused) {
-        wobbleRef.current.rotation.y += 0.001 * speedMul
-        wobbleRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.4 * speedMul) * 0.06
-      }
-    }
-
-    if (paused) {
-      return
-    }
-
-    for (let electronIndex = 0; electronIndex < electrons; electronIndex++) {
-      angles.current[electronIndex] += shellSpeed * speedMul * 60 * delta
-
-      const electron = electronRefs.current[electronIndex]
-      if (!electron) {
-        continue
-      }
-
-      const x = radius * Math.cos(angles.current[electronIndex])
-      const yz = radius * Math.sin(angles.current[electronIndex])
-
-      electron.position.set(x, topView ? yz : 0, topView ? 0 : yz)
-
-      const trails = trailRefs.current[electronIndex]
-      if (!trails) {
-        continue
-      }
-
-      for (let trailIndex = trails.length - 1; trailIndex > 0; trailIndex--) {
-        const current = trails[trailIndex]
-        const previous = trails[trailIndex - 1]
-        if (current && previous) {
-          current.position.copy(previous.position)
-        }
-      }
-
-      trails[0]?.position.copy(electron.position)
-    }
-  })
+  const angles = useElectronShellFrame(
+    wobbleRef,
+    electronRefs,
+    trailRefs,
+    electrons,
+    radius,
+    shellSpeed,
+    speedMul,
+    paused,
+    topView,
+  )
 
   return (
     <group

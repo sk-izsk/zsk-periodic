@@ -15,6 +15,28 @@ export type FormulaCounts = Record<string, number>
 
 export type FormulaParseResult = { ok: true; counts: FormulaCounts } | { ok: false; error: string }
 
+type ParseGroupResult =
+  | { ok: true; counts: FormulaCounts; nextIndex: number }
+  | { ok: false; error: string }
+
+interface AddCountOptions {
+  counts: FormulaCounts
+  symbol: string
+  count: number
+}
+
+interface MergeCountsOptions {
+  target: FormulaCounts
+  source: FormulaCounts
+  multiplier: number
+}
+
+interface ParseGroupOptions {
+  formula: string
+  startIndex: number
+  terminator?: ')' | ']'
+}
+
 const normalizeFormula = (formula: string): string =>
   formula
     .trim()
@@ -34,21 +56,17 @@ const readNumber = (formula: string, index: number): { value: number; nextIndex:
   return { value: Number(formula.slice(index, end)), nextIndex: end }
 }
 
-const addCount = (counts: FormulaCounts, symbol: string, count: number): void => {
+const addCount = ({ counts, symbol, count }: AddCountOptions): void => {
   counts[symbol] = (counts[symbol] ?? 0) + count
 }
 
-const mergeCounts = (target: FormulaCounts, source: FormulaCounts, multiplier: number): void => {
+const mergeCounts = ({ target, source, multiplier }: MergeCountsOptions): void => {
   for (const [symbol, count] of Object.entries(source)) {
-    addCount(target, symbol, count * multiplier)
+    addCount({ counts: target, symbol, count: count * multiplier })
   }
 }
 
-const parseGroup = (
-  formula: string,
-  startIndex: number,
-  terminator?: ')' | ']',
-): { ok: true; counts: FormulaCounts; nextIndex: number } | { ok: false; error: string } => {
+const parseGroup = ({ formula, startIndex, terminator }: ParseGroupOptions): ParseGroupResult => {
   const counts: FormulaCounts = {}
   let index = startIndex
 
@@ -65,13 +83,13 @@ const parseGroup = (
 
     if (char === '(' || char === '[') {
       const close = char === '(' ? ')' : ']'
-      const group = parseGroup(formula, index + 1, close)
+      const group = parseGroup({ formula, startIndex: index + 1, terminator: close })
       if (!group.ok) {
         return group
       }
 
-      const multiplier = readNumber(formula, group.nextIndex)
-      mergeCounts(counts, group.counts, multiplier.value)
+      const multiplier = readNumber(formula, group.nextIndex!)
+      mergeCounts({ target: counts, source: group.counts!, multiplier: multiplier.value })
       index = multiplier.nextIndex
       continue
     }
@@ -88,7 +106,7 @@ const parseGroup = (
     }
 
     const amount = readNumber(formula, index)
-    addCount(counts, symbol, amount.value)
+    addCount({ counts, symbol, count: amount.value })
     index = amount.nextIndex
   }
 
@@ -106,12 +124,12 @@ export const parseChemicalFormula = (formula: string): FormulaParseResult => {
     return { ok: false, error: 'Formula is empty.' }
   }
 
-  const parsed = parseGroup(normalized, 0)
+  const parsed = parseGroup({ formula: normalized, startIndex: 0 })
   if (!parsed.ok) {
     return parsed
   }
 
-  return { ok: true, counts: parsed.counts }
+  return { ok: true, counts: parsed.counts! }
 }
 
 export const gcd = (a: number, b: number): number => {

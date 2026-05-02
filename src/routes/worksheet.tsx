@@ -1,4 +1,4 @@
-import { RoutePending } from '@/components/RoutePending'
+import { RoutePending } from '@/components/routePending/RoutePending'
 import { createFileRoute, lazyRouteComponent } from '@tanstack/react-router'
 
 const WorksheetPending = () => <RoutePending label="Loading Worksheet..." />

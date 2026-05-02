@@ -1,11 +1,11 @@
 import { useAtomShells } from '@/hooks/useAtomShells'
-import type { Element } from '@/lib/elements'
+import type { Element } from '@/data/elements/elements'
 import { getNeutronCount } from '@/utils/atomModel'
-import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { ElectronShell } from './ElectronShell'
 import { Nucleus } from './Nucleus'
+import { useAtomSceneFrame } from '@/hooks/atomModel/useAtomSceneFrame'
 
 interface AtomSceneProps {
   element: Element
@@ -27,44 +27,13 @@ const AtomScene = ({
   onShellHover,
 }: AtomSceneProps) => {
   const atomRef = useRef<THREE.Group>(null)
-  const popStartRef = useRef<number | null>(null)
   const shells = useAtomShells(element)
   const neutrons = useMemo(
     () => neutronOverride ?? getNeutronCount(element.mass, element.n),
     [element.mass, element.n, neutronOverride],
   )
 
-  useEffect(() => {
-    popStartRef.current = null
-    atomRef.current?.scale.set(0.1, 0.1, 0.1)
-  }, [element.n, neutrons])
-
-  useFrame((state) => {
-    if (!atomRef.current) {
-      return
-    }
-
-    if (popStartRef.current == null) {
-      popStartRef.current = state.clock.elapsedTime
-    }
-
-    if (topView) {
-      atomRef.current.rotation.set(0, 0, 0)
-    }
-
-    const elapsed = state.clock.elapsedTime - popStartRef.current
-    if (elapsed < 0.6) {
-      const ease = 1 - Math.pow(1 - elapsed / 0.6, 3)
-      const scale = 0.1 + 0.9 * ease
-      atomRef.current.scale.set(scale, scale, scale)
-      return
-    }
-
-    atomRef.current.scale.set(1, 1, 1)
-    if (!paused && !topView) {
-      atomRef.current.rotation.y += 0.002 * speed
-    }
-  })
+  useAtomSceneFrame(atomRef, element.n, neutrons, paused, speed, topView)
 
   return (
     <group ref={atomRef} dispose={null} scale={[0.1, 0.1, 0.1]}>

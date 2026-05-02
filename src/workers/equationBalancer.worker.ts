@@ -1,4 +1,4 @@
-import { balanceEquation, type BalanceResult } from '@/lib/balancer'
+import { balanceEquation, type BalanceResult } from '@/utils/balancer'
 
 type BalanceRequest = {
   id: number

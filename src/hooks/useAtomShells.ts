@@ -1,4 +1,4 @@
-import type { Element } from '@/lib/elements'
+import type { Element } from '@/data/elements/elements'
 import { configToShells } from '@/utils/atomModel'
 import { useMemo } from 'react'
 
