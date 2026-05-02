@@ -5,7 +5,7 @@ import { lazy, Suspense } from 'react'
 import { ErrorBoundary, type FallbackProps } from 'zsk-react-error'
 import * as styles from './elementModal.css'
 
-const AtomModel = lazy(() => import('@/components/atoms/atomModel/AtomModel'))
+const AtomModel = lazy(() => import('@/components/atoms/atomModel'))
 
 const AtomModelFallback = () => <div className={styles.atomFallback}>Loading atom model...</div>
 
