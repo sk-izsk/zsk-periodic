@@ -1,6 +1,6 @@
-import { ElementModal } from '@/components/modal/ElementModal'
+import { ElementModal } from '@/components/modal/elementModal/ElementModal'
 import { DesktopOnlyGate } from '@/components/DesktopOnlyGate'
-import { Nav } from '@/components/Nav'
+import { Nav } from '@/components/nav/Nav'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 
 const RootLayout = () => {
@@ -19,8 +19,11 @@ const RootLayout = () => {
 
 const Route = createRootRoute({
   validateSearch: (search: Record<string, unknown>): { element?: string } => {
-    const val = typeof search.element === 'string' ? search.element : undefined
-    return val !== undefined ? { element: val } : {}
+    const raw = Array.isArray(search.element) ? search.element[0] : search.element
+    const element =
+      typeof raw === 'string' || typeof raw === 'number' ? String(raw).trim() : undefined
+
+    return element ? { element } : {}
   },
   component: RootLayout,
 })

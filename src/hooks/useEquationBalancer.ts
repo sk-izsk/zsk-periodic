@@ -1,4 +1,4 @@
-import { balanceEquation, type BalanceResult } from '@/lib/balancer'
+import { balanceEquation, type BalanceResult } from '@/utils/balancer'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 type WorkerResponse = {

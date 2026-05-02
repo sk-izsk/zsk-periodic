@@ -1,7 +1,7 @@
-import { ION_SECTION_LABELS, ionsData } from '@/lib/features/ions/data'
+import { ION_SECTION_LABELS, ionsData } from '@/data/ions/data'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import { groupIonsBySection, sectionOrder } from '@/lib/features/ions/selectors'
+import { groupIonsBySection, sectionOrder } from '@/data/ions/selectors'
 import { useMemo } from 'react'
 
 const IonScreen = () => {

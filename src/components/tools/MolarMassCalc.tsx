@@ -1,4 +1,4 @@
-import { calcMolarMass } from '@/lib/molarMass'
+import { calcMolarMass } from '@/utils/molarMass'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'

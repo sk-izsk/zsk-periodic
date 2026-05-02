@@ -1,14 +1,16 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { AppProviders } from '@/components/providers/AppProviders'
-import { useAppStore } from '@/lib/store'
+import { AppProviders } from '@/AppProviders'
+import { useLanguageStore } from '@/stores/languageStore'
+import { useThemeStore } from '@/stores/themeStore'
 
 describe('AppProviders', () => {
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.className = ''
     document.documentElement.lang = ''
-    useAppStore.setState({ darkMode: false, language: 'en' })
+    useThemeStore.setState({ darkMode: false })
+    useLanguageStore.setState({ language: 'en' })
   })
 
   afterEach(() => {
@@ -39,8 +41,8 @@ describe('AppProviders', () => {
     })
 
     act(() => {
-      useAppStore.getState().toggleDarkMode()
-      useAppStore.getState().setLanguage('fr')
+      useThemeStore.getState().toggleDarkMode()
+      useLanguageStore.getState().setLanguage('fr')
     })
 
     await waitFor(() => {

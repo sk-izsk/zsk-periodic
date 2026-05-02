@@ -1,15 +1,16 @@
 <claude-mem-context>
 # Memory Context
 
-# [zperiod] recent context, 2026-04-30 10:42pm EDT
+# \[zperiod] recent context, 2026-04-30 10:42pm EDT
 
-Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
+Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security\_alert 🔐security\_note
 Format: ID TIME TYPE TITLE
-Fetch details: get_observations([IDs]) | Search: mem-search skill
+Fetch details: get\_observations(\[IDs]) | Search: mem-search skill
 
 Stats: 44 obs (14,490t read) | 632,845t work | 98% savings
 
 ### Apr 28, 2026
+
 1 3:40p 🔵 zperiod Project Structure — Next.js Chemistry App
 2 3:41p 🔵 PeriodicTable Uses Fixed Pixel Grid — Root Cause of Non-Full-Screen Layout
 3 " ✅ PeriodicTable Refactored to Full-Screen Fluid Layout
@@ -18,7 +19,9 @@ Stats: 44 obs (14,490t read) | 632,845t work | 98% savings
 6 4:25p 🔄 PeriodicTable Layout Switched from Fluid to Fixed-Size Scrollable Grid
 S3 Revert PeriodicTable layout changes in zperiod project (Apr 28 at 4:25 PM)
 S2 PeriodicTable Layout Switched from Fluid to Fixed-Size Scrollable Grid (Apr 28 at 4:25 PM)
+
 ### Apr 30, 2026
+
 7 8:40p 🔵 zperiod Project Structure Mapped
 8 8:41p 🔵 AtomModel.tsx Architecture Fully Mapped
 9 " 🔵 zperiod Zustand Store: Persisted Global State Shape
@@ -59,5 +62,4 @@ S4 Refactor zperiod periodic table app: fix chemistry logic, split AtomModel, op
 43 8:59p 🔴 buildParticleKinds fixed: Array.sort with unstable seed replaced with proper Fisher-Yates shuffle
 44 " 🟣 useAtomShells hook created to memoize electron shell configuration parsing per element
 
-Access 633k tokens of past work via get_observations([IDs]) or mem-search skill.
-</claude-mem-context>
+Access 633k tokens of past work via get\_observations(\[IDs]) or mem-search skill. </claude-mem-context>

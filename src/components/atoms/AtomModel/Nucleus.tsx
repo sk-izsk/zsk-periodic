@@ -1,7 +1,7 @@
 import { buildNucleusParticles, getSphereGeometry, getStandardMaterial } from '@/utils/atomModel'
-import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { useNucleusFrame } from '@/hooks/atomModel/useNucleusFrame'
 
 interface NucleusProps {
   protons: number
@@ -37,14 +37,7 @@ const Nucleus = ({ protons, neutrons, speedMul, paused }: NucleusProps) => {
   )
   const particleGeometry = useMemo(() => getSphereGeometry(0.35, 14, 14), [])
 
-  useFrame((state, delta) => {
-    if (!groupRef.current || paused) {
-      return
-    }
-
-    groupRef.current.rotation.y -= delta * 0.5 * speedMul
-    groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1
-  })
+  useNucleusFrame(groupRef, paused, speedMul)
 
   return (
     <group ref={groupRef} dispose={null}>

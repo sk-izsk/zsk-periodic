@@ -1,4 +1,4 @@
-import type { Difficulty, ReactionType } from '@/lib/worksheet'
+import type { Difficulty, ReactionType } from '@/utils/worksheet'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useState } from 'react'
@@ -26,7 +26,7 @@ const WorksheetScreen = () => {
       return
     }
     setGenerating(true)
-    const { generateWorksheet } = await import('@/lib/worksheet')
+    const { generateWorksheet } = await import('@/utils/worksheet')
     generateWorksheet({ count, types, difficulty, includeAnswers: answers })
     setGenerating(false)
   }
