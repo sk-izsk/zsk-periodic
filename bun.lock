@@ -19,6 +19,7 @@
         "react-dom": "^19.2.0",
         "tailwind-merge": "^3.5.0",
         "three": "^0.165.0",
+        "zsk-react-error": "^0.0.4",
         "zsk-react-i18n": "^0.0.5",
         "zustand": "^4.5.2",
       },
@@ -1005,6 +1006,8 @@
 
     "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
 
+    "zsk-react-error": ["zsk-react-error@0.0.4", "", { "dependencies": { "zustand": "^5.0.12" }, "peerDependencies": { "react": ">=18" } }, "sha512-TkdC54kGWl54cdNwTtZpL88PSDWyK3RPkG4C0w83h/XZUkLheZukfgHyL3P0L9ZTAHeXDqLk/OK9EVTOr75ujA=="],
+
     "zsk-react-i18n": ["zsk-react-i18n@0.0.5", "", { "dependencies": { "i18next": "^25.0.0", "react-i18next": "^16.0.0" }, "peerDependencies": { "react": "^19.0.0" } }, "sha512-pxKyhh7KDb+E9GPzm7Lazx/gdx790wQlwm4kqw/pek8ExeHH3snZVVCxVKr8X3fTqF6ATfSNtWjr84Q5qiXZ+Q=="],
 
     "zustand": ["zustand@4.5.7", "", { "dependencies": { "use-sync-external-store": "^1.2.2" }, "peerDependencies": { "@types/react": ">=16.8", "immer": ">=9.0.6", "react": ">=16.8" }, "optionalPeers": ["@types/react", "immer", "react"] }, "sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw=="],
@@ -1040,5 +1043,7 @@
     "three-stdlib/fflate": ["fflate@0.6.10", "", {}, "sha512-IQrh3lEPM93wVCEczc9SaAOvkmcoQn/G8Bo1e8ZPlY3X3bnAxWaBdvTdvM1hP62iZp0BXWDy4vTAy4fF0+Dlpg=="],
 
     "vite-node/vite": ["vite@8.0.10", "", { "dependencies": { "lightningcss": "^1.32.0", "picomatch": "^4.0.4", "postcss": "^8.5.10", "rolldown": "1.0.0-rc.17", "tinyglobby": "^0.2.16" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "@vitejs/devtools": "^0.1.0", "esbuild": "^0.27.0 || ^0.28.0", "jiti": ">=1.21.0", "less": "^4.0.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "@vitejs/devtools", "esbuild", "jiti", "less", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-rZuUu9j6J5uotLDs+cAA4O5H4K1SfPliUlQwqa6YEwSrWDZzP4rhm00oJR5snMewjxF5V/K3D4kctsUTsIU9Mw=="],
+
+    "zsk-react-error/zustand": ["zustand@5.0.12", "", { "peerDependencies": { "@types/react": ">=18.0.0", "immer": ">=9.0.6", "react": ">=18.0.0", "use-sync-external-store": ">=1.2.0" }, "optionalPeers": ["@types/react", "immer", "react", "use-sync-external-store"] }, "sha512-i77ae3aZq4dhMlRhJVCYgMLKuSiZAaUPAct2AksxQ+gOtimhGMdXljRT21P5BNpeT4kXlLIckvkPM029OljD7g=="],
   }
 }

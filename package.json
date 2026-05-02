@@ -29,6 +29,7 @@
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3.5.0",
     "three": "^0.165.0",
+    "zsk-react-error": "^0.0.4",
     "zsk-react-i18n": "^0.0.5",
     "zustand": "^4.5.2"
   },
