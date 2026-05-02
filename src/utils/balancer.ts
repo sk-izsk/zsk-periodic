@@ -12,6 +12,28 @@ type RrefResult = {
   freeColumns: number[]
 }
 
+interface CombineBasisOptions {
+  basis: Matrix
+  weights: number[]
+}
+
+interface SearchBasisCombinationsOptions {
+  basis: Matrix
+  index: number
+  weights: number[]
+}
+
+interface CombineBasisOptions {
+  basis: Matrix
+  weights: number[]
+}
+
+interface SearchBasisCombinationsOptions {
+  basis: Matrix
+  index: number
+  weights: number[]
+}
+
 const MAX_FREE_VARIABLE_WEIGHT = 12
 
 export interface BalanceResult {
@@ -195,7 +217,7 @@ const buildNullspaceBasis = ({ matrix: rref, pivotColumns, freeColumns }: RrefRe
   })
 }
 
-const combineBasis = (basis: Matrix, weights: number[]): Fraction[] =>
+const combineBasis = ({ basis, weights }: CombineBasisOptions): Fraction[] =>
   basis[0].map((_, coefficientIndex) =>
     weights.reduce(
       (sum, weight, basisIndex) =>
@@ -223,18 +245,18 @@ const freeVariableWeights = Array.from(
   (_, index) => index + 1,
 ).flatMap((weight) => [weight, -weight])
 
-const searchBasisCombinations = (
-  basis: Matrix,
-  index: number,
-  weights: number[],
-): number[] | undefined => {
+const searchBasisCombinations = ({
+  basis,
+  index,
+  weights,
+}: SearchBasisCombinationsOptions): number[] | undefined => {
   if (index === basis.length) {
-    return tryIntegerCoefficients(combineBasis(basis, weights))
+    return tryIntegerCoefficients(combineBasis({ basis, weights }))
   }
 
   for (const weight of freeVariableWeights) {
     weights[index] = weight
-    const coefficients = searchBasisCombinations(basis, index + 1, weights)
+    const coefficients = searchBasisCombinations({ basis, index: index + 1, weights })
     if (coefficients) {
       return coefficients
     }
@@ -258,11 +280,11 @@ const solveNullspace = (matrix: Matrix): number[] | undefined => {
     }
   }
 
-  return searchBasisCombinations(
+  return searchBasisCombinations({
     basis,
-    0,
-    Array.from({ length: basis.length }, () => 1),
-  )
+    index: 0,
+    weights: Array.from({ length: basis.length }, () => 1),
+  })
 }
 
 const formatBalancedSide = (compounds: string[], coefficients: number[]): string =>

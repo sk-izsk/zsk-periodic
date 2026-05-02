@@ -2,6 +2,12 @@ import type { AppLanguage, TranslationDict } from '../types'
 import { enUI } from './en'
 import { frUI } from './fr'
 
+interface TranslateOptions {
+  lang: AppLanguage
+  key: string
+  fallback?: string
+}
+
 const UI_DICTIONARIES: Record<AppLanguage, TranslationDict> = {
   en: enUI,
   fr: frUI,
@@ -21,6 +27,6 @@ const getByPath = (dict: TranslationDict, key: string): string | undefined => {
   return typeof current === 'string' ? current : undefined
 }
 
-export const t = (lang: AppLanguage, key: string, fallback = ''): string => {
+export const t = ({ lang, key, fallback = '' }: TranslateOptions): string => {
   return getByPath(UI_DICTIONARIES[lang], key) ?? getByPath(UI_DICTIONARIES.en, key) ?? fallback
 }
