@@ -184,7 +184,7 @@ const fractionsToIntegerCoefficients = (values: Fraction[]): number[] | undefine
   return reduced.map(Number)
 }
 
-const buildNullspaceBasis = ({ matrix: rref, pivotColumns, freeColumns }: RrefResult): Matrix => {
+const buildNullSpaceBasis = ({ matrix: rref, pivotColumns, freeColumns }: RrefResult): Matrix => {
   const columnCount = rref[0]?.length ?? 0
 
   return freeColumns.map((freeColumn) => {
@@ -254,9 +254,9 @@ const searchBasisCombinations = ({
   return undefined
 }
 
-const solveNullspace = (matrix: Matrix): number[] | undefined => {
+const solveNullSpace = (matrix: Matrix): number[] | undefined => {
   const rref = toRref(matrix)
-  const basis = buildNullspaceBasis(rref)
+  const basis = buildNullSpaceBasis(rref)
 
   if (basis.length === 0) {
     return undefined
@@ -322,7 +322,7 @@ export const balanceEquation = (input: string): BalanceResult => {
     }),
   )
 
-  const coefficients = solveNullspace(matrix)
+  const coefficients = solveNullSpace(matrix)
   if (!coefficients) {
     return { error: 'Could not balance equation.' }
   }
