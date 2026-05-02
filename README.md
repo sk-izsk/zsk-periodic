@@ -4,6 +4,12 @@ ZTable is a frontend-heavy chemistry platform built to handle both rich visuals 
 
 It includes a searchable 118-element periodic table, detailed element views, a 3D atom model, ion references, molar mass tools, equation balancing, solubility lookup, and worksheet generation.
 
+## Live demo and sample
+
+- Deployed app: https://zsk-periodic.vercel.app
+
+![ZTable sample](./sample.gif)
+
 ## Quick impact
 
 - Product depth: more than a static table; this is a multi-tool chemistry learning and utility app.
