@@ -1,10 +1,10 @@
-import { useEquationBalancer } from '@/hooks/useEquationBalancer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useEquationBalancer } from '@/hooks/useEquationBalancer'
 import { useState } from 'react'
 
-const EquationBalancer = () => {
+export const EquationBalancer = () => {
   const [input, setInput] = useState('')
   const { result, pending, run } = useEquationBalancer()
 
@@ -51,5 +51,3 @@ const EquationBalancer = () => {
     </Card>
   )
 }
-
-export { EquationBalancer }

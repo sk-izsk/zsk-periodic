@@ -1,7 +1,7 @@
-import { useAppTranslation } from '@/i18n/localize'
 import { useLanguage, useSetLanguage } from '@/hooks/store/useLanguageStore'
 import { useSearchQuery, useSetSearchQuery } from '@/hooks/store/useTableStore'
 import { useDarkMode, useToggleDarkMode } from '@/hooks/store/useThemeStore'
+import { useAppTranslation } from '@/i18n/localize'
 import { useRouterState } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { LanguageMenu } from './LanguageMenu'
@@ -10,7 +10,7 @@ import { NavRouteLinks } from './NavRouteLinks'
 import { NavSearch } from './NavSearch'
 import { ThemeToggle } from './ThemeToggle'
 
-const Nav = () => {
+export const Nav: React.FC = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { t } = useAppTranslation()
   const darkMode = useDarkMode()
@@ -46,9 +46,9 @@ const Nav = () => {
   }, [])
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center gap-3 border-b border-line bg-elevated/90 px-4 py-2 shadow-sm backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 flex items-center gap-3 px-4 py-2 border-b shadow-sm border-line bg-elevated/90 backdrop-blur-xl">
       <NavBrand />
-      <NavRouteLinks pathname={pathname} t={t} />
+      <NavRouteLinks pathname={pathname} />
 
       {pathname === '/' && (
         <NavSearch value={searchQuery} onChange={setSearchQuery} inputRef={searchRef} />
@@ -59,7 +59,6 @@ const Nav = () => {
         pathname={pathname}
         language={language}
         dropdownRef={dropdownRef}
-        t={t}
         onToggle={() => setOpen((s) => !s)}
         onClose={() => setOpen(false)}
         onLanguageChange={setLanguage}
@@ -74,4 +73,3 @@ const Nav = () => {
   )
 }
 
-export { Nav }

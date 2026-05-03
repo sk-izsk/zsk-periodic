@@ -1,13 +1,13 @@
-import * as styles from './routePending.css'
+import { pending } from './routePending.css'
 
 type RoutePendingProps = {
   label?: string
 }
 
-const RoutePending = ({ label = 'Loading...' }: RoutePendingProps) => {
+export const RoutePending: React.FC<RoutePendingProps> = ({ label = 'Loading...' }) => {
   return (
     <div
-      className={`w-full h-full min-h-[240px] flex items-center justify-center ${styles.pending}`}
+      className={`w-full h-full min-h-[240px] flex items-center justify-center ${pending}`}
       aria-live="polite"
       aria-busy="true"
     >
@@ -21,5 +21,3 @@ const RoutePending = ({ label = 'Loading...' }: RoutePendingProps) => {
     </div>
   )
 }
-
-export { RoutePending }

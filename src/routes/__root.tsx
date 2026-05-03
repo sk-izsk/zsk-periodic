@@ -6,9 +6,9 @@ import { createRootRoute, Outlet } from '@tanstack/react-router'
 const RootLayout = () => {
   return (
     <DesktopOnlyGate>
-      <div className="flex h-screen w-screen flex-col overflow-hidden">
+      <div className="flex flex-col w-screen h-screen overflow-hidden">
         <Nav />
-        <div className="min-h-0 flex-1 overflow-auto">
+        <div className="flex-1 min-h-0 overflow-auto">
           <Outlet />
         </div>
         <ElementModal />
@@ -17,7 +17,7 @@ const RootLayout = () => {
   )
 }
 
-const Route = createRootRoute({
+export const Route = createRootRoute({
   validateSearch: (search: Record<string, unknown>): { element?: string } => {
     const raw = Array.isArray(search.element) ? search.element[0] : search.element
     const element =
@@ -27,5 +27,3 @@ const Route = createRootRoute({
   },
   component: RootLayout,
 })
-
-export { Route }

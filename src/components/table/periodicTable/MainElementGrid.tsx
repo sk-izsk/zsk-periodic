@@ -1,8 +1,8 @@
 import type { Element } from '@/data/elements/elements'
+import { MAIN_GRID_CELLS } from '@/data/periodicTableData'
 import clsx from 'clsx'
 import { ElementCell } from '../elementCell/ElementCell'
-import * as styles from './periodicTable.css'
-import { MAIN_GRID_CELLS } from './periodicTableData'
+import { mainGrid, placeholder, placeholderLabel, position } from './periodicTable.css'
 
 interface MainElementGridProps {
   hasFilter: boolean
@@ -10,10 +10,14 @@ interface MainElementGridProps {
   onSelect: (element: Element) => void
 }
 
-const MainElementGrid = ({ hasFilter, matchedElementNumbers, onSelect }: MainElementGridProps) => (
-  <div className={styles.mainGrid}>
+export const MainElementGrid: React.FC<MainElementGridProps> = ({
+  hasFilter,
+  matchedElementNumbers,
+  onSelect,
+}) => (
+  <div className={mainGrid}>
     {MAIN_GRID_CELLS.map((cell) => {
-      const positionClass = styles.position[`r${cell.row}c${cell.col}`]
+      const positionClass = position[`r${cell.row}c${cell.col}`]
       if (cell.kind === 'element') {
         const isMatch = matchedElementNumbers.has(cell.element.n)
         return (
@@ -29,12 +33,10 @@ const MainElementGrid = ({ hasFilter, matchedElementNumbers, onSelect }: MainEle
       }
 
       return (
-        <div key={cell.key} className={clsx(positionClass, cell.label && styles.placeholder)}>
-          {cell.label && <span className={styles.placeholderLabel}>{cell.label}</span>}
+        <div key={cell.key} className={clsx(positionClass, cell.label && placeholder)}>
+          {cell.label && <span className={placeholderLabel}>{cell.label}</span>}
         </div>
       )
     })}
   </div>
 )
-
-export { MainElementGrid }

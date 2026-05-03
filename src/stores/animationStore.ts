@@ -13,7 +13,7 @@ const clampAnimationSpeed = (speed: number) => Math.max(0.1, Math.min(2, speed))
 export const useAnimationStore = create<AnimationStore>()(
   persist(
     (set) => ({
-      animationSpeed: 0.5,
+      animationSpeed: 0.3,
       setAnimationSpeed: (speed) => set({ animationSpeed: clampAnimationSpeed(speed) }),
       animationsPaused: false,
       setAnimationsPaused: (paused) => set({ animationsPaused: paused }),

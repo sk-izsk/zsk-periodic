@@ -2,24 +2,24 @@ import type { Element } from '@/data/elements/elements'
 import type { ElementIsotope } from '@/types/elementProfile'
 import clsx from 'clsx'
 import { lazy, Suspense } from 'react'
-import { ErrorBoundary, type FallbackProps } from 'zsk-react-error'
-import * as styles from './elementModal.css'
+import { ErrorBoundary } from 'zsk-react-error'
+import { AtomErrorFallback } from './AtomErrorFallback'
+import { AtomModelFallback } from './AtomModelFallback'
+import {
+  atomCanvasInner,
+  atomCanvasWrap,
+  atomPanel,
+  atomTone,
+  bottomControls,
+  bottomTone,
+  closeButton,
+  closeTone,
+  controlActive,
+  controlButton,
+  controlGroup,
+} from './elementModal.css'
 
-const AtomModel = lazy(() => import('@/components/atoms/atomModel'))
-
-const AtomModelFallback = () => <div className={styles.atomFallback}>Loading atom model...</div>
-
-const AtomErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
-  <div className={clsx(styles.atomFallback, 'flex flex-col items-center gap-3')}>
-    <p className="text-xs opacity-60">{String(error)}</p>
-    <button
-      onClick={resetErrorBoundary}
-      className="rounded px-3 py-1 text-xs opacity-70 ring-1 ring-current hover:opacity-100"
-    >
-      Retry
-    </button>
-  </div>
-)
+const AtomModel = lazy(() => import('@/components/atoms/atomModel/AtomModel'))
 
 interface AtomPanelProps {
   element: Element
@@ -35,7 +35,7 @@ interface AtomPanelProps {
   onResetView: () => void
 }
 
-const AtomPanel = ({
+export const AtomPanel: React.FC<AtomPanelProps> = ({
   element,
   darkMode,
   paused,
@@ -47,18 +47,18 @@ const AtomPanel = ({
   onTogglePaused,
   onToggleTopView,
   onResetView,
-}: AtomPanelProps) => {
+}) => {
   const tone = darkMode ? 'dark' : 'light'
   const atomBg = darkMode ? '#061015' : '#eaf3f8'
 
   return (
-    <div className={clsx(styles.atomPanel, styles.atomTone[tone])}>
-      <button onClick={onClose} className={clsx(styles.closeButton, styles.closeTone[tone])}>
+    <div className={clsx(atomPanel, atomTone[tone])}>
+      <button onClick={onClose} className={clsx(closeButton, closeTone[tone])}>
         ×
       </button>
 
-      <div className={styles.atomCanvasWrap}>
-        <div className={styles.atomCanvasInner}>
+      <div className={atomCanvasWrap}>
+        <div className={atomCanvasInner}>
           <ErrorBoundary FallbackComponent={AtomErrorFallback}>
             <Suspense fallback={<AtomModelFallback />}>
               <AtomModel
@@ -77,12 +77,12 @@ const AtomPanel = ({
         </div>
       </div>
 
-      <div className={clsx(styles.bottomControls, styles.bottomTone[tone])}>
-        <div className={styles.controlGroup}>
+      <div className={clsx(bottomControls, bottomTone[tone])}>
+        <div className={controlGroup}>
           <button
             title={paused ? 'Resume' : 'Pause'}
             onClick={onTogglePaused}
-            className={clsx(styles.controlButton, paused && styles.controlActive)}
+            className={clsx(controlButton, paused && controlActive)}
           >
             {paused ? (
               <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
@@ -98,7 +98,7 @@ const AtomPanel = ({
           <button
             title="Top view"
             onClick={onToggleTopView}
-            className={clsx(styles.controlButton, topView && styles.controlActive)}
+            className={clsx(controlButton, topView && controlActive)}
           >
             <svg
               width="16"
@@ -114,7 +114,7 @@ const AtomPanel = ({
             </svg>
           </button>
         </div>
-        <button title="Reset view" onClick={onResetView} className={styles.controlButton}>
+        <button title="Reset view" onClick={onResetView} className={controlButton}>
           <svg
             width="14"
             height="14"
@@ -133,5 +133,3 @@ const AtomPanel = ({
     </div>
   )
 }
-
-export { AtomPanel }

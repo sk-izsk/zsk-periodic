@@ -1,7 +1,7 @@
+import { useNucleusFrame } from '@/hooks/atomModel/useNucleusFrame'
 import { buildNucleusParticles, getSphereGeometry, getStandardMaterial } from '@/utils/atomModel'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { useNucleusFrame } from '@/hooks/atomModel/useNucleusFrame'
 
 interface NucleusProps {
   protons: number
@@ -10,7 +10,7 @@ interface NucleusProps {
   paused: boolean
 }
 
-const Nucleus = ({ protons, neutrons, speedMul, paused }: NucleusProps) => {
+export const Nucleus: React.FC<NucleusProps> = ({ protons, neutrons, speedMul, paused }) => {
   const groupRef = useRef<THREE.Group>(null)
   const particles = useMemo(() => buildNucleusParticles(protons, neutrons), [protons, neutrons])
   const protonMat = useMemo(
@@ -37,7 +37,7 @@ const Nucleus = ({ protons, neutrons, speedMul, paused }: NucleusProps) => {
   )
   const particleGeometry = useMemo(() => getSphereGeometry(0.35, 14, 14), [])
 
-  useNucleusFrame(groupRef, paused, speedMul)
+  useNucleusFrame({ groupRef, paused, speedMul })
 
   return (
     <group ref={groupRef} dispose={null}>
@@ -53,5 +53,3 @@ const Nucleus = ({ protons, neutrons, speedMul, paused }: NucleusProps) => {
     </group>
   )
 }
-
-export { Nucleus }

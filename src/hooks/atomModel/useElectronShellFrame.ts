@@ -4,17 +4,29 @@ import { useRef } from 'react'
 import type { RefObject } from 'react'
 import type * as THREE from 'three'
 
-export const useElectronShellFrame = (
-  wobbleRef: RefObject<THREE.Group | null>,
-  electronRefs: RefObject<(THREE.Mesh | null)[]>,
-  trailRefs: RefObject<(THREE.Mesh | null)[][]>,
-  electrons: number,
-  radius: number,
-  shellSpeed: number,
-  speedMul: number,
-  paused: boolean,
-  topView: boolean,
-) => {
+interface UseElectronShellFrameProps {
+  wobbleRef: RefObject<THREE.Group | null>
+  electronRefs: RefObject<(THREE.Mesh | null)[]>
+  trailRefs: RefObject<(THREE.Mesh | null)[][]>
+  electrons: number
+  radius: number
+  shellSpeed: number
+  speedMul: number
+  paused: boolean
+  topView: boolean
+}
+
+export const useElectronShellFrame = ({
+  wobbleRef,
+  electronRefs,
+  trailRefs,
+  electrons,
+  radius,
+  shellSpeed,
+  speedMul,
+  paused,
+  topView,
+}: UseElectronShellFrameProps) => {
   const angles = useRef<number[]>(
     Array.from(
       { length: electrons },

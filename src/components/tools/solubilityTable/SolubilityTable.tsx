@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SOLUBILITY_ANIONS, SOLUBILITY_CATIONS, SOLUBILITY_DATA } from '@/data/tools/solubility'
-import * as styles from './solubilityTable.css'
+import { resultCell, resultCode } from './solubilityTable.css'
 
-const SolubilityTable = () => {
+export const SolubilityTable: React.FC = () => {
   return (
     <Card>
       <CardHeader>
@@ -32,9 +32,7 @@ const SolubilityTable = () => {
                     const value = SOLUBILITY_DATA[cation][anion]
                     return (
                       <td key={anion} className="px-1.5 py-1 text-center">
-                        <span className={`${styles.resultCell} ${styles.resultCode[value]}`}>
-                          {value}
-                        </span>
+                        <span className={`${resultCell} ${resultCode[value]}`}>{value}</span>
                       </td>
                     )
                   })}
@@ -47,5 +45,3 @@ const SolubilityTable = () => {
     </Card>
   )
 }
-
-export { SolubilityTable }

@@ -1,6 +1,14 @@
 import type { ElementIsotope, ElementProfile } from '@/types/elementProfile'
 import clsx from 'clsx'
-import * as styles from './elementModal.css'
+import {
+  header,
+  headerGrid,
+  headerTone,
+  isotopeStack,
+  isotopeStackTone,
+  name,
+  symbol,
+} from './elementModal.css'
 
 interface ElementModalHeaderProps {
   profile: ElementProfile
@@ -8,23 +16,25 @@ interface ElementModalHeaderProps {
   darkMode: boolean
 }
 
-const ElementModalHeader = ({ profile, activeIsotope, darkMode }: ElementModalHeaderProps) => {
+export const ElementModalHeader: React.FC<ElementModalHeaderProps> = ({
+  profile,
+  activeIsotope,
+  darkMode,
+}) => {
   const tone = darkMode ? 'dark' : 'light'
 
   return (
-    <div className={clsx(styles.header, styles.headerTone[tone])}>
-      <div className={styles.headerGrid}>
-        <div className={clsx(styles.isotopeStack, styles.isotopeStackTone[tone])}>
+    <div className={clsx(header, headerTone[tone])}>
+      <div className={headerGrid}>
+        <div className={clsx(isotopeStack, isotopeStackTone[tone])}>
           <span>
             {activeIsotope?.massNumber ?? Math.round(parseFloat(profile.level2.mass.highSchool))}
           </span>
           <span>{profile.level2.protons}</span>
         </div>
-        <div className={styles.symbol}>{profile.symbol}</div>
-        <div className={styles.name}>{profile.name}</div>
+        <div className={symbol}>{profile.symbol}</div>
+        <div className={name}>{profile.name}</div>
       </div>
     </div>
   )
 }
-
-export { ElementModalHeader }

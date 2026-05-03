@@ -1,10 +1,10 @@
-import { calcMolarMass } from '@/utils/molarMass'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { calcMolarMass } from '@/utils/molarMass'
 import { useState } from 'react'
 
-const MolarMassCalc = () => {
+export const MolarMassCalc = () => {
   const [input, setInput] = useState('')
   const [result, setResult] = useState<ReturnType<typeof calcMolarMass> | null>(null)
 
@@ -61,5 +61,3 @@ const MolarMassCalc = () => {
     </Card>
   )
 }
-
-export { MolarMassCalc }
