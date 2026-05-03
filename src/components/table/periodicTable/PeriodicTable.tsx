@@ -1,4 +1,5 @@
 import { elements, type ElementCategory } from '@/data/elements/elements'
+import { ACTINIDES, LANTHANIDES } from '@/data/periodicTableData'
 import { useLanguage } from '@/hooks/store/useLanguageStore'
 import {
   useFilterCategory,
@@ -10,7 +11,6 @@ import { loadElementLocale } from '@/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/i18n/types'
 import { matchesElementQuery } from '@/utils/tableSearch'
 import { useEffect, useMemo, useState } from 'react'
-import { ACTINIDES, LANTHANIDES } from '../../../data/periodicTableData'
 import { CategoryFilters } from './CategoryFilters'
 import { ElementSeries } from './ElementSeries'
 import { MainElementGrid } from './MainElementGrid'
@@ -91,4 +91,3 @@ export const PeriodicTable: React.FC = () => {
     </div>
   )
 }
-

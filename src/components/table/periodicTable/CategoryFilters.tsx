@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import type { ElementCategory } from '@/data/elements/elements'
+import { CATEGORY_ENTRIES } from '@/data/periodicTableData'
 import clsx from 'clsx'
-import { CATEGORY_ENTRIES } from '../../../data/periodicTableData'
 import { swatch, swatchCategory } from './periodicTable.css'
 
 interface CategoryFiltersProps {

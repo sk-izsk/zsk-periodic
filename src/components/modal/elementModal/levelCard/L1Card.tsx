@@ -1,8 +1,8 @@
+import { CATEGORY_LABELS } from '@/data/elements/elements'
+import { useAppTranslation } from '@/i18n/localize'
 import { ElementProfile } from '@/types/elementProfile'
+import { parseCommonIons } from '@/utils/elementModalUtils'
 import clsx from 'clsx'
-import { CATEGORY_LABELS } from '../../../../data/elements/elements'
-import { useAppTranslation } from '../../../../i18n/localize'
-import { parseCommonIons } from '../../../../utils/elementModalUtils'
 import { CardRow } from '../CardRow'
 import {
   card,

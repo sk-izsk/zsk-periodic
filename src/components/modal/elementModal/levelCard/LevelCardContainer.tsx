@@ -1,9 +1,9 @@
+import { useCardSwipe } from '@/hooks/useCardSwipe'
+import { ElementIsotope, ElementProfile } from '@/types/elementProfile'
+import { cardSlideVariants } from '@/utils/cardSlideVariants'
+import { LEVELS } from '@/utils/elementModalUtils'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useCardSwipe } from '../../../../hooks/useCardSwipe'
-import { ElementIsotope, ElementProfile } from '../../../../types/elementProfile'
-import { cardSlideVariants } from '../../../../utils/cardSlideVariants'
-import { LEVELS } from '../../../../utils/elementModalUtils'
 import { CardPager } from '../CardPager'
 import { animatedCard, cardArea, cardViewport, leftPanel, leftPanelTone } from '../elementModal.css'
 import { ElementModalHeader } from '../ElementModalHeader'
@@ -38,7 +38,7 @@ export const LevelCardContainer: React.FC<LevelCardContainerProps> = ({
   setSelectedIsotope,
 }) => {
   const tone = darkMode ? 'dark' : 'light'
-  const swipeHandlers = useCardSwipe(goPrevCard, goNextCard)
+  const swipeHandlers = useCardSwipe({ goPrevCard, goNextCard })
 
   return (
     <div className={clsx(leftPanel, leftPanelTone[tone])}>

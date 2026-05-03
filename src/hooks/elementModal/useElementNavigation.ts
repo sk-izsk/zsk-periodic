@@ -1,13 +1,18 @@
-import { useSearch, useNavigate } from "@tanstack/react-router"
-import { useRef, useEffect, useCallback } from "react"
-import { elements } from "../data/elements/elements"
-import { normalizeElementSearchParam } from "../utils/elementModalUtils"
 import type { Element } from '@/data/elements/elements'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useCallback, useEffect, useRef } from 'react'
+import { elements } from '../../data/elements/elements'
+import { normalizeElementSearchParam } from '../../utils/elementModalUtils'
 
-export const  useElementNavigation = (
-  selectedElement: Element | null,
-  setSelectedElement: (el: Element | null) => void,
-) =>{
+interface UseElementNavigationProps {
+  selectedElement: Element | null
+  setSelectedElement: (el: Element | null) => void
+}
+
+export const useElementNavigation = ({
+  selectedElement,
+  setSelectedElement,
+}: UseElementNavigationProps) => {
   const search = useSearch({ from: '__root__' })
   const navigate = useNavigate({ from: '/' })
   const closingRef = useRef(false)

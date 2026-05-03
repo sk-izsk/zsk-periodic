@@ -1,9 +1,9 @@
+import { LANGUAGES } from '@/data/navData'
 import { useAppTranslation } from '@/i18n/localize'
 import type { AppLanguage } from '@/i18n/types'
 import clsx from 'clsx'
 import { Languages } from 'lucide-react'
 import type { RefObject } from 'react'
-import { LANGUAGES } from '../../data/navData'
 
 interface LanguageMenuProps {
   open: boolean

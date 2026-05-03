@@ -1,4 +1,5 @@
 import { useElectronShellFrame } from '@/hooks/atomModel/useElectronShellFrame'
+import { useElectronShellAssets } from '@/hooks/useElectronShellAssets'
 import {
   ELECTRON_COLORS,
   ELECTRON_COLORS_DARK,
@@ -7,7 +8,6 @@ import {
 } from '@/utils/atomModel'
 import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { useElectronShellAssets } from '../../../hooks/useElectronShellAssets'
 import { ElectronParticle } from './ElectronParticle'
 
 export interface ElectronShellProps {

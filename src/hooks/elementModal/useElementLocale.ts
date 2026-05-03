@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { loadElementLocale } from '../i18n/locale-loaders'
-import { ElementLocaleRecord, type AppLanguage } from '../i18n/types'
+import { loadElementLocale } from '../../i18n/locale-loaders'
+import { ElementLocaleRecord, type AppLanguage } from '../../i18n/types'
 
 export const useElementLocale = (language: AppLanguage): Record<string, ElementLocaleRecord> => {
   const [locale, setLocale] = useState<Record<string, ElementLocaleRecord>>({})

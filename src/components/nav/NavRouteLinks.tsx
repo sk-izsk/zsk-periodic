@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
+import { NAV_LINKS } from '@/data/navData'
+import { useAppTranslation } from '@/i18n/localize'
 import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { NAV_LINKS } from '../../data/navData'
-import { useAppTranslation } from '../../i18n/localize'
 
 interface NavRouteLinksProps {
   pathname: string

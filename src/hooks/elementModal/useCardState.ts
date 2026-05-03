@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ElementIsotope } from '../types/elementProfile'
-import { LEVELS } from '../utils/elementModalUtils'
+import { ElementIsotope } from '../../types/elementProfile'
+import { LEVELS } from '../../utils/elementModalUtils'
 
 export const useCardState = (elementN: number | undefined) => {
   const [activeCard, setActiveCard] = useState(0)

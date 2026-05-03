@@ -1,6 +1,6 @@
+import { useAppTranslation } from '@/i18n/localize'
+import { ElementProfile } from '@/types/elementProfile'
 import clsx from 'clsx'
-import { useAppTranslation } from '../../../../i18n/localize'
-import { ElementProfile } from '../../../../types/elementProfile'
 import { CardRow } from '../CardRow'
 import { ScrollHintArea } from '../ScrollHintArea'
 import {

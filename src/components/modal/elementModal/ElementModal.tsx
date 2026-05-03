@@ -1,3 +1,7 @@
+import { useCardState } from '@/hooks/elementModal/useCardState'
+import { useElementLocale } from '@/hooks/elementModal/useElementLocale'
+import { useElementNavigation } from '@/hooks/elementModal/useElementNavigation'
+import { useModalKeyboard } from '@/hooks/elementModal/useModalKeyBoard'
 import {
   useAnimationSpeed,
   useAnimationsPaused,
@@ -11,10 +15,6 @@ import { toElementProfile } from '@/utils/elementProfile'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
-import { useCardState } from '../../../hooks/useCardState'
-import { useElementLocale } from '../../../hooks/useElementLocale'
-import { useElementNavigation } from '../../../hooks/useElementNavigation'
-import { useModalKeyboard } from '../../../hooks/useModalKeyBoard'
 import { AtomPanel } from './AtomPanel'
 import { backdrop, backdropTone, modal, modalTone, stage } from './elementModal.css'
 import { ElementSideNav } from './ElementSideNav'
@@ -33,10 +33,10 @@ export const ElementModal: React.FC = () => {
 
   const locale = useElementLocale(language)
 
-  const { close, navigatePrev, navigateNext, hasPrev, hasNext } = useElementNavigation(
+  const { close, navigatePrev, navigateNext, hasPrev, hasNext } = useElementNavigation({
     selectedElement,
     setSelectedElement,
-  )
+  })
 
   const {
     activeCard,
@@ -66,7 +66,7 @@ export const ElementModal: React.FC = () => {
     }
   }, [profile, selectedIsotope, setSelectedIsotope])
 
-  useModalKeyboard(selectedElement, close, navigatePrev, navigateNext)
+  useModalKeyboard({ selectedElement, close, navigatePrev, navigateNext })
 
   return (
     <AnimatePresence>

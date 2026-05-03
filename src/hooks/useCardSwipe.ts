@@ -1,6 +1,11 @@
 import { useRef } from 'react'
 
-export const useCardSwipe = (goPrevCard: () => void, goNextCard: () => void) => {
+interface UseCardSwipeProps {
+  goPrevCard: () => void
+  goNextCard: () => void
+}
+
+export const useCardSwipe = ({ goPrevCard, goNextCard }: UseCardSwipeProps) => {
   const touchStartX = useRef<number | null>(null)
   const pointerStartX = useRef<number | null>(null)
   const pointerDragActive = useRef(false)

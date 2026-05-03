@@ -1,6 +1,6 @@
 import type { Element } from '@/data/elements/elements'
+import { MAIN_GRID_CELLS } from '@/data/periodicTableData'
 import clsx from 'clsx'
-import { MAIN_GRID_CELLS } from '../../../data/periodicTableData'
 import { ElementCell } from '../elementCell/ElementCell'
 import { mainGrid, placeholder, placeholderLabel, position } from './periodicTable.css'
 

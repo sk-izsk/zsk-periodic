@@ -1,5 +1,5 @@
+import { useResetTableOrbitControls } from '@/hooks/useResetTableOrbitControls'
 import { OrbitControls } from '@react-three/drei'
-import { useResettableOrbitControls } from '../../../hooks/useResettableOrbitControls'
 
 interface AtomOrbitControlsProps {
   cameraPosition: readonly [number, number, number]
@@ -10,7 +10,7 @@ export const AtomOrbitControls: React.FC<AtomOrbitControlsProps> = ({
   cameraPosition,
   resetToken,
 }) => {
-  const controlsRef = useResettableOrbitControls(resetToken, cameraPosition)
+  const controlsRef = useResetTableOrbitControls({ resetToken, cameraPosition })
 
   return (
     <OrbitControls
