@@ -1,19 +1,15 @@
 import clsx from 'clsx'
-import * as styles from './elementModal.css'
+import { row, rowLabel, rowLast, rowValue } from './levelCard/levelCard.css'
 
-const CardRow = ({
-  label,
-  value,
-  last = false,
-}: {
+interface CardRowProps {
   label: string
   value: string
   last?: boolean
-}) => (
-  <div className={clsx(styles.row, last && styles.rowLast)}>
-    <span className={styles.rowLabel}>{label}</span>
-    <span className={styles.rowValue}>{value}</span>
+}
+
+export const CardRow: React.FC<CardRowProps> = ({ label, value, last = false }) => (
+  <div className={clsx(row, last && rowLast)}>
+    <span className={rowLabel}>{label}</span>
+    <span className={rowValue}>{value}</span>
   </div>
 )
-
-export { CardRow }

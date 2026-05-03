@@ -1,12 +1,16 @@
 import { Monitor, RotateCcw, TabletSmartphone } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-const DESKTOP_MIN_WIDTH = 1024
+export const DESKTOP_MIN_WIDTH = 1024
 
 const getViewportWidth = () =>
   typeof window === 'undefined' ? DESKTOP_MIN_WIDTH : window.innerWidth
 
-const DesktopOnlyGate = ({ children }: { children: React.ReactNode }) => {
+interface DesktopOnlyGateProps {
+  children: React.ReactNode
+}
+
+export const DesktopOnlyGate: React.FC<DesktopOnlyGateProps> = ({ children }) => {
   const [viewportWidth, setViewportWidth] = useState(getViewportWidth)
 
   useEffect(() => {
@@ -22,7 +26,7 @@ const DesktopOnlyGate = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center overflow-hidden bg-app px-5 text-ink">
+    <main className="flex items-center justify-center min-h-screen px-5 overflow-hidden bg-app text-ink">
       <section className="relative w-full max-w-md rounded-lg border border-line bg-surface p-7 text-center shadow-[var(--shadow-panel)] backdrop-blur-xl">
         <div
           className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-accent)] to-transparent"
@@ -39,12 +43,12 @@ const DesktopOnlyGate = ({ children }: { children: React.ReactNode }) => {
           For the best periodic table experience, open ZTable on desktop or an 11-inch iPad in
           landscape.
         </p>
-        <div className="mt-6 grid grid-cols-2 gap-3 text-left text-xs text-muted">
-          <div className="rounded-md border border-line bg-elevated p-3">
+        <div className="grid grid-cols-2 gap-3 mt-6 text-xs text-left text-muted">
+          <div className="p-3 border rounded-md border-line bg-elevated">
             <TabletSmartphone className="mb-2 text-[var(--color-accent)]" size={18} />
             Portrait tablets and phones are intentionally simplified here.
           </div>
-          <div className="rounded-md border border-line bg-elevated p-3">
+          <div className="p-3 border rounded-md border-line bg-elevated">
             <RotateCcw className="mb-2 text-[var(--color-accent)]" size={18} />
             Rotate larger tablets or move to a desktop browser.
           </div>
@@ -53,5 +57,3 @@ const DesktopOnlyGate = ({ children }: { children: React.ReactNode }) => {
     </main>
   )
 }
-
-export { DESKTOP_MIN_WIDTH, DesktopOnlyGate }

@@ -1,24 +1,47 @@
 import { CATEGORY_LABELS, Element } from '@/data/elements/elements'
-import { toElementProfile } from '@/utils/elementProfile'
-import type { DetailLevel } from '@/types/elementProfile'
-import { loadElementLocale } from '@/i18n/locale-loaders'
-import type { ElementLocaleRecord } from '@/i18n/types'
 import { useLanguage } from '@/hooks/store/useLanguageStore'
 import { useMassUnit } from '@/hooks/store/useSettingsStore'
+import { loadElementLocale } from '@/i18n/locale-loaders'
+import type { ElementLocaleRecord } from '@/i18n/types'
+import type { DetailLevel } from '@/types/elementProfile'
+import { toElementProfile } from '@/utils/elementProfile'
 import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
-import * as styles from './elementDetail.css'
+import {
+  activeLevel,
+  category,
+  closeButton,
+  gridLarge,
+  gridMedium,
+  gridSmall,
+  levelButton,
+  meta,
+  panel,
+  prop,
+  propLabel,
+  propValue,
+  tile,
+  tileMass,
+  tileNumber,
+  tileSymbol,
+  title,
+} from './elementDetail.css'
 
 interface Props {
   element: Element
   onClose: () => void
 }
 
-const Prop = ({ label, value }: { label: string; value: string }) => {
+interface PropProps {
+  label: string
+  value: string
+}
+
+const Prop: React.FC<PropProps> = ({ label, value }) => {
   return (
-    <div className={clsx('rounded-lg p-3', styles.prop)}>
-      <div className={styles.propLabel}>{label}</div>
-      <div className={styles.propValue}>{value}</div>
+    <div className={clsx('rounded-lg p-3', prop)}>
+      <div className={propLabel}>{label}</div>
+      <div className={propValue}>{value}</div>
     </div>
   )
 }
@@ -31,7 +54,7 @@ const LEVEL_LABELS: Record<DetailLevel, string> = {
   l4: 'Level 4',
 }
 
-const ElementDetail = ({ element, onClose }: Props) => {
+export const ElementDetail: React.FC<Props> = ({ element, onClose }) => {
   const language = useLanguage()
   const massUnit = useMassUnit()
   const [level, setLevel] = useState<DetailLevel>('l1')
@@ -58,35 +81,35 @@ const ElementDetail = ({ element, onClose }: Props) => {
       : (profile.level2.mass.universityConventional ?? profile.level2.mass.highSchool)
 
   return (
-    <div className={clsx('mt-3 rounded-xl p-4', styles.panel)}>
+    <div className={clsx('mt-3 rounded-xl p-4', panel)}>
       <div className="flex items-start gap-4 mb-4">
         <div
           className={clsx(
             'rounded-xl flex flex-col items-center justify-center flex-shrink-0',
-            styles.tile,
-            styles.category[element.cat],
+            tile,
+            category[element.cat],
           )}
         >
-          <span className={styles.tileNumber}>{element.n}</span>
-          <span className={styles.tileSymbol}>{element.sym}</span>
-          <span className={styles.tileMass}>{massValue}</span>
+          <span className={tileNumber}>{element.n}</span>
+          <span className={tileSymbol}>{element.sym}</span>
+          <span className={tileMass}>{massValue}</span>
         </div>
         <div className="flex-1">
-          <h2 className={styles.title}>{profile.name}</h2>
-          <p className={styles.meta}>
+          <h2 className={title}>{profile.name}</h2>
+          <p className={meta}>
             Period {element.period}
             {element.group ? ` · Group ${element.group}` : ''} · {element.phase} @ STP
           </p>
           <span
             className={clsx(
               'inline-block mt-2 rounded px-2 py-0.5 text-xs text-white',
-              styles.category[element.cat],
+              category[element.cat],
             )}
           >
             {CATEGORY_LABELS[element.cat]}
           </span>
         </div>
-        <button onClick={onClose} className={clsx('text-sm px-3 py-1 rounded', styles.closeButton)}>
+        <button onClick={onClose} className={clsx('text-sm px-3 py-1 rounded', closeButton)}>
           close
         </button>
       </div>
@@ -98,8 +121,8 @@ const ElementDetail = ({ element, onClose }: Props) => {
             onClick={() => setLevel(item)}
             className={clsx(
               'px-3 py-1.5 rounded text-xs',
-              styles.levelButton,
-              level === item && styles.activeLevel[element.cat],
+              levelButton,
+              level === item && activeLevel[element.cat],
             )}
           >
             {LEVEL_LABELS[item]}
@@ -108,7 +131,7 @@ const ElementDetail = ({ element, onClose }: Props) => {
       </div>
 
       {level === 'l1' && (
-        <div className={clsx('grid gap-2', styles.gridSmall)}>
+        <div className={clsx('grid gap-2', gridSmall)}>
           <Prop label="Type" value={profile.level1.type} />
           <Prop label="Group / Period" value={profile.level1.groupPeriod} />
           <Prop label="Phase @ STP" value={profile.level1.phaseAtSTP} />
@@ -119,7 +142,7 @@ const ElementDetail = ({ element, onClose }: Props) => {
       )}
 
       {level === 'l2' && (
-        <div className={clsx('grid gap-2', styles.gridSmall)}>
+        <div className={clsx('grid gap-2', gridSmall)}>
           <Prop label="Atomic mass" value={massValue} />
           <Prop label="Protons" value={String(profile.level2.protons)} />
           <Prop label="Electrons (neutral)" value={String(profile.level2.electronsNeutral)} />
@@ -130,7 +153,7 @@ const ElementDetail = ({ element, onClose }: Props) => {
       )}
 
       {level === 'l3' && (
-        <div className={clsx('grid gap-2', styles.gridMedium)}>
+        <div className={clsx('grid gap-2', gridMedium)}>
           <Prop label="Configuration" value={profile.level3.electronic.configuration} />
           <Prop
             label="Oxidation"
@@ -144,7 +167,7 @@ const ElementDetail = ({ element, onClose }: Props) => {
       )}
 
       {level === 'l4' && (
-        <div className={clsx('grid gap-2', styles.gridLarge)}>
+        <div className={clsx('grid gap-2', gridLarge)}>
           <Prop label="Discovery year" value={profile.level4.history.discoveryYear} />
           <Prop label="Discovered by" value={profile.level4.history.discoveredBy} />
           <Prop label="Named by" value={profile.level4.history.namedBy} />
@@ -154,11 +177,9 @@ const ElementDetail = ({ element, onClose }: Props) => {
         </div>
       )}
 
-      <div className={clsx('mt-3 rounded-lg px-3 py-2 font-mono text-sm', styles.prop)}>
+      <div className={clsx('mt-3 rounded-lg px-3 py-2 font-mono text-sm', prop)}>
         Electron configuration: {profile.electronConfiguration}
       </div>
     </div>
   )
 }
-
-export { ElementDetail }

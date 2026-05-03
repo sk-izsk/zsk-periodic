@@ -1,7 +1,7 @@
+import { cn } from '@/utils/cn'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
-import { cn } from '@/utils/cn'
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)] disabled:pointer-events-none disabled:opacity-50',
@@ -34,10 +34,8 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
     asChild?: boolean
   }
 
-const Button = ({ className, variant, size, asChild, ...props }: ButtonProps) => {
+export const Button: React.FC<ButtonProps> = ({ className, variant, size, asChild, ...props }) => {
   const Comp = asChild ? Slot : 'button'
 
   return <Comp className={cn(buttonVariants({ variant, size, className }))} {...props} />
 }
-
-export { Button, buttonVariants }

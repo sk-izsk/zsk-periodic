@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import * as styles from './elementModal.css'
+import { PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
+import { scrollArea, scrollButton, scrollRegion } from './levelCard/levelCard.css'
 
-const ScrollHintArea = ({ children }: { children: React.ReactNode }) => {
+export const ScrollHintArea: React.FC<PropsWithChildren> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const [showHint, setShowHint] = useState(false)
 
@@ -30,15 +30,15 @@ const ScrollHintArea = ({ children }: { children: React.ReactNode }) => {
   }, [updateHint])
 
   return (
-    <div className={styles.scrollArea}>
-      <div ref={scrollRef} className={styles.scrollRegion} onScroll={updateHint}>
+    <div className={scrollArea}>
+      <div ref={scrollRef} className={scrollRegion} onScroll={updateHint}>
         {children}
       </div>
       {showHint && (
         <button
           type="button"
           aria-label="Scroll for more"
-          className={styles.scrollButton}
+          className={scrollButton}
           onClick={() =>
             scrollRef.current?.scrollBy({
               top: scrollRef.current.clientHeight * 0.72,
@@ -52,5 +52,3 @@ const ScrollHintArea = ({ children }: { children: React.ReactNode }) => {
     </div>
   )
 }
-
-export { ScrollHintArea }

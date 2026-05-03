@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { Zap } from 'lucide-react'
 
-const NavBrand = () => (
-  <Link to="/" search={true} className="mr-2 flex items-center gap-2">
+export const NavBrand: React.FC = () => (
+  <Link to="/" search={true} className="flex items-center gap-2 mr-2">
     <span className="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-[var(--color-accent)] text-white shadow-sm dark:text-slate-950">
       <Zap size={18} fill="currentColor" />
     </span>
@@ -14,5 +14,3 @@ const NavBrand = () => (
     </span>
   </Link>
 )
-
-export { NavBrand }

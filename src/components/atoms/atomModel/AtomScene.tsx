@@ -1,11 +1,11 @@
-import { useAtomShells } from '@/hooks/useAtomShells'
 import type { Element } from '@/data/elements/elements'
+import { useAtomSceneFrame } from '@/hooks/atomModel/useAtomSceneFrame'
+import { useAtomShells } from '@/hooks/useAtomShells'
 import { getNeutronCount } from '@/utils/atomModel'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { ElectronShell } from './ElectronShell'
 import { Nucleus } from './Nucleus'
-import { useAtomSceneFrame } from '@/hooks/atomModel/useAtomSceneFrame'
 
 interface AtomSceneProps {
   element: Element
@@ -17,7 +17,7 @@ interface AtomSceneProps {
   onShellHover: (idx: number | null) => void
 }
 
-const AtomScene = ({
+export const AtomScene: React.FC<AtomSceneProps> = ({
   element,
   paused,
   speed,
@@ -25,7 +25,7 @@ const AtomScene = ({
   darkMode,
   neutronOverride,
   onShellHover,
-}: AtomSceneProps) => {
+}) => {
   const atomRef = useRef<THREE.Group>(null)
   const shells = useAtomShells(element)
   const neutrons = useMemo(
@@ -33,7 +33,7 @@ const AtomScene = ({
     [element.mass, element.n, neutronOverride],
   )
 
-  useAtomSceneFrame(atomRef, element.n, neutrons, paused, speed, topView)
+  useAtomSceneFrame({ atomRef, elementNumber: element.n, neutrons, paused, speed, topView })
 
   return (
     <group ref={atomRef} dispose={null} scale={[0.1, 0.1, 0.1]}>
@@ -54,5 +54,3 @@ const AtomScene = ({
     </group>
   )
 }
-
-export { AtomScene }

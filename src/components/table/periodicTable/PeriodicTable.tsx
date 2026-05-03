@@ -1,7 +1,4 @@
 import { elements, type ElementCategory } from '@/data/elements/elements'
-import { matchesElementQuery } from '@/utils/tableSearch'
-import { loadElementLocale } from '@/i18n/locale-loaders'
-import type { ElementLocaleRecord } from '@/i18n/types'
 import { useLanguage } from '@/hooks/store/useLanguageStore'
 import {
   useFilterCategory,
@@ -9,14 +6,17 @@ import {
   useSetFilterCategory,
   useSetSelectedElement,
 } from '@/hooks/store/useTableStore'
+import { loadElementLocale } from '@/i18n/locale-loaders'
+import type { ElementLocaleRecord } from '@/i18n/types'
+import { matchesElementQuery } from '@/utils/tableSearch'
 import { useEffect, useMemo, useState } from 'react'
+import { ACTINIDES, LANTHANIDES } from '../../../data/periodicTableData'
 import { CategoryFilters } from './CategoryFilters'
 import { ElementSeries } from './ElementSeries'
 import { MainElementGrid } from './MainElementGrid'
-import { ACTINIDES, LANTHANIDES } from './periodicTableData'
-import * as styles from './periodicTable.css'
+import { gridWrap } from './periodicTable.css'
 
-const PeriodicTable = () => {
+export const PeriodicTable: React.FC = () => {
   const setSelectedElement = useSetSelectedElement()
   const filterCategory = useFilterCategory()
   const setFilterCategory = useSetFilterCategory()
@@ -73,7 +73,7 @@ const PeriodicTable = () => {
           <span>{elements.length} elements indexed</span>
         </div>
         <div className="px-3 pt-1 pb-6 overflow-x-auto overflow-y-hidden rounded-md">
-          <div className={styles.gridWrap}>
+          <div className={gridWrap}>
             <MainElementGrid
               hasFilter={hasFilter}
               matchedElementNumbers={matchedElementNumbers}
@@ -92,4 +92,3 @@ const PeriodicTable = () => {
   )
 }
 
-export { PeriodicTable }

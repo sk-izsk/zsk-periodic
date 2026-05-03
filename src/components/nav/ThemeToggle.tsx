@@ -7,10 +7,8 @@ interface ThemeToggleProps {
   onToggle: () => void
 }
 
-const ThemeToggle = ({ darkMode, label, onToggle }: ThemeToggleProps) => (
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({ darkMode, label, onToggle }) => (
   <Button onClick={onToggle} variant="secondary" size="icon" aria-label={label}>
     {darkMode ? <Sun size={16} /> : <Moon size={16} />}
   </Button>
 )
-
-export { ThemeToggle }

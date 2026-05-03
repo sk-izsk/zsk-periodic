@@ -8,10 +8,10 @@ interface NavSearchProps {
   inputRef: RefObject<HTMLInputElement | null>
 }
 
-const NavSearch = ({ value, onChange, inputRef }: NavSearchProps) => (
+export const NavSearch: React.FC<NavSearchProps> = ({ value, onChange, inputRef }) => (
   <div className="relative ml-auto mr-1">
     <Search
-      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+      className="absolute -translate-y-1/2 pointer-events-none left-3 top-1/2 text-muted"
       size={15}
     />
     <Input
@@ -24,5 +24,3 @@ const NavSearch = ({ value, onChange, inputRef }: NavSearchProps) => (
     />
   </div>
 )
-
-export { NavSearch }

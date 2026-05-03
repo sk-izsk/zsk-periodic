@@ -1,36 +1,40 @@
+import type { Element } from '@/data/elements/elements'
 import { useAtomShells } from '@/hooks/useAtomShells'
-import { useResettableOrbitControls } from '@/hooks/useResettableOrbitControls'
 import { getAtomTextColors, SHELL_NAMES } from '@/utils/atomModel'
-import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import clsx from 'clsx'
 import { useMemo, useState } from 'react'
+import {
+  canvas,
+  configPill,
+  footer,
+  glow,
+  isotopePill,
+  pillTone,
+  root,
+  rootSize,
+  rootTone,
+  shellHint,
+  shellHintTone,
+  topPill,
+} from './atomModel.css'
+import { AtomOrbitControls } from './AtomOrbitControls'
 import { AtomScene } from './AtomScene'
-import * as styles from './atomModel.css'
-import type { AtomModelProps } from '@/types/atomModel'
 
-interface AtomOrbitControlsProps {
-  cameraPosition: readonly [number, number, number]
-  resetToken: number
+interface AtomModelProps {
+  element: Element
+  bg?: string
+  height?: number
+  fill?: boolean
+  paused?: boolean
+  speed?: number
+  topView?: boolean
+  resetToken?: number
+  neutronOverride?: number
+  isotopeLabel?: string
 }
 
-const AtomOrbitControls = ({ cameraPosition, resetToken }: AtomOrbitControlsProps) => {
-  const controlsRef = useResettableOrbitControls(resetToken, cameraPosition)
-
-  return (
-    <OrbitControls
-      ref={controlsRef}
-      enablePan={false}
-      enableZoom
-      enableRotate
-      minDistance={5}
-      maxDistance={55}
-      target={[0, 0, 0]}
-    />
-  )
-}
-
-const AtomModel = ({
+const AtomModel: React.FC<AtomModelProps> = ({
   element,
   bg = '#0f0f1a',
   height = 320,
@@ -41,7 +45,7 @@ const AtomModel = ({
   resetToken = 0,
   neutronOverride,
   isotopeLabel,
-}: AtomModelProps) => {
+}) => {
   const [hoveredShell, setHoveredShell] = useState<number | null>(null)
   const shells = useAtomShells(element)
   const { isLight, isDarkMode } = useMemo(() => getAtomTextColors(bg), [bg])
@@ -54,18 +58,16 @@ const AtomModel = ({
   return (
     <div
       className={clsx(
-        styles.root,
-        styles.rootTone[tone],
-        styles.rootSize[fill || height === 320 ? (fill ? 'fill' : 'fixed') : 'fixed'],
+        root,
+        rootTone[tone],
+        rootSize[fill || height === 320 ? (fill ? 'fill' : 'fixed') : 'fixed'],
       )}
     >
-      <div className={styles.glow} />
-      <div className={clsx(styles.topPill, styles.configPill, styles.pillTone[tone])}>
-        {element.config}
-      </div>
+      <div className={glow} />
+      <div className={clsx(topPill, configPill, pillTone[tone])}>{element.config}</div>
 
       {hoveredShell !== null && (
-        <div className={clsx(styles.shellHint, styles.shellHintTone[tone])}>
+        <div className={clsx(shellHint, shellHintTone[tone])}>
           Shell {SHELL_NAMES[hoveredShell]} · {shells[hoveredShell]} electron
           {shells[hoveredShell] !== 1 ? 's' : ''}
         </div>
@@ -75,9 +77,9 @@ const AtomModel = ({
         <div
           className={clsx(
             'atom-isotope-pulse',
-            styles.topPill,
-            styles.isotopePill,
-            styles.pillTone[isLight ? 'light' : 'isotopeDark'],
+            topPill,
+            isotopePill,
+            pillTone[isLight ? 'light' : 'isotopeDark'],
           )}
         >
           {isotopeLabel} · {neutronOverride}n
@@ -87,7 +89,7 @@ const AtomModel = ({
       <Canvas
         camera={{ position: cameraPosition, fov: topView ? 42 : 46 }}
         gl={{ antialias: true, alpha: true }}
-        className={styles.canvas}
+        className={canvas}
       >
         <ambientLight intensity={isDarkMode ? 0.85 : 1.25} />
         <directionalLight position={[10, 12, 12]} intensity={isDarkMode ? 0.7 : 0.72} />
@@ -106,7 +108,7 @@ const AtomModel = ({
       </Canvas>
 
       {!fill && (
-        <div className={styles.footer}>
+        <div className={footer}>
           {element.sym} · {element.config}
         </div>
       )}
@@ -115,4 +117,3 @@ const AtomModel = ({
 }
 
 export default AtomModel
-export type { AtomModelProps }

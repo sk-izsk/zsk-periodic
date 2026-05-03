@@ -9,7 +9,7 @@ interface ThemeStore {
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
-      darkMode: true,
+      darkMode: false,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
     }),
     { name: 'zperiod_theme_v1' },

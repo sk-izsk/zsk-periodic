@@ -1,6 +1,6 @@
 import type { Element } from '@/data/elements/elements'
 import { ElementCell } from '../elementCell/ElementCell'
-import * as styles from './periodicTable.css'
+import { seriesRow, seriesWrap } from './periodicTable.css'
 
 interface ElementSeriesProps {
   rows: Element[][]
@@ -9,15 +9,15 @@ interface ElementSeriesProps {
   onSelect: (element: Element) => void
 }
 
-const ElementSeries = ({
+export const ElementSeries: React.FC<ElementSeriesProps> = ({
   rows,
   hasFilter,
   matchedElementNumbers,
   onSelect,
-}: ElementSeriesProps) => (
-  <div className={styles.seriesWrap}>
+}) => (
+  <div className={seriesWrap}>
     {rows.map((series) => (
-      <div key={series[0]?.n ?? 'series'} className={styles.seriesRow}>
+      <div key={series[0]?.n ?? 'series'} className={seriesRow}>
         {series.map((element) => {
           const isMatch = matchedElementNumbers.has(element.n)
           return (
@@ -35,4 +35,3 @@ const ElementSeries = ({
   </div>
 )
 
-export { ElementSeries }

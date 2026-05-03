@@ -8,7 +8,6 @@ import { useLanguage } from '@/hooks/store/useLanguageStore'
 import { useMassUnit } from '@/hooks/store/useSettingsStore'
 import { useSelectedElement, useSetSelectedElement } from '@/hooks/store/useTableStore'
 import { useDarkMode } from '@/hooks/store/useThemeStore'
-import { useAppTranslation } from '@/i18n/localize'
 import { loadElementLocale } from '@/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/i18n/types'
 import type { ElementIsotope } from '@/types/elementProfile'
@@ -17,13 +16,27 @@ import { useNavigate, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { LEVELS, normalizeElementSearchParam } from '../../../utils/elementModalUtils'
 import { AtomPanel } from './AtomPanel'
 import { CardPager } from './CardPager'
+import {
+  animatedCard,
+  backdrop,
+  backdropTone,
+  cardArea,
+  cardViewport,
+  leftPanel,
+  leftPanelTone,
+  modal,
+  modalTone,
+  stage,
+} from './elementModal.css'
 import { ElementModalHeader } from './ElementModalHeader'
 import { ElementSideNav } from './ElementSideNav'
-import * as styles from './elementModal.css'
-import { LEVELS, normalizeElementSearchParam } from './elementModalUtils'
-import { L1Card, L2Card, L3Card, L4Card } from './LevelCards'
+import { L1Card } from './levelCard/L1Card'
+import { L2Card } from './levelCard/L2Card'
+import { L3Card } from './levelCard/L3Card'
+import { L4Card } from './levelCard/L4Card'
 
 const cardSlideVariants = {
   enter: (direction: number) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
@@ -31,7 +44,7 @@ const cardSlideVariants = {
   exit: (direction: number) => ({ x: direction > 0 ? -80 : 80, opacity: 0 }),
 }
 
-const ElementModal = () => {
+export const ElementModal: React.FC = () => {
   const selectedElement = useSelectedElement()
   const setSelectedElement = useSetSelectedElement()
   const massUnit = useMassUnit()
@@ -40,7 +53,6 @@ const ElementModal = () => {
   const setAnimationsPaused = useSetAnimationsPaused()
   const animationSpeed = useAnimationSpeed()
   const darkMode = useDarkMode()
-  const { t } = useAppTranslation()
   const search = useSearch({ from: '__root__' })
   const navigate = useNavigate({ from: '/' })
   const [locale, setLocale] = useState<Record<string, ElementLocaleRecord>>({})
@@ -226,16 +238,16 @@ const ElementModal = () => {
         <>
           <motion.div
             key="backdrop"
-            className={clsx(styles.backdrop, styles.backdropTone[tone])}
+            className={clsx(backdrop, backdropTone[tone])}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
             onClick={close}
           />
-          <motion.div key="modal" className={styles.stage} onClick={close}>
+          <motion.div key="modal" className={stage} onClick={close}>
             <motion.div
-              className={clsx(styles.modal, styles.modalTone[tone])}
+              className={clsx(modal, modalTone[tone])}
               initial={{ scale: 0.88, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.88, opacity: 0, y: 24 }}
@@ -245,17 +257,14 @@ const ElementModal = () => {
               {hasPrev && <ElementSideNav direction="prev" onClick={navigatePrev} />}
               {hasNext && <ElementSideNav direction="next" onClick={navigateNext} />}
 
-              <div className={clsx(styles.leftPanel, styles.leftPanelTone[tone])}>
+              <div className={clsx(leftPanel, leftPanelTone[tone])}>
                 <ElementModalHeader
                   profile={profile}
                   activeIsotope={selectedIsotope}
                   darkMode={darkMode}
                 />
                 <div
-                  className={clsx(
-                    styles.cardArea,
-                    'cursor-grab select-none active:cursor-grabbing',
-                  )}
+                  className={clsx(cardArea, 'cursor-grab select-none active:cursor-grabbing')}
                   onTouchStart={onTouchStart}
                   onTouchEnd={onTouchEnd}
                   onPointerDown={onPointerDown}
@@ -265,7 +274,7 @@ const ElementModal = () => {
                     pointerDragActive.current = false
                   }}
                 >
-                  <div className={styles.cardViewport}>
+                  <div className={cardViewport}>
                     <AnimatePresence initial={false} custom={cardDirection} mode="popLayout">
                       <motion.div
                         key={LEVELS[activeCard]}
@@ -278,20 +287,19 @@ const ElementModal = () => {
                           x: { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
                           opacity: { duration: 0.18 },
                         }}
-                        className={styles.animatedCard}
+                        className={animatedCard}
                       >
-                        {LEVELS[activeCard] === 'l1' && <L1Card profile={profile} t={t} />}
+                        {LEVELS[activeCard] === 'l1' && <L1Card profile={profile} />}
                         {LEVELS[activeCard] === 'l2' && (
                           <L2Card
                             profile={profile}
                             massUnit={massUnit}
                             selectedIsotope={selectedIsotope}
                             onSelectIsotope={setSelectedIsotope}
-                            t={t}
                           />
                         )}
-                        {LEVELS[activeCard] === 'l3' && <L3Card profile={profile} t={t} />}
-                        {LEVELS[activeCard] === 'l4' && <L4Card profile={profile} t={t} />}
+                        {LEVELS[activeCard] === 'l3' && <L3Card profile={profile} />}
+                        {LEVELS[activeCard] === 'l4' && <L4Card profile={profile} />}
                       </motion.div>
                     </AnimatePresence>
                   </div>
@@ -329,5 +337,3 @@ const ElementModal = () => {
     </AnimatePresence>
   )
 }
-
-export { ElementModal }

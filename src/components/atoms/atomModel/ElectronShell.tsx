@@ -1,3 +1,4 @@
+import { useElectronShellFrame } from '@/hooks/atomModel/useElectronShellFrame'
 import {
   ELECTRON_COLORS,
   ELECTRON_COLORS_DARK,
@@ -11,7 +12,6 @@ import {
 } from '@/utils/atomModel'
 import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { useElectronShellFrame } from '@/hooks/atomModel/useElectronShellFrame'
 
 interface ElectronShellProps {
   shellIndex: number
@@ -24,7 +24,7 @@ interface ElectronShellProps {
   onHover: (idx: number | null) => void
 }
 
-const ElectronShell = ({
+export const ElectronShell: React.FC<ElectronShellProps> = ({
   shellIndex,
   shellCount,
   electrons,
@@ -33,7 +33,7 @@ const ElectronShell = ({
   topView,
   darkMode,
   onHover,
-}: ElectronShellProps) => {
+}) => {
   const wobbleRef = useRef<THREE.Group>(null)
   const electronRefs = useRef<(THREE.Mesh | null)[]>([])
   const trailRefs = useRef<(THREE.Mesh | null)[][]>([])
@@ -97,7 +97,7 @@ const ElectronShell = ({
   const orbitOpacity = darkMode ? 0.72 : 0.78
   const glowOpacity = hovered ? (darkMode ? 0.34 : 0.52) : darkMode ? 0.18 : 0.34
   const hoverOrbitOpacity = darkMode ? 0.98 : 0.92
-  const angles = useElectronShellFrame(
+  const angles = useElectronShellFrame({
     wobbleRef,
     electronRefs,
     trailRefs,
@@ -107,7 +107,7 @@ const ElectronShell = ({
     speedMul,
     paused,
     topView,
-  )
+  })
 
   return (
     <group
@@ -174,5 +174,3 @@ const ElectronShell = ({
     </group>
   )
 }
-
-export { ElectronShell }

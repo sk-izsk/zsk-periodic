@@ -1,16 +1,25 @@
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
+import { useEffect, useRef } from 'react'
 import type * as THREE from 'three'
 
-export const useAtomSceneFrame = (
-  atomRef: RefObject<THREE.Group | null>,
-  elementNumber: number,
-  neutrons: number,
-  paused: boolean,
-  speed: number,
-  topView: boolean,
-) => {
+interface UseAtomSceneFrameProps {
+  atomRef: RefObject<THREE.Group | null>
+  elementNumber: number
+  neutrons: number
+  paused: boolean
+  speed: number
+  topView: boolean
+}
+
+export const useAtomSceneFrame = ({
+  atomRef,
+  elementNumber,
+  neutrons,
+  paused,
+  speed,
+  topView,
+}: UseAtomSceneFrameProps) => {
   const popStartRef = useRef<number | null>(null)
 
   useEffect(() => {
