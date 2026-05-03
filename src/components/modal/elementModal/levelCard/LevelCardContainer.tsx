@@ -38,6 +38,7 @@ export const LevelCardContainer: React.FC<LevelCardContainerProps> = ({
   setSelectedIsotope,
 }) => {
   const tone = darkMode ? 'dark' : 'light'
+
   const swipeHandlers = useCardSwipe({ goPrevCard, goNextCard })
 
   return (
