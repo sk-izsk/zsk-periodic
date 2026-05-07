@@ -14,6 +14,9 @@ const ElementCell: React.FC<Props> = ({ element, dimmed, highlighted, onClick })
   return (
     <div
       onClick={() => onClick?.(element)}
+      data-element-number={element.n}
+      data-highlighted={highlighted ? 'true' : 'false'}
+      data-category={element.cat}
       className={clsx(
         'element-cell relative flex flex-col items-center justify-center select-none overflow-hidden border border-white/20 shadow-sm',
         cell,

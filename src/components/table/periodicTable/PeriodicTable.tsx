@@ -1,5 +1,6 @@
 import { elements, type ElementCategory } from '@/data/elements/elements'
 import { ACTINIDES, LANTHANIDES } from '@/data/periodicTableData'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useLanguage } from '@/hooks/store/useLanguageStore'
 import {
   useFilterCategory,
@@ -10,7 +11,7 @@ import {
 import { loadElementLocale } from '@/i18n/locale-loaders'
 import type { ElementLocaleRecord } from '@/i18n/types'
 import { matchesElementQuery } from '@/utils/tableSearch'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { CategoryFilters } from './CategoryFilters'
 import { ElementSeries } from './ElementSeries'
 import { MainElementGrid } from './MainElementGrid'
@@ -22,10 +23,12 @@ export const PeriodicTable: React.FC = () => {
   const setFilterCategory = useSetFilterCategory()
   const searchQuery = useSearchQuery()
   const language = useLanguage()
+  const isMobile = useMediaQuery('(max-width: 1023px)')
   const [localizedElements, setLocalizedElements] = useState<Record<string, ElementLocaleRecord>>(
     {},
   )
   const [hoveredCategory, setHoveredCategory] = useState<ElementCategory | null>(null)
+  const tableViewportRef = useRef<HTMLDivElement | null>(null)
   const activeCategory = hoveredCategory ?? filterCategory
 
   useEffect(() => {
@@ -59,11 +62,40 @@ export const PeriodicTable: React.FC = () => {
     )
   }, [activeCategory, hasFilter, localizedElements, searchQuery])
 
+  useEffect(() => {
+    if (!isMobile || !hasFilter) {
+      return
+    }
+
+    const viewport = tableViewportRef.current
+    if (!viewport) {
+      return
+    }
+
+    const frame = requestAnimationFrame(() => {
+      const firstMatch = viewport.querySelector<HTMLElement>('[data-highlighted="true"]')
+      if (!firstMatch) {
+        return
+      }
+
+      firstMatch.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      })
+    })
+
+    return () => cancelAnimationFrame(frame)
+  }, [activeCategory, hasFilter, isMobile, matchedElementNumbers, searchQuery])
+
   return (
     <div className="p-4">
       <CategoryFilters
         activeCategory={activeCategory}
+        mobile={isMobile}
+        matchCount={matchedElementNumbers.size}
         onFilter={setFilterCategory}
+        onClear={() => setFilterCategory(null)}
         onHover={setHoveredCategory}
       />
 
@@ -72,7 +104,10 @@ export const PeriodicTable: React.FC = () => {
           <span className="font-semibold uppercase tracking-[0.18em]">ZTable matrix</span>
           <span>{elements.length} elements indexed</span>
         </div>
-        <div className="px-3 pt-1 pb-6 overflow-x-auto overflow-y-hidden rounded-md">
+        <div
+          ref={tableViewportRef}
+          className="overflow-x-auto overflow-y-hidden rounded-md px-2 pt-1 pb-6 lg:px-3"
+        >
           <div className={gridWrap}>
             <MainElementGrid
               hasFilter={hasFilter}

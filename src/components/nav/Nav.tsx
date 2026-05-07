@@ -1,10 +1,14 @@
+import { Button } from '@/components/ui/button'
 import { useLanguage, useSetLanguage } from '@/hooks/store/useLanguageStore'
 import { useSearchQuery, useSetSearchQuery } from '@/hooks/store/useTableStore'
 import { useDarkMode, useToggleDarkMode } from '@/hooks/store/useThemeStore'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useAppTranslation } from '@/i18n/localize'
 import { useRouterState } from '@tanstack/react-router'
+import { Menu } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { LanguageMenu } from './LanguageMenu'
+import { NavMobileDrawer } from './NavMobileDrawer'
 import { NavBrand } from './NavBrand'
 import { NavRouteLinks } from './NavRouteLinks'
 import { NavSearch } from './NavSearch'
@@ -19,8 +23,11 @@ export const Nav: React.FC = () => {
   const setLanguage = useSetLanguage()
   const searchQuery = useSearchQuery()
   const setSearchQuery = useSetSearchQuery()
+  const isMobile = useMediaQuery('(max-width: 1023px)')
   const [open, setOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
+  const mobileDrawerRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -28,10 +35,17 @@ export const Nav: React.FC = () => {
       if (!dropdownRef.current?.contains(event.target as Node)) {
         setOpen(false)
       }
+      if (!mobileDrawerRef.current?.contains(event.target as Node)) {
+        setMobileMenuOpen(false)
+      }
     }
     document.addEventListener('mousedown', closeOnOutsideClick)
     return () => document.removeEventListener('mousedown', closeOnOutsideClick)
   }, [])
+
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     const onQuickSearch = (event: KeyboardEvent) => {
@@ -46,30 +60,69 @@ export const Nav: React.FC = () => {
   }, [])
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center gap-3 px-4 py-2 border-b shadow-sm border-line bg-elevated/90 backdrop-blur-xl">
-      <NavBrand />
-      <NavRouteLinks pathname={pathname} />
+    <>
+      <nav className="sticky top-0 z-50 border-b border-line bg-elevated/90 px-4 py-2 shadow-sm backdrop-blur-xl">
+        <div className="flex items-center gap-3">
+          <NavBrand />
 
-      {pathname === '/' && (
-        <NavSearch value={searchQuery} onChange={setSearchQuery} inputRef={searchRef} />
-      )}
+          {!isMobile && <NavRouteLinks pathname={pathname} />}
 
-      <LanguageMenu
-        open={open}
+          {!isMobile && pathname === '/' && (
+            <NavSearch value={searchQuery} onChange={setSearchQuery} inputRef={searchRef} />
+          )}
+
+          {!isMobile && (
+            <LanguageMenu
+              open={open}
+              pathname={pathname}
+              language={language}
+              dropdownRef={dropdownRef}
+              onToggle={() => setOpen((s) => !s)}
+              onClose={() => setOpen(false)}
+              onLanguageChange={setLanguage}
+            />
+          )}
+
+          {!isMobile && (
+            <ThemeToggle
+              darkMode={darkMode}
+              label={darkMode ? t('common.light') : t('common.dark')}
+              onToggle={toggleDarkMode}
+            />
+          )}
+
+          {isMobile && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon"
+              className="ml-auto"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+            >
+              <Menu size={18} />
+            </Button>
+          )}
+        </div>
+
+        {isMobile && pathname === '/' && (
+          <div className="pt-2">
+            <NavSearch value={searchQuery} onChange={setSearchQuery} inputRef={searchRef} />
+          </div>
+        )}
+      </nav>
+
+      <NavMobileDrawer
+        open={mobileMenuOpen}
         pathname={pathname}
-        language={language}
-        dropdownRef={dropdownRef}
-        onToggle={() => setOpen((s) => !s)}
-        onClose={() => setOpen(false)}
-        onLanguageChange={setLanguage}
-      />
-
-      <ThemeToggle
         darkMode={darkMode}
-        label={darkMode ? t('common.light') : t('common.dark')}
-        onToggle={toggleDarkMode}
+        themeLabel={darkMode ? t('common.light') : t('common.dark')}
+        language={language}
+        onClose={() => setMobileMenuOpen(false)}
+        onToggleTheme={toggleDarkMode}
+        onLanguageChange={setLanguage}
+        panelRef={mobileDrawerRef}
       />
-    </nav>
+    </>
   )
 }
-

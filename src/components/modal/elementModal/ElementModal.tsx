@@ -11,14 +11,33 @@ import { useLanguage } from '@/hooks/store/useLanguageStore'
 import { useMassUnit } from '@/hooks/store/useSettingsStore'
 import { useSelectedElement, useSetSelectedElement } from '@/hooks/store/useTableStore'
 import { useDarkMode } from '@/hooks/store/useThemeStore'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { useAppTranslation } from '@/i18n/localize'
 import { toElementProfile } from '@/utils/elementProfile'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AtomPanel } from './AtomPanel'
-import { backdrop, backdropTone, modal, modalTone, stage } from './elementModal.css'
+import {
+  backdrop,
+  backdropTone,
+  mobileBody,
+  mobileChrome,
+  mobileChromeTone,
+  mobileCloseButton,
+  mobileDetailsPanel,
+  mobileSheet,
+  modal,
+  modalTone,
+  stage,
+} from './elementModal.css'
 import { ElementSideNav } from './ElementSideNav'
 import { LevelCardContainer } from './levelCard/LevelCardContainer'
+import { Button } from '@/components/ui/button'
+import { SegmentedControl } from '@/components/ui/segmented-control'
+import { ElementModalHeader } from './ElementModalHeader'
+
+type MobileModalView = 'details' | 'model'
 
 export const ElementModal: React.FC = () => {
   const selectedElement = useSelectedElement()
@@ -29,6 +48,9 @@ export const ElementModal: React.FC = () => {
   const setAnimationsPaused = useSetAnimationsPaused()
   const animationSpeed = useAnimationSpeed()
   const darkMode = useDarkMode()
+  const isMobile = useMediaQuery('(max-width: 1023px)')
+  const { t } = useAppTranslation()
+  const [mobileView, setMobileView] = useState<MobileModalView>('model')
   const tone = darkMode ? 'dark' : 'light'
 
   const locale = useElementLocale(language)
@@ -66,6 +88,12 @@ export const ElementModal: React.FC = () => {
     }
   }, [profile, selectedIsotope, setSelectedIsotope])
 
+  useEffect(() => {
+    if (selectedElement) {
+      setMobileView('model')
+    }
+  }, [selectedElement])
+
   useModalKeyboard({ selectedElement, close, navigatePrev, navigateNext })
 
   return (
@@ -83,45 +111,121 @@ export const ElementModal: React.FC = () => {
           />
           <motion.div key="modal" className={stage} onClick={close}>
             <motion.div
-              className={clsx(modal, modalTone[tone])}
-              initial={{ scale: 0.88, opacity: 0, y: 24 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.88, opacity: 0, y: 24 }}
+              className={clsx(isMobile ? mobileSheet : modal, modalTone[tone])}
+              initial={isMobile ? { opacity: 0, y: 36 } : { scale: 0.88, opacity: 0, y: 24 }}
+              animate={isMobile ? { opacity: 1, y: 0 } : { scale: 1, opacity: 1, y: 0 }}
+              exit={isMobile ? { opacity: 0, y: 36 } : { scale: 0.88, opacity: 0, y: 24 }}
               transition={{ type: 'spring', stiffness: 320, damping: 28 }}
               onClick={(event) => event.stopPropagation()}
             >
-              {hasPrev && <ElementSideNav direction="prev" onClick={navigatePrev} />}
-              {hasNext && <ElementSideNav direction="next" onClick={navigateNext} />}
+              {isMobile ? (
+                <>
+                  <div className={clsx(mobileChrome, mobileChromeTone[tone])}>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      onClick={close}
+                      className={mobileCloseButton}
+                      aria-label="Close element modal"
+                    >
+                      ×
+                    </Button>
+                    <ElementModalHeader
+                      profile={profile}
+                      activeIsotope={selectedIsotope}
+                      darkMode={darkMode}
+                      compact
+                    />
+                    <SegmentedControl
+                      value={mobileView}
+                      onValueChange={setMobileView}
+                      options={[
+                        { value: 'model', label: t('modal.model3d') },
+                        { value: 'details', label: t('modal.details') },
+                      ]}
+                    />
+                  </div>
 
-              <LevelCardContainer
-                profile={profile}
-                selectedIsotope={selectedIsotope}
-                massUnit={massUnit}
-                darkMode={darkMode}
-                activeCard={activeCard}
-                cardDirection={cardDirection}
-                goToCard={goToCard}
-                goPrevCard={goPrevCard}
-                goNextCard={goNextCard}
-                setSelectedIsotope={setSelectedIsotope}
-              />
+                  <div className={mobileBody}>
+                    {mobileView === 'details' ? (
+                      <div className={mobileDetailsPanel}>
+                        <LevelCardContainer
+                          profile={profile}
+                          selectedIsotope={selectedIsotope}
+                          massUnit={massUnit}
+                          darkMode={darkMode}
+                          activeCard={activeCard}
+                          cardDirection={cardDirection}
+                          goToCard={goToCard}
+                          goPrevCard={goPrevCard}
+                          goNextCard={goNextCard}
+                          setSelectedIsotope={setSelectedIsotope}
+                          layout="mobile"
+                          showHeader={false}
+                        />
+                      </div>
+                    ) : (
+                      <AtomPanel
+                        element={selectedElement}
+                        darkMode={darkMode}
+                        paused={animationsPaused}
+                        speed={animationSpeed}
+                        topView={topView}
+                        resetToken={resetViewToken}
+                        activeIsotope={selectedIsotope}
+                        onClose={close}
+                        onTogglePaused={() => setAnimationsPaused(!animationsPaused)}
+                        onToggleTopView={() => setTopView((v) => !v)}
+                        onResetView={() => {
+                          setTopView(false)
+                          setResetViewToken((v) => v + 1)
+                        }}
+                        showCloseButton={false}
+                        cameraMode="mobile"
+                        overlayInsetRight={12}
+                      />
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {hasPrev && <ElementSideNav direction="prev" onClick={navigatePrev} />}
+                  {hasNext && <ElementSideNav direction="next" onClick={navigateNext} />}
 
-              <AtomPanel
-                element={selectedElement}
-                darkMode={darkMode}
-                paused={animationsPaused}
-                speed={animationSpeed}
-                topView={topView}
-                resetToken={resetViewToken}
-                activeIsotope={selectedIsotope}
-                onClose={close}
-                onTogglePaused={() => setAnimationsPaused(!animationsPaused)}
-                onToggleTopView={() => setTopView((v) => !v)}
-                onResetView={() => {
-                  setTopView(false)
-                  setResetViewToken((v) => v + 1)
-                }}
-              />
+                  <LevelCardContainer
+                    profile={profile}
+                    selectedIsotope={selectedIsotope}
+                    massUnit={massUnit}
+                    darkMode={darkMode}
+                    activeCard={activeCard}
+                    cardDirection={cardDirection}
+                    goToCard={goToCard}
+                    goPrevCard={goPrevCard}
+                    goNextCard={goNextCard}
+                    setSelectedIsotope={setSelectedIsotope}
+                  />
+
+                  <AtomPanel
+                    element={selectedElement}
+                    darkMode={darkMode}
+                    paused={animationsPaused}
+                    speed={animationSpeed}
+                    topView={topView}
+                    resetToken={resetViewToken}
+                    activeIsotope={selectedIsotope}
+                    onClose={close}
+                    onTogglePaused={() => setAnimationsPaused(!animationsPaused)}
+                    onToggleTopView={() => setTopView((v) => !v)}
+                    onResetView={() => {
+                      setTopView(false)
+                      setResetViewToken((v) => v + 1)
+                    }}
+                    cameraMode="desktop"
+                    overlayInsetRight={54}
+                  />
+                </>
+              )}
             </motion.div>
           </motion.div>
         </>

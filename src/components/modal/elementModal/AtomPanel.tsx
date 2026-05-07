@@ -33,6 +33,9 @@ interface AtomPanelProps {
   onTogglePaused: () => void
   onToggleTopView: () => void
   onResetView: () => void
+  showCloseButton?: boolean
+  cameraMode?: 'desktop' | 'mobile'
+  overlayInsetRight?: number
 }
 
 export const AtomPanel: React.FC<AtomPanelProps> = ({
@@ -47,15 +50,20 @@ export const AtomPanel: React.FC<AtomPanelProps> = ({
   onTogglePaused,
   onToggleTopView,
   onResetView,
+  showCloseButton = true,
+  cameraMode = 'desktop',
+  overlayInsetRight = 54,
 }) => {
   const tone = darkMode ? 'dark' : 'light'
   const atomBg = darkMode ? '#061015' : '#eaf3f8'
 
   return (
     <div className={clsx(atomPanel, atomTone[tone])}>
-      <button onClick={onClose} className={clsx(closeButton, closeTone[tone])}>
-        ×
-      </button>
+      {showCloseButton && (
+        <button onClick={onClose} className={clsx(closeButton, closeTone[tone])}>
+          ×
+        </button>
+      )}
 
       <div className={atomCanvasWrap}>
         <div className={atomCanvasInner}>
@@ -71,6 +79,8 @@ export const AtomPanel: React.FC<AtomPanelProps> = ({
                 resetToken={resetToken}
                 neutronOverride={activeIsotope?.neutronCount}
                 isotopeLabel={activeIsotope?.name}
+                cameraMode={cameraMode}
+                overlayInsetRight={overlayInsetRight}
               />
             </Suspense>
           </ErrorBoundary>

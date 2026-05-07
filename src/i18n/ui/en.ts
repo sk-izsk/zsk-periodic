@@ -52,5 +52,7 @@ export const enUI: TranslationDict = {
     hazards: 'Hazards',
     stse: 'STSE',
     notAvailable: 'N/A',
+    details: 'Details',
+    model3d: '3D Model',
   },
 }
