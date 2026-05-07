@@ -52,5 +52,7 @@ export const frUI: TranslationDict = {
     hazards: 'Risques',
     stse: 'STSE',
     notAvailable: 'N/D',
+    details: 'Détails',
+    model3d: 'Modèle 3D',
   },
 }

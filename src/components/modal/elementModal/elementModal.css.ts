@@ -39,6 +39,16 @@ export const modal = style({
   position: 'relative',
 })
 
+export const mobileSheet = style({
+  width: 'min(100%, 480px)',
+  height: 'min(100dvh - 20px, 900px)',
+  borderRadius: 30,
+  overflow: 'hidden',
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+})
+
 export const modalTone = styleVariants({
   dark: {
     background: 'var(--color-elevated)',
@@ -59,6 +69,12 @@ export const leftPanel = style({
   flexShrink: 0,
 })
 
+export const leftPanelMobile = style({
+  width: '100%',
+  flex: 1,
+  minHeight: 0,
+})
+
 export const leftPanelTone = styleVariants({
   dark: { borderRight: '1px solid var(--color-border)' },
   light: { borderRight: '1px solid #e8e4de' },
@@ -67,6 +83,10 @@ export const leftPanelTone = styleVariants({
 export const header = style({
   padding: '24px 42px 18px',
   flexShrink: 0,
+})
+
+export const headerCompact = style({
+  padding: '18px 20px 14px',
 })
 
 export const headerTone = styleVariants({
@@ -87,6 +107,10 @@ export const headerGrid = style({
   gap: 14,
 })
 
+export const headerGridCompact = style({
+  gap: 10,
+})
+
 export const isotopeStack = style({
   display: 'flex',
   flexDirection: 'column',
@@ -95,6 +119,10 @@ export const isotopeStack = style({
   lineHeight: 1.15,
   fontSize: 28,
   fontWeight: 800,
+})
+
+export const isotopeStackCompact = style({
+  fontSize: 18,
 })
 
 export const isotopeStackTone = styleVariants({
@@ -109,11 +137,19 @@ export const symbol = style({
   color: 'var(--color-text)',
 })
 
+export const symbolCompact = style({
+  fontSize: 46,
+})
+
 export const name = style({
   justifySelf: 'end',
   fontSize: 38,
   fontWeight: 800,
   color: 'var(--color-text)',
+})
+
+export const nameCompact = style({
+  fontSize: 24,
 })
 
 export const cardArea = style({
@@ -123,10 +159,21 @@ export const cardArea = style({
   position: 'relative',
 })
 
+export const mobileCardArea = style({
+  padding: '0 0 16px',
+})
+
 export const cardViewport = style({
   position: 'relative',
   height: '100%',
   overflow: 'hidden',
+})
+
+export const mobileCardViewport = style({
+  flex: 1,
+  minHeight: 0,
+  padding: '12px 0 0',
+  overflow: 'visible',
 })
 
 export const animatedCard = style({
@@ -220,6 +267,7 @@ export const atomPanel = style({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
+  minHeight: 0,
 })
 export const atomTone = styleVariants({
   dark: { background: '#061015' },
@@ -286,4 +334,45 @@ export const controlButton = style({
 export const controlActive = style({
   background: 'rgba(100,120,180,0.25)',
   color: 'var(--color-text)',
+})
+
+export const mobileChrome = style({
+  padding: '18px 16px 14px',
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 14,
+  position: 'relative',
+})
+
+export const mobileChromeTone = styleVariants({
+  dark: {
+    background: 'linear-gradient(180deg, rgba(6,16,21,0.98), rgba(10,20,26,0.92))',
+    borderBottom: '1px solid var(--color-border)',
+  },
+  light: {
+    background: 'linear-gradient(180deg, rgba(251,250,247,0.98), rgba(246,243,237,0.94))',
+    borderBottom: '1px solid #e8e4de',
+  },
+})
+
+export const mobileCloseButton = style({
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  zIndex: 2,
+})
+
+export const mobileBody = style({
+  flex: 1,
+  minHeight: 0,
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+export const mobileDetailsPanel = style({
+  flex: 1,
+  minHeight: 0,
+  display: 'flex',
+  flexDirection: 'column',
 })
