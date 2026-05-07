@@ -32,6 +32,8 @@ interface AtomModelProps {
   resetToken?: number
   neutronOverride?: number
   isotopeLabel?: string
+  cameraMode?: 'desktop' | 'mobile'
+  overlayInsetRight?: number
 }
 
 const AtomModel: React.FC<AtomModelProps> = ({
@@ -45,14 +47,20 @@ const AtomModel: React.FC<AtomModelProps> = ({
   resetToken = 0,
   neutronOverride,
   isotopeLabel,
+  cameraMode = 'desktop',
+  overlayInsetRight = 54,
 }) => {
   const [hoveredShell, setHoveredShell] = useState<number | null>(null)
   const shells = useAtomShells(element)
   const { isLight, isDarkMode } = useMemo(() => getAtomTextColors(bg), [bg])
-  const cameraPosition = useMemo<[number, number, number]>(
-    () => (topView ? [0, 0, 31] : [0, 6, 30]),
-    [topView],
-  )
+  const cameraPosition = useMemo<[number, number, number]>(() => {
+    if (cameraMode === 'mobile') {
+      return topView ? [0, 0, 38] : [0, 7, 37]
+    }
+
+    return topView ? [0, 0, 31] : [0, 6, 30]
+  }, [cameraMode, topView])
+  const fov = cameraMode === 'mobile' ? (topView ? 48 : 52) : topView ? 42 : 46
   const tone = isLight ? 'light' : 'dark'
 
   return (
@@ -81,13 +89,14 @@ const AtomModel: React.FC<AtomModelProps> = ({
             isotopePill,
             pillTone[isLight ? 'light' : 'isotopeDark'],
           )}
+          style={{ right: overlayInsetRight }}
         >
           {isotopeLabel} · {neutronOverride}n
         </div>
       )}
 
       <Canvas
-        camera={{ position: cameraPosition, fov: topView ? 42 : 46 }}
+        camera={{ position: cameraPosition, fov }}
         gl={{ antialias: true, alpha: true }}
         className={canvas}
       >

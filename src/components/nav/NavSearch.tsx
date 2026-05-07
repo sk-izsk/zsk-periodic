@@ -9,7 +9,7 @@ interface NavSearchProps {
 }
 
 export const NavSearch: React.FC<NavSearchProps> = ({ value, onChange, inputRef }) => (
-  <div className="relative ml-auto mr-1">
+  <div className="relative ml-auto mr-1 w-full lg:w-auto">
     <Search
       className="absolute -translate-y-1/2 pointer-events-none left-3 top-1/2 text-muted"
       size={15}
@@ -20,7 +20,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ value, onChange, inputRef 
       placeholder="Search elements... (Cmd+K)"
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="w-[260px] pl-9"
+      className="w-full lg:w-[260px] pl-9"
     />
   </div>
 )

@@ -50,7 +50,7 @@ export const ElementModal: React.FC = () => {
   const darkMode = useDarkMode()
   const isMobile = useMediaQuery('(max-width: 1023px)')
   const { t } = useAppTranslation()
-  const [mobileView, setMobileView] = useState<MobileModalView>('details')
+  const [mobileView, setMobileView] = useState<MobileModalView>('model')
   const tone = darkMode ? 'dark' : 'light'
 
   const locale = useElementLocale(language)
@@ -90,7 +90,7 @@ export const ElementModal: React.FC = () => {
 
   useEffect(() => {
     if (selectedElement) {
-      setMobileView('details')
+      setMobileView('model')
     }
   }, [selectedElement])
 
@@ -141,8 +141,8 @@ export const ElementModal: React.FC = () => {
                       value={mobileView}
                       onValueChange={setMobileView}
                       options={[
-                        { value: 'details', label: t('modal.details') },
                         { value: 'model', label: t('modal.model3d') },
+                        { value: 'details', label: t('modal.details') },
                       ]}
                     />
                   </div>
@@ -182,6 +182,8 @@ export const ElementModal: React.FC = () => {
                           setResetViewToken((v) => v + 1)
                         }}
                         showCloseButton={false}
+                        cameraMode="mobile"
+                        overlayInsetRight={12}
                       />
                     )}
                   </div>
@@ -219,6 +221,8 @@ export const ElementModal: React.FC = () => {
                       setTopView(false)
                       setResetViewToken((v) => v + 1)
                     }}
+                    cameraMode="desktop"
+                    overlayInsetRight={54}
                   />
                 </>
               )}

@@ -86,7 +86,7 @@ export const header = style({
 })
 
 export const headerCompact = style({
-  padding: '18px 20px 14px',
+  padding: '18px 64px 14px 20px',
 })
 
 export const headerTone = styleVariants({
@@ -358,8 +358,8 @@ export const mobileChromeTone = styleVariants({
 
 export const mobileCloseButton = style({
   position: 'absolute',
-  top: 16,
-  right: 16,
+  top: 18,
+  right: 18,
   zIndex: 2,
 })
 
@@ -375,4 +375,5 @@ export const mobileDetailsPanel = style({
   minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
+  paddingTop: 6,
 })

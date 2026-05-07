@@ -113,6 +113,7 @@ export const LevelCardContainer: React.FC<LevelCardContainerProps> = ({
               activeIndex={activeCard}
               onIndexChange={goToCard}
               getItemKey={(level) => level}
+              peekPx={28}
               renderItem={(level) =>
                 renderLevelCard(level, profile, massUnit, selectedIsotope, setSelectedIsotope)
               }

@@ -44,7 +44,6 @@ export const configPill = style({
 })
 
 export const isotopePill = style({
-  right: 54,
   padding: '4px 12px',
 })
 

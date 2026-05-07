@@ -83,7 +83,7 @@ export const HorizontalSnapCarousel = <T,>({
     <div
       ref={containerRef}
       className={cn(
-        'flex h-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-4 pb-2 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        'flex h-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-5 pb-2 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         className,
       )}
       onScroll={() => {
