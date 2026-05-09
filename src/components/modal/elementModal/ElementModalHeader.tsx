@@ -20,6 +20,7 @@ interface ElementModalHeaderProps {
   activeIsotope: ElementIsotope | null
   darkMode: boolean
   compact?: boolean
+  titleId?: string
 }
 
 export const ElementModalHeader: React.FC<ElementModalHeaderProps> = ({
@@ -27,6 +28,7 @@ export const ElementModalHeader: React.FC<ElementModalHeaderProps> = ({
   activeIsotope,
   darkMode,
   compact = false,
+  titleId,
 }) => {
   const tone = darkMode ? 'dark' : 'light'
 
@@ -40,7 +42,9 @@ export const ElementModalHeader: React.FC<ElementModalHeaderProps> = ({
           <span>{profile.level2.protons}</span>
         </div>
         <div className={clsx(symbol, compact && symbolCompact)}>{profile.symbol}</div>
-        <div className={clsx(name, compact && nameCompact)}>{profile.name}</div>
+        <div id={titleId} className={clsx(name, compact && nameCompact)}>
+          {profile.name}
+        </div>
       </div>
     </div>
   )
