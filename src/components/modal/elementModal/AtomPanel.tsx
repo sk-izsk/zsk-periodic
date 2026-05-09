@@ -60,7 +60,12 @@ export const AtomPanel: React.FC<AtomPanelProps> = ({
   return (
     <div className={clsx(atomPanel, atomTone[tone])}>
       {showCloseButton && (
-        <button onClick={onClose} className={clsx(closeButton, closeTone[tone])}>
+        <button
+          type="button"
+          onClick={onClose}
+          className={clsx(closeButton, closeTone[tone])}
+          aria-label="Close element modal"
+        >
           ×
         </button>
       )}
@@ -90,9 +95,11 @@ export const AtomPanel: React.FC<AtomPanelProps> = ({
       <div className={clsx(bottomControls, bottomTone[tone])}>
         <div className={controlGroup}>
           <button
+            type="button"
             title={paused ? 'Resume' : 'Pause'}
             onClick={onTogglePaused}
             className={clsx(controlButton, paused && controlActive)}
+            aria-label={paused ? 'Resume animation' : 'Pause animation'}
           >
             {paused ? (
               <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
@@ -106,9 +113,11 @@ export const AtomPanel: React.FC<AtomPanelProps> = ({
             )}
           </button>
           <button
+            type="button"
             title="Top view"
             onClick={onToggleTopView}
             className={clsx(controlButton, topView && controlActive)}
+            aria-label={topView ? 'Exit top view' : 'Switch to top view'}
           >
             <svg
               width="16"
@@ -124,7 +133,13 @@ export const AtomPanel: React.FC<AtomPanelProps> = ({
             </svg>
           </button>
         </div>
-        <button title="Reset view" onClick={onResetView} className={controlButton}>
+        <button
+          type="button"
+          title="Reset view"
+          onClick={onResetView}
+          className={controlButton}
+          aria-label="Reset atom view"
+        >
           <svg
             width="14"
             height="14"

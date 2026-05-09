@@ -37,6 +37,7 @@ interface LevelCardContainerProps {
   setSelectedIsotope: (isotope: ElementIsotope) => void
   layout?: CardLayout
   showHeader?: boolean
+  titleId?: string
 }
 
 const renderLevelCard = (
@@ -81,6 +82,7 @@ export const LevelCardContainer: React.FC<LevelCardContainerProps> = ({
   setSelectedIsotope,
   layout = 'desktop',
   showHeader = true,
+  titleId,
 }) => {
   const tone = darkMode ? 'dark' : 'light'
   const isMobile = layout === 'mobile'
@@ -95,6 +97,7 @@ export const LevelCardContainer: React.FC<LevelCardContainerProps> = ({
           activeIsotope={selectedIsotope}
           darkMode={darkMode}
           compact={isMobile}
+          titleId={titleId}
         />
       )}
       <div

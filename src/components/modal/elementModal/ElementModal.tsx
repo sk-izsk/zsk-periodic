@@ -16,7 +16,7 @@ import { useAppTranslation } from '@/i18n/localize'
 import { toElementProfile } from '@/utils/elementProfile'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { AtomPanel } from './AtomPanel'
 import {
   backdrop,
@@ -52,6 +52,9 @@ export const ElementModal: React.FC = () => {
   const { t } = useAppTranslation()
   const [mobileView, setMobileView] = useState<MobileModalView>('model')
   const tone = darkMode ? 'dark' : 'light'
+  const dialogRef = useRef<HTMLDivElement | null>(null)
+  const titleId = useId()
+  const descriptionId = useId()
 
   const locale = useElementLocale(language)
 
@@ -96,6 +99,64 @@ export const ElementModal: React.FC = () => {
 
   useModalKeyboard({ selectedElement, close, navigatePrev, navigateNext })
 
+  useEffect(() => {
+    if (!selectedElement) {
+      return
+    }
+
+    const dialog = dialogRef.current
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const focusTarget =
+      dialog?.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ) ?? dialog
+
+    focusTarget?.focus()
+
+    return () => {
+      previouslyFocused?.focus()
+    }
+  }, [selectedElement])
+
+  const handleDialogKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') {
+      return
+    }
+
+    const dialog = dialogRef.current
+    if (!dialog) {
+      return
+    }
+
+    const focusable = Array.from(
+      dialog.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((element) => !element.hasAttribute('disabled') && element.tabIndex !== -1)
+
+    if (focusable.length === 0) {
+      event.preventDefault()
+      dialog.focus()
+      return
+    }
+
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    const activeElement = document.activeElement
+
+    if (event.shiftKey && activeElement === first) {
+      event.preventDefault()
+      last.focus()
+      return
+    }
+
+    if (!event.shiftKey && activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
+
   return (
     <AnimatePresence>
       {selectedElement && profile && (
@@ -111,13 +172,23 @@ export const ElementModal: React.FC = () => {
           />
           <motion.div key="modal" className={stage} onClick={close}>
             <motion.div
+              ref={dialogRef}
               className={clsx(isMobile ? mobileSheet : modal, modalTone[tone])}
               initial={isMobile ? { opacity: 0, y: 36 } : { scale: 0.88, opacity: 0, y: 24 }}
               animate={isMobile ? { opacity: 1, y: 0 } : { scale: 1, opacity: 1, y: 0 }}
               exit={isMobile ? { opacity: 0, y: 36 } : { scale: 0.88, opacity: 0, y: 24 }}
               transition={{ type: 'spring', stiffness: 320, damping: 28 }}
               onClick={(event) => event.stopPropagation()}
+              onKeyDown={handleDialogKeyDown}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              aria-describedby={descriptionId}
+              tabIndex={-1}
             >
+              <div id={descriptionId} className="sr-only">
+                Press Escape to close. Use left and right arrow keys to move between elements.
+              </div>
               {isMobile ? (
                 <>
                   <div className={clsx(mobileChrome, mobileChromeTone[tone])}>
@@ -136,6 +207,7 @@ export const ElementModal: React.FC = () => {
                       activeIsotope={selectedIsotope}
                       darkMode={darkMode}
                       compact
+                      titleId={titleId}
                     />
                     <SegmentedControl
                       value={mobileView}
@@ -163,6 +235,7 @@ export const ElementModal: React.FC = () => {
                           setSelectedIsotope={setSelectedIsotope}
                           layout="mobile"
                           showHeader={false}
+                          titleId={titleId}
                         />
                       </div>
                     ) : (
@@ -204,6 +277,7 @@ export const ElementModal: React.FC = () => {
                     goPrevCard={goPrevCard}
                     goNextCard={goNextCard}
                     setSelectedIsotope={setSelectedIsotope}
+                    titleId={titleId}
                   />
 
                   <AtomPanel
